@@ -9,7 +9,12 @@
     <link rel="icon" type="image/png" href="https://muhrasul523.github.io/sapadai/logo_sapadai_1.png">
     <meta property="og:title" content="Laporan Kinerja Dai Utusan">
     <meta property="og:description" content="Aplikasi penginputan laporan kinerja bulanan Dai Utusan Wahdah Islamiyah.">
-    <meta property="og:image" content="https://muhrasul523.github.io/sapadai/logo_sapadai_2.png">
+    <!-- Meta tag image diperkuat untuk menjamin cache WhatsApp membaca gambar dengan baik -->
+    <meta property="og:image" itemprop="image" content="https://muhrasul523.github.io/sapadai/logo_sapadai_2.png">
+    <meta property="og:image:secure_url" itemprop="image" content="https://muhrasul523.github.io/sapadai/logo_sapadai_2.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:url" content="https://muhrasul523.github.io/sapadai/profil/">
     <meta property="og:type" content="website">
 
@@ -88,6 +93,25 @@
             <button type="button" id="btn-lanjut" onclick="proceedToDashboard()" class="w-full wahdah-bg text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-800 transition shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
                 Lanjut <i class="fas fa-arrow-right ml-2"></i>
             </button>
+        </div>
+    </div>
+
+    <!-- Halaman Sukses & Redirect -->
+    <div id="success-page" class="hidden min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
+        <div class="bg-white p-10 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 text-center">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-teal-100 rounded-full mb-6">
+                <i class="fas fa-check text-4xl text-teal-600"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Alhamdulillah!</h2>
+            <p class="text-gray-600 mb-8">Laporan kinerja bulanan Anda berhasil dikirim dan disimpan dengan aman.</p>
+            
+            <a href="#" id="btn-redirect" class="block w-full wahdah-bg text-white font-bold py-4 px-4 rounded-xl hover:bg-teal-800 transition shadow-lg mb-4">
+                Konfirmasi
+            </a>
+            
+            <p id="text-countdown" class="text-sm text-gray-500 hidden">
+                Anda akan diarahkan otomatis dalam <span id="span-detik" class="font-bold text-teal-600">5</span> detik...
+            </p>
         </div>
     </div>
 
@@ -285,6 +309,7 @@
         let currentUser = null;
         let uploadedFilesBase64 = [];
         let initAmanahList = [];
+        let appConfig = {};
 
         function callBackend(action, data, onSuccess, onFail) {
             fetch(SCRIPT_URL, {
@@ -298,13 +323,11 @@
                     let json = JSON.parse(text);
                     if(onSuccess) onSuccess(json);
                 } catch (e) {
-                    console.error("Format balasan server salah:", text);
-                    Swal.fire('Error Server', 'Sistem tidak menerima balasan JSON. Pastikan WebApp dideploy untuk "Siapa Saja".', 'error');
+                    Swal.fire('Error Server', 'Sistem tidak menerima balasan JSON.', 'error');
                     if(onFail) onFail(e);
                 }
             })
             .catch(err => { 
-                console.error("Fetch Error:", err); 
                 if(onFail) onFail(err); else { hideLoading(); Swal.fire('Error', 'Kesalahan koneksi internet.', 'error'); }
             });
         }
@@ -312,10 +335,14 @@
         function showLoading(txt) { document.getElementById('loading-text').innerText = txt; document.getElementById('loading-overlay').style.display = 'flex'; }
         function hideLoading() { document.getElementById('loading-overlay').style.display = 'none'; }
 
-        // STRICT NUMERICS & MAX VALUES
+        // STRICT NUMERICS, MAX VALUES, & TEXT ONLY
         document.addEventListener('input', e => {
             if(e.target.classList.contains('numeric-only')) {
                 e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            }
+            if(e.target.classList.contains('text-only')) {
+                // Memblokir angka pada kolom nama
+                e.target.value = e.target.value.replace(/[0-9]/g, '');
             }
             if(e.target.classList.contains('max-5')) {
                 if(e.target.value !== '' && parseInt(e.target.value) > 5) e.target.value = '5';
@@ -340,6 +367,7 @@
                         document.getElementById('btn-lanjut').disabled = true;
                     }
                     if(res.amanah) initAmanahList = res.amanah;
+                    if(res.config) appConfig = res.config;
                 }
             });
         };
@@ -401,17 +429,14 @@
             uploadedFilesBase64 = [];
             document.getElementById('file_exist_notice').classList.add('hidden');
             
-            // Populate Dropdown Amanah
             let selAmanah = document.getElementById('amanah');
             selAmanah.innerHTML = '<option value="">-- Pilih Amanah --</option>';
             initAmanahList.forEach(o => selAmanah.add(new Option(o, o)));
 
-            // Populate Readonly Profile
             ['nama_dai', 'penempatan', 'marhalah', 'nama_murabbi', 'wa_murabbi', 'nama_pimpinan', 'jabatan_pimpinan', 'wa_pimpinan'].forEach(id => { 
                 if(document.getElementById(id) && currentUser[id]) document.getElementById(id).value = currentUser[id]; 
             });
 
-            // Clear Dynamic Containers
             ['karya_quran', 'karya_murabbi', 'karya_pengurus', 'karya_stiba', 'karya_dai', 
              'halaqah_tarbiyah_container', 'halaqah_quran_container', 
              'silaturahmi_internal', 'silaturahmi_eksternal'].forEach(id => document.getElementById(id).innerHTML = '');
@@ -431,25 +456,16 @@
                 document.getElementById('taklim_tablig').value = histData.taklim_tablig || '';
                 document.getElementById('ketidakhadiran_tarbiyah').value = histData.ketidakhadiran_tarbiyah || '';
 
-                // Restore Karya Unggulan
                 rebuildKarya('karya_quran', histData.a1_rincian);
                 rebuildKarya('karya_murabbi', histData.a2_rincian);
                 rebuildKarya('karya_pengurus', histData.a3_rincian);
                 rebuildKarya('karya_stiba', histData.a4_rincian);
                 rebuildKarya('karya_dai', histData.a5_rincian);
 
-                // Restore Halaqah (Only Totals saved in sheet, so rebuild 1 combined row if exists)
-                if(parseInt(histData.c1_halaqah) > 0) {
-                    addHalaqahTarbiyah(histData.c1_peserta, histData.c1_aktif);
-                }
-                if(parseInt(histData.c2_dirosa_halaqah) > 0) {
-                    addHalaqahQuran('Dirosa', histData.c2_dirosa_peserta, histData.c2_dirosa_aktif);
-                }
-                if(parseInt(histData.c2_tahsin_halaqah) > 0) {
-                    addHalaqahQuran('Tahsin', histData.c2_tahsin_peserta, histData.c2_tahsin_aktif);
-                }
+                if(parseInt(histData.c1_halaqah) > 0) addHalaqahTarbiyah(histData.c1_peserta, histData.c1_aktif);
+                if(parseInt(histData.c2_dirosa_halaqah) > 0) addHalaqahQuran('Dirosa', histData.c2_dirosa_peserta, histData.c2_dirosa_aktif);
+                if(parseInt(histData.c2_tahsin_halaqah) > 0) addHalaqahQuran('Tahsin', histData.c2_tahsin_peserta, histData.c2_tahsin_aktif);
 
-                // Restore Silaturahmi
                 rebuildSilaturahmi('silaturahmi_internal', histData.silaturahmi_internal_rincian);
                 rebuildSilaturahmi('silaturahmi_eksternal', histData.silaturahmi_eksternal_rincian);
             }
@@ -458,23 +474,16 @@
         function rebuildKarya(containerId, text) {
             if(!text || text === '-') return;
             text.split('\n').forEach(line => {
-                if(line.trim()){
-                    let p = line.split(' - ');
-                    addKaryaRow(containerId, p[0]||'', p[1]||'');
-                }
+                if(line.trim()){ let p = line.split(' - '); addKaryaRow(containerId, p[0]||'', p[1]||''); }
             });
         }
         function rebuildSilaturahmi(containerId, text) {
             if(!text || text === '-') return;
             text.split('\n').forEach(line => {
-                if(line.trim()){
-                    let p = line.split(' - ');
-                    addSilaRow(containerId, p[0]||'', p.slice(1).join(' - ')||'');
-                }
+                if(line.trim()){ let p = line.split(' - '); addSilaRow(containerId, p[0]||'', p.slice(1).join(' - ')||''); }
             });
         }
 
-        // --- VALIDASI PENAMBAHAN BARIS ---
         function addKaryaRow(containerId, initNama='', initWa='') {
             let container = document.getElementById(containerId);
             let rows = container.querySelectorAll('.karya-row');
@@ -486,7 +495,8 @@
             }
             let html = `
                 <div class="flex gap-2 items-center karya-row mb-1">
-                    <input type="text" placeholder="Nama Lengkap" class="w-1/2 p-2 border rounded text-sm uppercase k-nama" value="${initNama}" required>
+                    <!-- Ditambahkan class text-only untuk blokir angka -->
+                    <input type="text" placeholder="Nama Lengkap" class="w-1/2 p-2 border rounded text-sm uppercase k-nama text-only" value="${initNama}" required>
                     <input type="text" inputmode="numeric" placeholder="No WA (08...)" class="w-1/2 p-2 border rounded text-sm wa-validate numeric-only k-wa" value="${initWa}" required>
                     <button type="button" onclick="this.parentElement.remove()" class="text-red-500 px-2 hover:text-red-700"><i class="fas fa-times"></i></button>
                 </div>`;
@@ -504,14 +514,13 @@
             }
             let html = `
                 <div class="flex flex-col md:flex-row gap-2 items-start md:items-center sila-row mb-2 border-b pb-2">
-                    <input type="text" placeholder="Nama Tokoh/Instansi" class="w-full md:w-1/3 p-2 border rounded text-sm uppercase s-nama" value="${initNama}" required>
+                    <input type="text" placeholder="Nama Tokoh/Instansi" class="w-full md:w-1/3 p-2 border rounded text-sm uppercase s-nama text-only" value="${initNama}" required>
                     <input type="text" placeholder="Hasil Singkat" class="w-full md:flex-1 p-2 border rounded text-sm s-hasil" value="${initHasil}" required>
                     <button type="button" onclick="this.parentElement.remove()" class="text-red-500 bg-red-50 p-2 rounded hover:bg-red-500 hover:text-white transition w-full md:w-auto"><i class="fas fa-trash"></i> Hapus</button>
                 </div>`;
             container.insertAdjacentHTML('beforeend', html);
         }
 
-        // --- HALAQAH LOGIC ---
         function valAktif(el) {
             let row = el.closest('div.row-hal');
             let max = parseInt(row.querySelector('.h-peserta').value || 0);
@@ -543,9 +552,7 @@
             document.querySelectorAll('#halaqah_tarbiyah_container .row-hal').forEach(r => {
                 h++; p += parseInt(r.querySelector('.h-peserta').value||0); a += parseInt(r.querySelector('.h-aktif').value||0);
             });
-            document.getElementById('c1_halaqah').value = h;
-            document.getElementById('c1_peserta').value = p;
-            document.getElementById('c1_aktif').value = a;
+            document.getElementById('c1_halaqah').value = h; document.getElementById('c1_peserta').value = p; document.getElementById('c1_aktif').value = a;
         }
 
         function addHalaqahQuran(initJ='', initP='', initA='') {
@@ -571,9 +578,7 @@
         function calcHalaqahQuran() {
             let hD=0, pD=0, aD=0, hT=0, pT=0, aT=0;
             document.querySelectorAll('#halaqah_quran_container .row-hal').forEach(r => {
-                let j = r.querySelector('.h-jenis').value;
-                let p = parseInt(r.querySelector('.h-peserta').value||0);
-                let a = parseInt(r.querySelector('.h-aktif').value||0);
+                let j = r.querySelector('.h-jenis').value; let p = parseInt(r.querySelector('.h-peserta').value||0); let a = parseInt(r.querySelector('.h-aktif').value||0);
                 if(j==='Dirosa'){ hD++; pD+=p; aD+=a; } else if(j==='Tahsin'){ hT++; pT+=p; aT+=a; }
             });
             document.getElementById('c2_dirosa_halaqah').value = hD; document.getElementById('c2_dirosa_peserta').value = pD; document.getElementById('c2_dirosa_aktif').value = aD;
@@ -581,7 +586,6 @@
             document.getElementById('c2_total_halaqah').value = hD+hT; document.getElementById('c2_total_peserta').value = pD+pT; document.getElementById('c2_total_aktif').value = aD+aT;
         }
 
-        // --- GAMBAR ---
         function handleFilesUpload(e) {
             const files = Array.from(e.target.files);
             if(files.length + uploadedFilesBase64.length > 5) {
@@ -590,7 +594,6 @@
             showLoading("Mengkompres Foto...");
             let processed = 0;
             files.forEach(file => {
-                if(file.size > 1024*1024) { Swal.fire('Info', file.name + ' melebihi 1MB.', 'warning'); e.target.value = ''; hideLoading(); return; }
                 const reader = new FileReader(); reader.readAsDataURL(file);
                 reader.onload = evt => {
                     const img = new Image(); img.src = evt.target.result;
@@ -622,7 +625,6 @@
         }
         function removeFile(idx) { uploadedFilesBase64.splice(idx, 1); renderFilePreview(); }
 
-        // --- SUBMIT ---
         function getListData(containerId, isSila=false) {
             let rows = document.getElementById(containerId).querySelectorAll(isSila?'.sila-row':'.karya-row');
             if(rows.length === 0) return { jml: 0, rincian: "-" };
@@ -658,12 +660,8 @@
                 files: uploadedFilesBase64,
                 existing_file_urls: document.getElementById('existing_file_urls').value,
                 
-                a1_jml: d_quran.jml, a1_rincian: d_quran.rincian,
-                a2_jml: d_murabbi.jml, a2_rincian: d_murabbi.rincian,
-                a3_jml: d_pengurus.jml, a3_rincian: d_pengurus.rincian,
-                a4_jml: d_stiba.jml, a4_rincian: d_stiba.rincian,
-                a5_jml: d_dai.jml, a5_rincian: d_dai.rincian,
-                
+                a1_jml: d_quran.jml, a1_rincian: d_quran.rincian, a2_jml: d_murabbi.jml, a2_rincian: d_murabbi.rincian,
+                a3_jml: d_pengurus.jml, a3_rincian: d_pengurus.rincian, a4_jml: d_stiba.jml, a4_rincian: d_stiba.rincian, a5_jml: d_dai.jml, a5_rincian: d_dai.rincian,
                 waktu_berkantor_jam: document.getElementById('waktu_berkantor_jam').value,
                 
                 c1_halaqah: document.getElementById('c1_halaqah').value, c1_peserta: document.getElementById('c1_peserta').value, c1_aktif: document.getElementById('c1_aktif').value,
@@ -672,9 +670,7 @@
                 c2_total_halaqah: document.getElementById('c2_total_halaqah').value, c2_total_peserta: document.getElementById('c2_total_peserta').value, c2_total_aktif: document.getElementById('c2_total_aktif').value,
                 
                 khotbah_jumat: document.getElementById('khotbah_jumat').value, taklim_tablig: document.getElementById('taklim_tablig').value,
-                
-                silaturahmi_internal_jml: d_sila_in.jml, silaturahmi_internal_rincian: d_sila_in.rincian,
-                silaturahmi_eksternal_jml: d_sila_ex.jml, silaturahmi_eksternal_rincian: d_sila_ex.rincian,
+                silaturahmi_internal_jml: d_sila_in.jml, silaturahmi_internal_rincian: d_sila_in.rincian, silaturahmi_eksternal_jml: d_sila_ex.jml, silaturahmi_eksternal_rincian: d_sila_ex.rincian,
                 
                 marhalah: currentUser.marhalah, nama_murabbi: currentUser.nama_murabbi, wa_murabbi: currentUser.wa_murabbi,
                 ketidakhadiran_tarbiyah: document.getElementById('ketidakhadiran_tarbiyah').value,
@@ -689,8 +685,35 @@
                     showLoading("Memproses Laporan...");
                     callBackend('saveLaporan', { data: payload }, res => {
                         hideLoading();
-                        if(res && res.success) Swal.fire('Alhamdulillah', res.message, 'success').then(() => location.reload());
-                        else Swal.fire('Gagal', res?res.message:'Gagal terhubung.', 'error');
+                        if(res && res.success) {
+                            // Tampilkan Halaman Sukses
+                            document.getElementById('dashboard-page').style.display = 'none';
+                            document.getElementById('success-page').style.display = 'flex';
+                            
+                            // Eksekusi Logika Timer & Redirect
+                            let btnRedirect = document.getElementById('btn-redirect');
+                            let textCountdown = document.getElementById('text-countdown');
+                            let spanDetik = document.getElementById('span-detik');
+
+                            btnRedirect.innerText = appConfig.nama_tombol_sukses || 'Konfirmasi';
+                            btnRedirect.href = appConfig.link_tombol_sukses || '#';
+
+                            let durasi = parseInt(appConfig.durasi_redirect) || 0;
+                            if (durasi > 0 && appConfig.link_tombol_sukses) {
+                                textCountdown.classList.remove('hidden');
+                                spanDetik.innerText = durasi;
+                                let timer = setInterval(() => {
+                                    durasi--;
+                                    spanDetik.innerText = durasi;
+                                    if (durasi <= 0) {
+                                        clearInterval(timer);
+                                        window.location.href = appConfig.link_tombol_sukses;
+                                    }
+                                }, 1000);
+                            }
+                        } else {
+                            Swal.fire('Gagal', res?res.message:'Gagal terhubung.', 'error');
+                        }
                     });
                 }
             });
