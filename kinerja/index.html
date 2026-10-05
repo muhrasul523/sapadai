@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Kinerja - Sapadai</title>
+    <title>Laporan Kinerja - Dai Utusan Wahdah Islamiyah</title>
     
-    <!-- OpenGraph untuk Preview WhatsApp -->
-    <meta property="og:title" content="Laporan Kinerja Dai - Sapadai">
-    <meta property="og:description" content="Aplikasi penginputan laporan kinerja bulanan Dai Wahdah Islamiyah.">
-    <!-- Image mengarah ke logo_sapadai_2.png di luar folder profil -->
-    <meta property="og:image" content="../logo_sapadai_2.png">
+    <!-- Favicon & OpenGraph (Absolute URL GitHub) -->
+    <link rel="icon" type="image/png" href="https://muhrasul523.github.io/sapadai/logo_sapadai_1.png">
+    <meta property="og:title" content="Laporan Kinerja Dai Utusan">
+    <meta property="og:description" content="Aplikasi penginputan laporan kinerja bulanan Dai Utusan Wahdah Islamiyah.">
+    <meta property="og:image" content="https://muhrasul523.github.io/sapadai/logo_sapadai_2.png">
+    <meta property="og:url" content="https://muhrasul523.github.io/sapadai/profil/">
     <meta property="og:type" content="website">
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -28,6 +29,7 @@
         input[readonly], select[readonly] { background-color: #f3f4f6; cursor: not-allowed; color: #6b7280; font-weight: 500; }
         .login-tab.active { border-bottom: 2px solid #0f766e; color: #0f766e; font-weight: 600; background-color: #f0fdfa; }
         .login-tab { border-bottom: 2px solid transparent; color: #6b7280; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     </style>
 </head>
 <body class="antialiased">
@@ -35,17 +37,16 @@
     <!-- Loading Overlay -->
     <div id="loading-overlay" class="fixed inset-0 flex flex-col justify-center items-center">
         <div class="spinner mb-4"></div>
-        <h2 class="text-xl font-semibold wahdah-text" id="loading-text">Memuat Sistem...</h2>
+        <h2 class="text-xl font-semibold wahdah-text" id="loading-text">Memuat...</h2>
     </div>
 
     <!-- Login Page -->
     <div id="login-page" class="min-h-screen flex items-center justify-center p-4 bg-gray-50">
         <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
             <div class="text-center mb-6">
-                <!-- Logo Aplikasi mengarah ke logo_sapadai_1.png -->
-                <img src="../logo_sapadai_1.png" alt="Logo Sapadai" class="h-20 mx-auto mb-4 object-contain">
-                <h1 class="text-2xl font-bold text-gray-800 uppercase tracking-wide">LAPORAN KINERJA</h1>
-                <p class="text-sm text-gray-500 font-semibold tracking-wide">DAI WAHDAH ISLAMIYAH</p>
+                <img src="https://muhrasul523.github.io/sapadai/logo_sapadai_1.png" alt="Logo" class="h-20 mx-auto mb-4 object-contain">
+                <h1 class="text-xl font-bold text-gray-800 uppercase tracking-wide">LAPORAN KINERJA</h1>
+                <p class="text-sm text-gray-500 font-semibold tracking-wide">DAI UTUSAN WAHDAH ISLAMIYAH</p>
             </div>
             
             <div class="flex mb-6 border-b rounded-t-lg overflow-hidden">
@@ -56,7 +57,7 @@
                 <input type="hidden" id="login-type" value="wa">
                 <div id="div-login-wa">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Nomor WhatsApp</label>
-                    <input type="tel" id="login-wa" class="w-full p-3 rounded-lg border focus:ring-2 focus:ring-teal-500 wa-validate" placeholder="Contoh: 628123456789" required>
+                    <input type="text" inputmode="numeric" id="login-wa" class="w-full p-3 rounded-lg border focus:ring-2 focus:ring-teal-500 wa-validate numeric-only" placeholder="Contoh: 628123456789" required>
                 </div>
                 <div id="div-login-email" class="hidden">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Alamat Email</label>
@@ -64,10 +65,29 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Kata Sandi</label>
-                    <input type="password" id="login-password" required class="w-full p-3 rounded-lg border focus:ring-2 focus:ring-teal-500" placeholder="Masukkan kata sandi">
+                    <div class="relative">
+                        <input type="password" id="login-password" required class="w-full p-3 pr-10 rounded-lg border focus:ring-2 focus:ring-teal-500" placeholder="Masukkan kata sandi">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-gray-400 hover:text-gray-600" onclick="togglePassword()"><i class="fas fa-eye" id="eye-icon"></i></div>
+                    </div>
                 </div>
-                <button type="submit" class="w-full wahdah-bg text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-800 transition shadow-lg"><i class="fas fa-sign-in-alt mr-2"></i> Masuk Sistem</button>
+                <button type="submit" class="w-full wahdah-bg text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-800 transition shadow-lg"><i class="fas fa-sign-in-alt mr-2"></i> Masuk</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Pilih Bulan Page -->
+    <div id="month-page" class="hidden min-h-screen flex items-center justify-center p-4 bg-gray-50">
+        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 text-center">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Pilih Bulan</h2>
+            <p class="text-sm text-gray-500 mb-6">Tentukan bulan laporan kinerja yang ingin diisi atau diedit.</p>
+            
+            <select id="select-bulan" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 bg-white mb-6 font-medium text-gray-700 text-center text-lg appearance-none">
+                <option value="">-- Memuat Bulan --</option>
+            </select>
+            
+            <button type="button" id="btn-lanjut" onclick="proceedToDashboard()" class="w-full wahdah-bg text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-800 transition shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                Lanjut <i class="fas fa-arrow-right ml-2"></i>
+            </button>
         </div>
     </div>
 
@@ -76,7 +96,7 @@
         <nav class="wahdah-bg text-white p-4 sticky top-0 z-40 shadow-lg">
             <div class="max-w-6xl mx-auto flex justify-between items-center">
                 <div class="font-bold text-lg flex items-center">
-                    <img src="../logo_sapadai_1.png" alt="Logo" class="h-8 mr-2 bg-white rounded p-1 object-contain"> Laporan Kinerja
+                    Laporan Kinerja
                 </div>
                 <button type="button" onclick="location.reload()" class="text-sm border border-white hover:bg-white hover:text-teal-700 font-medium px-4 py-1.5 rounded transition"><i class="fas fa-power-off mr-1"></i> Keluar</button>
             </div>
@@ -85,43 +105,45 @@
         <div class="max-w-6xl mx-auto mt-6 px-4">
             <div class="bg-teal-50 border-l-4 border-teal-600 p-4 rounded shadow-sm mb-6 flex items-start">
                 <i class="fas fa-info-circle text-teal-600 mt-1 mr-3 text-lg"></i>
-                <p class="text-sm text-teal-800">Ahlan wa sahlan, <strong id="lbl_nama">Dai</strong>. Isi laporan sesuai urutan form di bawah ini.</p>
+                <div>
+                    <p class="text-sm text-teal-800">Ahlan wa sahlan, <strong id="lbl_nama">Dai</strong>.</p>
+                    <p class="text-xs text-teal-700 mt-1">Mengisi Laporan Bulan: <strong id="lbl_bulan" class="uppercase"></strong></p>
+                </div>
             </div>
 
             <form id="laporan-form" class="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-gray-100 space-y-8" novalidate>
-                
-                <!-- HEADER & UPLOAD -->
+                <input type="hidden" id="id_laporan">
+                <input type="hidden" id="existing_file_urls">
+
+                <!-- UPLOAD FOTO -->
                 <div class="border-b-2 pb-6 border-teal-100">
-                    <h3 class="text-xl font-bold mb-4 text-teal-800"><i class="fas fa-id-badge mr-2"></i>Identitas & Upload</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-5 bg-gray-50 p-4 rounded-lg">
+                    <h3 class="text-xl font-bold mb-4 text-teal-800"><i class="fas fa-camera mr-2"></i>Upload Persetujuan Pimpinan</h3>
+                    <div class="border-2 border-dashed border-gray-300 p-5 rounded-lg text-center bg-gray-50 hover:bg-teal-50 transition">
+                        <p class="text-xs text-gray-500 mb-3">Maksimal 5 Foto (JPG/PNG). Ukuran akan dikompres otomatis.</p>
+                        <input type="file" id="file_persetujuan" multiple accept="image/jpeg, image/png" onchange="handleFilesUpload(event)" class="mx-auto text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-teal-50 file:text-teal-700 cursor-pointer">
+                        <div id="file_preview" class="flex flex-wrap gap-3 justify-center mt-3"></div>
+                        <div id="file_exist_notice" class="text-xs text-teal-600 font-medium mt-2 hidden"><i class="fas fa-check-circle"></i> File persetujuan bulan ini sudah pernah diunggah.</div>
+                    </div>
+                </div>
+
+                <!-- IDENTITAS (Readonly & Dropdown) -->
+                <div class="border-b-2 pb-6 border-teal-100">
+                    <h3 class="text-xl font-bold mb-4 text-teal-800"><i class="fas fa-id-badge mr-2"></i>Identitas</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-5 bg-gray-50 p-4 rounded-lg">
                         <div><label class="text-xs font-semibold text-gray-500 uppercase">Nama Dai</label><input type="text" id="nama_dai" readonly class="w-full p-2 border rounded font-bold text-gray-700"></div>
                         <div><label class="text-xs font-semibold text-gray-500 uppercase">Penempatan</label><input type="text" id="penempatan" readonly class="w-full p-2 border rounded font-bold text-gray-700"></div>
                         <div>
-                            <label class="text-xs font-semibold text-gray-500 uppercase">Bulan Laporan *</label>
-                            <select id="bulan_laporan" required class="w-full p-2 border rounded focus:ring-1 focus:ring-teal-500 bg-white border-teal-400">
-                                <option value="">-- Memuat Bulan --</option>
-                            </select>
-                        </div>
-                        <div>
                             <label class="text-xs font-semibold text-gray-500 uppercase">Amanah Struktural *</label>
-                            <select id="amanah" required class="w-full p-2 border rounded bg-white border-teal-400">
+                            <select id="amanah" required class="w-full p-2 border rounded bg-white border-teal-400 focus:ring-1 focus:ring-teal-500">
                                 <option value="">-- Pilih Amanah --</option>
                             </select>
                         </div>
-                    </div>
-                    
-                    <div class="border-2 border-dashed border-gray-300 p-5 rounded-lg text-center bg-gray-50 hover:bg-teal-50 transition">
-                        <label class="block text-sm font-bold text-gray-700 mb-2"><i class="fas fa-camera text-teal-600 mr-1"></i> Upload Persetujuan Pimpinan</label>
-                        <p class="text-xs text-gray-500 mb-3">Maks. 5 Foto (JPG/PNG), masing-masing maks 1 MB. Otomatis dikompres ke < 150KB.</p>
-                        <input type="file" id="file_persetujuan" multiple accept="image/jpeg, image/png" onchange="handleFilesUpload(event)" class="mx-auto text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-teal-50 file:text-teal-700 cursor-pointer">
-                        <div id="file_preview" class="flex flex-wrap gap-3 justify-center mt-3"></div>
                     </div>
                 </div>
 
                 <!-- KARYA UNGGULAN -->
                 <div class="border-b-2 pb-6 border-teal-100">
                     <h3 class="text-xl font-bold mb-4 text-teal-800"><i class="fas fa-star mr-2"></i>Karya Unggulan</h3>
-                    <p class="text-xs text-gray-500 mb-4">Tambahkan baris jika ada, abaikan jika tidak ada.</p>
                     <div class="space-y-4">
                         <div class="bg-gray-50 p-3 rounded border">
                             <h4 class="font-bold text-sm text-teal-800 mb-2">1. Pengajar Al-Quran</h4>
@@ -155,8 +177,8 @@
                 <div class="border-b-2 pb-6 border-teal-100">
                     <h3 class="text-xl font-bold mb-4 text-teal-800"><i class="fas fa-building mr-2"></i>Waktu Berkantor</h3>
                     <div class="w-full md:w-1/3">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Total Berkantor (Jam) *</label>
-                        <input type="number" id="waktu_berkantor_jam" required min="0" class="w-full p-2.5 border rounded-lg focus:ring-1 focus:ring-teal-500 border-teal-400">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Total Jam *</label>
+                        <input type="text" inputmode="numeric" id="waktu_berkantor_jam" required class="w-full p-2.5 border rounded-lg focus:ring-1 focus:ring-teal-500 border-teal-400 numeric-only">
                     </div>
                 </div>
 
@@ -164,31 +186,32 @@
                 <div class="border-b-2 pb-6 border-teal-100">
                     <h3 class="text-xl font-bold mb-4 text-teal-800"><i class="fas fa-users mr-2"></i>Halaqah Tarbiyah & Quran</h3>
                     
+                    <!-- Halaqah Tarbiyah -->
                     <div class="bg-gray-50 p-4 rounded-lg border mb-4">
-                        <h4 class="font-bold text-teal-800 border-b pb-2 mb-3">Halaqah Tarbiyah (Total)</h4>
-                        <div class="grid grid-cols-3 gap-4">
-                            <div><label class="text-xs text-gray-500 font-bold">Jml Halaqah *</label><input type="number" id="c1_halaqah" required min="0" class="w-full p-2 border rounded border-teal-400"></div>
-                            <div><label class="text-xs text-gray-500 font-bold">Total Peserta *</label><input type="number" id="c1_peserta" required min="0" class="w-full p-2 border rounded border-teal-400"></div>
-                            <div><label class="text-xs text-gray-500 font-bold">Peserta Aktif *</label><input type="number" id="c1_aktif" required min="0" class="w-full p-2 border rounded border-teal-400" onchange="valAktif(this, 'c1_peserta')"></div>
+                        <h4 class="font-bold text-teal-800 border-b pb-2 mb-3">Halaqah Tarbiyah</h4>
+                        <div id="halaqah_tarbiyah_container" class="space-y-2 mb-2"></div>
+                        <button type="button" onclick="addHalaqahTarbiyah()" class="text-xs font-bold text-teal-600"><i class="fas fa-plus"></i> Tambah Halaqah</button>
+                        
+                        <div class="grid grid-cols-3 gap-4 mt-4 bg-teal-100/50 p-2 rounded border border-teal-200">
+                            <div><label class="text-xs text-teal-800 font-bold">Total Halaqah</label><input type="text" id="c1_halaqah" value="0" readonly class="w-full p-1 bg-transparent font-bold"></div>
+                            <div><label class="text-xs text-teal-800 font-bold">Total Peserta</label><input type="text" id="c1_peserta" value="0" readonly class="w-full p-1 bg-transparent font-bold"></div>
+                            <div><label class="text-xs text-teal-800 font-bold">Total Aktif</label><input type="text" id="c1_aktif" value="0" readonly class="w-full p-1 bg-transparent font-bold"></div>
                         </div>
                     </div>
 
+                    <!-- Halaqah Quran -->
                     <div class="bg-gray-50 p-4 rounded-lg border">
                         <h4 class="font-bold text-teal-800 border-b pb-2 mb-3">Halaqah Quran</h4>
-                        <div class="grid grid-cols-3 gap-4 mb-4">
-                            <div><label class="text-xs text-gray-500 font-bold">DIROSA Halaqah *</label><input type="number" id="c2_dirosa_halaqah" required min="0" value="0" class="w-full p-2 border rounded calc-hq border-teal-400"></div>
-                            <div><label class="text-xs text-gray-500 font-bold">DIROSA Peserta *</label><input type="number" id="c2_dirosa_peserta" required min="0" value="0" class="w-full p-2 border rounded calc-hq border-teal-400"></div>
-                            <div><label class="text-xs text-gray-500 font-bold">DIROSA Aktif *</label><input type="number" id="c2_dirosa_aktif" required min="0" value="0" class="w-full p-2 border rounded calc-hq border-teal-400" onchange="valAktif(this, 'c2_dirosa_peserta')"></div>
-                        </div>
-                        <div class="grid grid-cols-3 gap-4 border-b pb-4 mb-4">
-                            <div><label class="text-xs text-gray-500 font-bold">TAHSIN Halaqah *</label><input type="number" id="c2_tahsin_halaqah" required min="0" value="0" class="w-full p-2 border rounded calc-hq border-teal-400"></div>
-                            <div><label class="text-xs text-gray-500 font-bold">TAHSIN Peserta *</label><input type="number" id="c2_tahsin_peserta" required min="0" value="0" class="w-full p-2 border rounded calc-hq border-teal-400"></div>
-                            <div><label class="text-xs text-gray-500 font-bold">TAHSIN Aktif *</label><input type="number" id="c2_tahsin_aktif" required min="0" value="0" class="w-full p-2 border rounded calc-hq border-teal-400" onchange="valAktif(this, 'c2_tahsin_peserta')"></div>
-                        </div>
-                        <div class="grid grid-cols-3 gap-4 bg-teal-100/50 p-2 rounded">
-                            <div><label class="text-xs text-teal-800 font-bold">Total Halaqah HQ</label><input type="text" id="c2_total_halaqah" value="0" readonly class="w-full p-2 bg-transparent font-bold"></div>
-                            <div><label class="text-xs text-teal-800 font-bold">Total Peserta HQ</label><input type="text" id="c2_total_peserta" value="0" readonly class="w-full p-2 bg-transparent font-bold"></div>
-                            <div><label class="text-xs text-teal-800 font-bold">Total Aktif HQ</label><input type="text" id="c2_total_aktif" value="0" readonly class="w-full p-2 bg-transparent font-bold"></div>
+                        <div id="halaqah_quran_container" class="space-y-2 mb-2"></div>
+                        <button type="button" onclick="addHalaqahQuran()" class="text-xs font-bold text-teal-600"><i class="fas fa-plus"></i> Tambah Halaqah</button>
+
+                        <div class="grid grid-cols-3 gap-4 mt-4 bg-teal-100/50 p-2 rounded border border-teal-200">
+                            <input type="hidden" id="c2_dirosa_halaqah" value="0"><input type="hidden" id="c2_dirosa_peserta" value="0"><input type="hidden" id="c2_dirosa_aktif" value="0">
+                            <input type="hidden" id="c2_tahsin_halaqah" value="0"><input type="hidden" id="c2_tahsin_peserta" value="0"><input type="hidden" id="c2_tahsin_aktif" value="0">
+                            
+                            <div><label class="text-xs text-teal-800 font-bold">Total HQ</label><input type="text" id="c2_total_halaqah" value="0" readonly class="w-full p-1 bg-transparent font-bold"></div>
+                            <div><label class="text-xs text-teal-800 font-bold">Total Peserta</label><input type="text" id="c2_total_peserta" value="0" readonly class="w-full p-1 bg-transparent font-bold"></div>
+                            <div><label class="text-xs text-teal-800 font-bold">Total Aktif</label><input type="text" id="c2_total_aktif" value="0" readonly class="w-full p-1 bg-transparent font-bold"></div>
                         </div>
                     </div>
                 </div>
@@ -199,11 +222,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Khotbah Jumat (Kali) *</label>
-                            <input type="number" id="khotbah_jumat" required min="0" max="5" class="w-full p-2.5 border rounded-lg focus:ring-1 focus:ring-teal-500 border-teal-400">
+                            <input type="text" inputmode="numeric" id="khotbah_jumat" required class="w-full p-2.5 border rounded-lg focus:ring-1 focus:ring-teal-500 border-teal-400 numeric-only max-5" placeholder="Maksimal 5">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Taklim / Tablig Akbar (Kali) *</label>
-                            <input type="number" id="taklim_tablig" required min="0" class="w-full p-2.5 border rounded-lg focus:ring-1 focus:ring-teal-500 border-teal-400">
+                            <input type="text" inputmode="numeric" id="taklim_tablig" required class="w-full p-2.5 border rounded-lg focus:ring-1 focus:ring-teal-500 border-teal-400 numeric-only">
                         </div>
                     </div>
                 </div>
@@ -213,26 +236,26 @@
                     <h3 class="text-xl font-bold mb-4 text-teal-800"><i class="fas fa-handshake mr-2"></i>Silaturahmi</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="bg-gray-50 p-4 rounded-lg border">
-                            <h4 class="font-bold text-teal-800 mb-3 border-b pb-1">Silaturahmi Internal</h4>
+                            <h4 class="font-bold text-teal-800 mb-3 border-b pb-1">Internal</h4>
                             <div id="silaturahmi_internal" class="space-y-2"></div>
                             <button type="button" onclick="addSilaRow('silaturahmi_internal')" class="text-xs font-bold text-teal-600 mt-2"><i class="fas fa-plus"></i> Tambah Internal</button>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-lg border">
-                            <h4 class="font-bold text-teal-800 mb-3 border-b pb-1">Silaturahmi Eksternal</h4>
+                            <h4 class="font-bold text-teal-800 mb-3 border-b pb-1">Eksternal</h4>
                             <div id="silaturahmi_eksternal" class="space-y-2"></div>
                             <button type="button" onclick="addSilaRow('silaturahmi_eksternal')" class="text-xs font-bold text-teal-600 mt-2"><i class="fas fa-plus"></i> Tambah Eksternal</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- LAINNYA & PEMBINAAN -->
+                <!-- LAINNYA -->
                 <div>
-                    <h3 class="text-xl font-bold mb-4 text-teal-800"><i class="fas fa-list-alt mr-2"></i>Lainnya & Tarbiyah</h3>
+                    <h3 class="text-xl font-bold mb-4 text-teal-800"><i class="fas fa-list-alt mr-2"></i>Lainnya</h3>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5 bg-gray-50 p-4 border rounded-lg">
                         <div class="md:col-span-2">
                             <label class="block text-sm font-bold text-gray-700 mb-1">Ketidakhadiran Tarbiyah (Kali) *</label>
-                            <input type="number" id="ketidakhadiran_tarbiyah" required min="0" max="5" placeholder="Range 0-5" class="w-full md:w-1/2 p-2.5 border rounded-lg border-teal-400 focus:ring-1 focus:ring-teal-500">
+                            <input type="text" inputmode="numeric" id="ketidakhadiran_tarbiyah" required class="w-full md:w-1/2 p-2.5 border rounded-lg border-teal-400 focus:ring-1 focus:ring-teal-500 numeric-only max-5" placeholder="Maksimal 5">
                         </div>
                         <div class="opacity-70"><label class="text-xs text-gray-500 uppercase">Marhalah</label><input type="text" id="marhalah" readonly class="w-full p-2 border rounded"></div>
                         <div class="opacity-70"><label class="text-xs text-gray-500 uppercase">Nama Murabbi</label><input type="text" id="nama_murabbi" readonly class="w-full p-2 border rounded"></div>
@@ -248,7 +271,7 @@
 
                 <div class="mt-8 pt-6 border-t">
                     <button type="button" onclick="submitLaporan()" class="wahdah-bg text-white font-bold py-4 px-10 rounded-xl shadow-xl hover:bg-teal-800 transition w-full text-lg uppercase tracking-wide">
-                        <i class="fas fa-paper-plane mr-2"></i> Kirim Laporan Sekarang
+                        <i class="fas fa-paper-plane mr-2"></i> Simpan Laporan
                     </button>
                 </div>
             </form>
@@ -261,59 +284,66 @@
 
         let currentUser = null;
         let uploadedFilesBase64 = [];
+        let initAmanahList = [];
 
-        // Bridge Fetch Anti-HTML Error
         function callBackend(action, data, onSuccess, onFail) {
             fetch(SCRIPT_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify({ action: action, ...data })
             })
-            .then(res => {
-                if (!res.ok) throw new Error("HTTP Error: " + res.status);
-                return res.text(); // Ambil sebagai teks dulu agar tidak crash jika di-redirect ke HTML Login Google
-            })
+            .then(res => res.text())
             .then(text => {
                 try {
                     let json = JSON.parse(text);
                     if(onSuccess) onSuccess(json);
                 } catch (e) {
-                    console.error("Format balasan server salah (Bukan JSON):", text);
-                    Swal.fire({
-                        title: 'Error Koneksi App Script',
-                        html: 'Server menolak koneksi.<br><br><b>Penyebab Umum:</b><br>1. WebApp di-deploy salah, pastikan akses adalah <b>"Anyone" (Siapa Saja)</b>.<br>2. Script terputus dari Spreadsheet. Buat Script dari menu <b>Ekstensi > Apps Script</b> di Sheet Anda.',
-                        icon: 'error'
-                    });
+                    console.error("Format balasan server salah:", text);
+                    Swal.fire('Error Server', 'Sistem tidak menerima balasan JSON. Pastikan WebApp dideploy untuk "Siapa Saja".', 'error');
                     if(onFail) onFail(e);
                 }
             })
             .catch(err => { 
                 console.error("Fetch Error:", err); 
-                if(onFail) onFail(err); 
-                else { hideLoading(); Swal.fire('Error', 'Kesalahan koneksi internet atau server.', 'error'); }
+                if(onFail) onFail(err); else { hideLoading(); Swal.fire('Error', 'Kesalahan koneksi internet.', 'error'); }
             });
         }
 
         function showLoading(txt) { document.getElementById('loading-text').innerText = txt; document.getElementById('loading-overlay').style.display = 'flex'; }
         function hideLoading() { document.getElementById('loading-overlay').style.display = 'none'; }
 
-        // Initial Load
+        // STRICT NUMERICS & MAX VALUES
+        document.addEventListener('input', e => {
+            if(e.target.classList.contains('numeric-only')) {
+                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            }
+            if(e.target.classList.contains('max-5')) {
+                if(e.target.value !== '' && parseInt(e.target.value) > 5) e.target.value = '5';
+            }
+            if(e.target.classList.contains('wa-validate')) {
+                let v = e.target.value.replace(/[^0-9]/g, ''); if(v.startsWith('08')) v = '628' + v.substring(2); e.target.value = v;
+            }
+            if(e.target.classList.contains('input-error') && e.target.checkValidity()) e.target.classList.remove('input-error');
+        });
+
         window.onload = () => {
-            showLoading("Memuat Data...");
+            showLoading("Memuat...");
             callBackend('getInitData', {}, res => {
                 hideLoading();
-                if(res && res.success && res.bulan) {
-                    let sel = document.getElementById('bulan_laporan');
+                if(res && res.success) {
+                    let sel = document.getElementById('select-bulan');
                     sel.innerHTML = '<option value="">-- Pilih Bulan Laporan --</option>';
-                    res.bulan.forEach(b => sel.add(new Option(b, b)));
+                    if(res.bulan && res.bulan.length > 0) {
+                        res.bulan.forEach(b => sel.add(new Option(b, b)));
+                    } else {
+                        sel.innerHTML = '<option value="">Tidak ada bulan aktif</option>';
+                        document.getElementById('btn-lanjut').disabled = true;
+                    }
+                    if(res.amanah) initAmanahList = res.amanah;
                 }
-            }, err => {
-                hideLoading();
-                console.warn("Gagal memuat init data, namun form login tetap dibuka.", err);
             });
         };
 
-        // UI Listeners
         function switchLoginTab(type) {
             document.getElementById('login-type').value = type;
             document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active', 'bg-teal-50'));
@@ -326,24 +356,11 @@
             document.getElementById('login-email').required = (type !== 'wa');
         }
 
-        document.addEventListener('input', e => {
-            if(e.target.classList.contains('wa-validate')) {
-                let v = e.target.value.replace(/\D/g, ''); if(v.startsWith('08')) v = '628' + v.substring(2); e.target.value = v;
-            }
-            if(e.target.classList.contains('input-error') && e.target.checkValidity()) e.target.classList.remove('input-error');
-            
-            // Auto calc HQ total
-            if(e.target.classList.contains('calc-hq')) {
-                document.getElementById('c2_total_halaqah').value = (parseInt(document.getElementById('c2_dirosa_halaqah').value||0) + parseInt(document.getElementById('c2_tahsin_halaqah').value||0)) || 0;
-                document.getElementById('c2_total_peserta').value = (parseInt(document.getElementById('c2_dirosa_peserta').value||0) + parseInt(document.getElementById('c2_tahsin_peserta').value||0)) || 0;
-                document.getElementById('c2_total_aktif').value = (parseInt(document.getElementById('c2_dirosa_aktif').value||0) + parseInt(document.getElementById('c2_tahsin_aktif').value||0)) || 0;
-            }
-        });
-
-        function valAktif(el, maxId) {
-            let max = parseInt(document.getElementById(maxId).value || 0);
-            let val = parseInt(el.value || 0);
-            if(val > max) { el.value = max; Swal.fire('Perhatian', 'Peserta aktif tidak boleh lebih dari total peserta', 'warning'); el.dispatchEvent(new Event('input')); }
+        function togglePassword() {
+            let pwd = document.getElementById('login-password');
+            let icon = document.getElementById('eye-icon');
+            if (pwd.type === 'password') { pwd.type = 'text'; icon.classList.replace('fa-eye', 'fa-eye-slash'); } 
+            else { pwd.type = 'password'; icon.classList.replace('fa-eye-slash', 'fa-eye'); }
         }
 
         function submitLogin() {
@@ -351,91 +368,240 @@
             let u = t === 'wa' ? document.getElementById('login-wa').value : document.getElementById('login-email').value;
             let p = document.getElementById('login-password').value;
             
-            showLoading("Verifikasi Kredensial...");
+            showLoading("Memproses...");
             callBackend('processLogin', { type: t, user: u, pass: p }, res => {
                 hideLoading();
-                if(res && res.success) setupDashboard(res.data);
-                else Swal.fire('Gagal Login', res.message, 'error');
+                if(res && res.success) {
+                    currentUser = res.data;
+                    document.getElementById('login-page').style.display = 'none';
+                    document.getElementById('month-page').style.display = 'flex';
+                } else Swal.fire('Gagal', res.message, 'error');
             });
         }
 
-        function setupDashboard(data) {
-            currentUser = data;
-            document.getElementById('login-page').style.display = 'none';
-            document.getElementById('dashboard-page').style.display = 'block';
+        function proceedToDashboard() {
+            let bln = document.getElementById('select-bulan').value;
+            if(!bln) { Swal.fire('Perhatian', 'Pilih bulan terlebih dahulu.', 'warning'); return; }
             
-            // Populate form readonly fields
-            ['nama_dai', 'penempatan', 'marhalah', 'nama_murabbi', 'wa_murabbi', 'nama_pimpinan', 'jabatan_pimpinan', 'wa_pimpinan']
-                .forEach(id => { if(document.getElementById(id)) document.getElementById(id).value = data[id] || ''; });
-            document.getElementById('lbl_nama').innerText = data.nama_dai || 'Dai';
+            showLoading("Mengecek Riwayat...");
+            callBackend('checkLaporanBulan', { dai_id: currentUser.dai_id, bulan: bln }, res => {
+                hideLoading();
+                document.getElementById('month-page').style.display = 'none';
+                document.getElementById('dashboard-page').style.display = 'block';
+                setupForm(bln, res.found ? res.data : null);
+            });
+        }
 
-            // Set Amanah
+        function setupForm(bulan, histData) {
+            document.getElementById('lbl_nama').innerText = currentUser.nama_dai;
+            document.getElementById('lbl_bulan').innerText = bulan;
+            
+            document.getElementById('laporan-form').reset();
+            document.getElementById('file_preview').innerHTML = '';
+            uploadedFilesBase64 = [];
+            document.getElementById('file_exist_notice').classList.add('hidden');
+            
+            // Populate Dropdown Amanah
             let selAmanah = document.getElementById('amanah');
             selAmanah.innerHTML = '<option value="">-- Pilih Amanah --</option>';
-            let opts = data.gender === 'L' ? ["Pengurus DPW/DPD", "Pengurus DPC/DPRa", "Guru/Pengajar", "Lainnya"] 
-                                           : ["Pengurus MWW/MWD", "Pengurus MWC/MWRa", "Guru/Pengajar", "Lainnya"];
-            opts.forEach(o => selAmanah.add(new Option(o, o)));
+            initAmanahList.forEach(o => selAmanah.add(new Option(o, o)));
+
+            // Populate Readonly Profile
+            ['nama_dai', 'penempatan', 'marhalah', 'nama_murabbi', 'wa_murabbi', 'nama_pimpinan', 'jabatan_pimpinan', 'wa_pimpinan'].forEach(id => { 
+                if(document.getElementById(id) && currentUser[id]) document.getElementById(id).value = currentUser[id]; 
+            });
+
+            // Clear Dynamic Containers
+            ['karya_quran', 'karya_murabbi', 'karya_pengurus', 'karya_stiba', 'karya_dai', 
+             'halaqah_tarbiyah_container', 'halaqah_quran_container', 
+             'silaturahmi_internal', 'silaturahmi_eksternal'].forEach(id => document.getElementById(id).innerHTML = '');
+            calcHalaqahTarb(); calcHalaqahQuran();
+
+            if(histData) {
+                Swal.fire({title: 'Data Ditemukan', text: 'Riwayat form bulan ini dimuat.', icon: 'info', timer: 1500});
+                document.getElementById('id_laporan').value = histData.id_laporan || '';
+                if(histData.upload_persetujuan) {
+                    document.getElementById('existing_file_urls').value = histData.upload_persetujuan;
+                    document.getElementById('file_exist_notice').classList.remove('hidden');
+                }
+                
+                if(histData.amanah) document.getElementById('amanah').value = histData.amanah;
+                document.getElementById('waktu_berkantor_jam').value = histData.waktu_berkantor_jam || '';
+                document.getElementById('khotbah_jumat').value = histData.khotbah_jumat || '';
+                document.getElementById('taklim_tablig').value = histData.taklim_tablig || '';
+                document.getElementById('ketidakhadiran_tarbiyah').value = histData.ketidakhadiran_tarbiyah || '';
+
+                // Restore Karya Unggulan
+                rebuildKarya('karya_quran', histData.a1_rincian);
+                rebuildKarya('karya_murabbi', histData.a2_rincian);
+                rebuildKarya('karya_pengurus', histData.a3_rincian);
+                rebuildKarya('karya_stiba', histData.a4_rincian);
+                rebuildKarya('karya_dai', histData.a5_rincian);
+
+                // Restore Halaqah (Only Totals saved in sheet, so rebuild 1 combined row if exists)
+                if(parseInt(histData.c1_halaqah) > 0) {
+                    addHalaqahTarbiyah(histData.c1_peserta, histData.c1_aktif);
+                }
+                if(parseInt(histData.c2_dirosa_halaqah) > 0) {
+                    addHalaqahQuran('Dirosa', histData.c2_dirosa_peserta, histData.c2_dirosa_aktif);
+                }
+                if(parseInt(histData.c2_tahsin_halaqah) > 0) {
+                    addHalaqahQuran('Tahsin', histData.c2_tahsin_peserta, histData.c2_tahsin_aktif);
+                }
+
+                // Restore Silaturahmi
+                rebuildSilaturahmi('silaturahmi_internal', histData.silaturahmi_internal_rincian);
+                rebuildSilaturahmi('silaturahmi_eksternal', histData.silaturahmi_eksternal_rincian);
+            }
         }
 
-        function addKaryaRow(containerId) {
-            let div = document.createElement('div');
-            div.className = "flex gap-2 items-center karya-row mb-1";
-            div.innerHTML = `
-                <input type="text" placeholder="Nama Lengkap" class="w-1/2 p-2 border rounded text-sm k-nama uppercase" required>
-                <input type="tel" placeholder="No WA (08...)" class="w-1/2 p-2 border rounded text-sm wa-validate k-wa" required>
-                <button type="button" onclick="this.parentElement.remove()" class="text-red-500 px-2 hover:text-red-700"><i class="fas fa-times"></i></button>`;
-            document.getElementById(containerId).appendChild(div);
+        function rebuildKarya(containerId, text) {
+            if(!text || text === '-') return;
+            text.split('\n').forEach(line => {
+                if(line.trim()){
+                    let p = line.split(' - ');
+                    addKaryaRow(containerId, p[0]||'', p[1]||'');
+                }
+            });
+        }
+        function rebuildSilaturahmi(containerId, text) {
+            if(!text || text === '-') return;
+            text.split('\n').forEach(line => {
+                if(line.trim()){
+                    let p = line.split(' - ');
+                    addSilaRow(containerId, p[0]||'', p.slice(1).join(' - ')||'');
+                }
+            });
         }
 
-        function addSilaRow(containerId) {
-            let div = document.createElement('div');
-            div.className = "flex flex-col md:flex-row gap-2 items-start md:items-center sila-row mb-2 border-b pb-2";
-            div.innerHTML = `
-                <input type="text" placeholder="Nama Tokoh/Instansi" class="w-full md:w-1/3 p-2 border rounded text-sm s-nama uppercase" required>
-                <input type="text" placeholder="Hasil Singkat" class="w-full md:w-flex-1 p-2 border rounded text-sm s-hasil" required>
-                <button type="button" onclick="this.parentElement.remove()" class="text-red-500 bg-red-50 p-2 rounded w-full md:w-auto hover:bg-red-500 hover:text-white transition"><i class="fas fa-trash"></i> Hapus</button>`;
-            document.getElementById(containerId).appendChild(div);
+        // --- VALIDASI PENAMBAHAN BARIS ---
+        function addKaryaRow(containerId, initNama='', initWa='') {
+            let container = document.getElementById(containerId);
+            let rows = container.querySelectorAll('.karya-row');
+            if (rows.length > 0 && !initNama) {
+                let last = rows[rows.length - 1];
+                if (!last.querySelector('.k-nama').value.trim() || !last.querySelector('.k-wa').value.trim()) {
+                    Swal.fire('Perhatian', 'Isi nama dan No WA pada baris sebelumnya terlebih dahulu.', 'warning'); return;
+                }
+            }
+            let html = `
+                <div class="flex gap-2 items-center karya-row mb-1">
+                    <input type="text" placeholder="Nama Lengkap" class="w-1/2 p-2 border rounded text-sm uppercase k-nama" value="${initNama}" required>
+                    <input type="text" inputmode="numeric" placeholder="No WA (08...)" class="w-1/2 p-2 border rounded text-sm wa-validate numeric-only k-wa" value="${initWa}" required>
+                    <button type="button" onclick="this.parentElement.remove()" class="text-red-500 px-2 hover:text-red-700"><i class="fas fa-times"></i></button>
+                </div>`;
+            container.insertAdjacentHTML('beforeend', html);
         }
 
-        // Image Compressor & Upload
+        function addSilaRow(containerId, initNama='', initHasil='') {
+            let container = document.getElementById(containerId);
+            let rows = container.querySelectorAll('.sila-row');
+            if (rows.length > 0 && !initNama) {
+                let last = rows[rows.length - 1];
+                if (!last.querySelector('.s-nama').value.trim() || !last.querySelector('.s-hasil').value.trim()) {
+                    Swal.fire('Perhatian', 'Isi Nama dan Hasil pada baris sebelumnya terlebih dahulu.', 'warning'); return;
+                }
+            }
+            let html = `
+                <div class="flex flex-col md:flex-row gap-2 items-start md:items-center sila-row mb-2 border-b pb-2">
+                    <input type="text" placeholder="Nama Tokoh/Instansi" class="w-full md:w-1/3 p-2 border rounded text-sm uppercase s-nama" value="${initNama}" required>
+                    <input type="text" placeholder="Hasil Singkat" class="w-full md:flex-1 p-2 border rounded text-sm s-hasil" value="${initHasil}" required>
+                    <button type="button" onclick="this.parentElement.remove()" class="text-red-500 bg-red-50 p-2 rounded hover:bg-red-500 hover:text-white transition w-full md:w-auto"><i class="fas fa-trash"></i> Hapus</button>
+                </div>`;
+            container.insertAdjacentHTML('beforeend', html);
+        }
+
+        // --- HALAQAH LOGIC ---
+        function valAktif(el) {
+            let row = el.closest('div.row-hal');
+            let max = parseInt(row.querySelector('.h-peserta').value || 0);
+            let val = parseInt(el.value || 0);
+            if(val > max) { el.value = max; Swal.fire('Perhatian', 'Aktif \u2264 Jumlah Peserta', 'warning'); }
+        }
+
+        function addHalaqahTarbiyah(initP='', initA='') {
+            let container = document.getElementById('halaqah_tarbiyah_container');
+            let rows = container.querySelectorAll('.row-hal');
+            if(rows.length > 0 && !initP) {
+                let last = rows[rows.length - 1];
+                if(!last.querySelector('.h-peserta').value || !last.querySelector('.h-aktif').value) {
+                    Swal.fire('Perhatian', 'Isi data halaqah sebelumnya.', 'warning'); return;
+                }
+            }
+            let html = `
+                <div class="grid grid-cols-2 gap-4 row-hal bg-white p-2 border rounded relative">
+                    <button type="button" onclick="this.parentElement.remove(); calcHalaqahTarb();" class="absolute -right-2 -top-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"><i class="fas fa-times"></i></button>
+                    <div><label class="text-xs text-gray-500">Jml Peserta *</label><input type="text" inputmode="numeric" class="w-full p-2 border rounded h-peserta numeric-only" value="${initP}" onchange="calcHalaqahTarb()" required></div>
+                    <div><label class="text-xs text-gray-500">Peserta Aktif *</label><input type="text" inputmode="numeric" class="w-full p-2 border rounded h-aktif numeric-only" value="${initA}" onchange="valAktif(this); calcHalaqahTarb();" required></div>
+                </div>`;
+            container.insertAdjacentHTML('beforeend', html);
+            calcHalaqahTarb();
+        }
+
+        function calcHalaqahTarb() {
+            let h = 0, p = 0, a = 0;
+            document.querySelectorAll('#halaqah_tarbiyah_container .row-hal').forEach(r => {
+                h++; p += parseInt(r.querySelector('.h-peserta').value||0); a += parseInt(r.querySelector('.h-aktif').value||0);
+            });
+            document.getElementById('c1_halaqah').value = h;
+            document.getElementById('c1_peserta').value = p;
+            document.getElementById('c1_aktif').value = a;
+        }
+
+        function addHalaqahQuran(initJ='', initP='', initA='') {
+            let container = document.getElementById('halaqah_quran_container');
+            let rows = container.querySelectorAll('.row-hal');
+            if(rows.length > 0 && !initP) {
+                let last = rows[rows.length - 1];
+                if(!last.querySelector('.h-jenis').value || !last.querySelector('.h-peserta').value || !last.querySelector('.h-aktif').value) {
+                    Swal.fire('Perhatian', 'Isi data halaqah sebelumnya.', 'warning'); return;
+                }
+            }
+            let html = `
+                <div class="grid grid-cols-3 gap-2 row-hal bg-white p-2 border rounded relative">
+                    <button type="button" onclick="this.parentElement.remove(); calcHalaqahQuran();" class="absolute -right-2 -top-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs z-10"><i class="fas fa-times"></i></button>
+                    <div><label class="text-xs text-gray-500">Jenis *</label><select class="w-full p-2 border rounded h-jenis" onchange="calcHalaqahQuran()" required><option value="">-Pilih-</option><option value="Dirosa" ${initJ==='Dirosa'?'selected':''}>Dirosa</option><option value="Tahsin" ${initJ==='Tahsin'?'selected':''}>Tahsin</option></select></div>
+                    <div><label class="text-xs text-gray-500">Peserta *</label><input type="text" inputmode="numeric" class="w-full p-2 border rounded h-peserta numeric-only" value="${initP}" onchange="calcHalaqahQuran()" required></div>
+                    <div><label class="text-xs text-gray-500">Aktif *</label><input type="text" inputmode="numeric" class="w-full p-2 border rounded h-aktif numeric-only" value="${initA}" onchange="valAktif(this); calcHalaqahQuran();" required></div>
+                </div>`;
+            container.insertAdjacentHTML('beforeend', html);
+            calcHalaqahQuran();
+        }
+
+        function calcHalaqahQuran() {
+            let hD=0, pD=0, aD=0, hT=0, pT=0, aT=0;
+            document.querySelectorAll('#halaqah_quran_container .row-hal').forEach(r => {
+                let j = r.querySelector('.h-jenis').value;
+                let p = parseInt(r.querySelector('.h-peserta').value||0);
+                let a = parseInt(r.querySelector('.h-aktif').value||0);
+                if(j==='Dirosa'){ hD++; pD+=p; aD+=a; } else if(j==='Tahsin'){ hT++; pT+=p; aT+=a; }
+            });
+            document.getElementById('c2_dirosa_halaqah').value = hD; document.getElementById('c2_dirosa_peserta').value = pD; document.getElementById('c2_dirosa_aktif').value = aD;
+            document.getElementById('c2_tahsin_halaqah').value = hT; document.getElementById('c2_tahsin_peserta').value = pT; document.getElementById('c2_tahsin_aktif').value = aT;
+            document.getElementById('c2_total_halaqah').value = hD+hT; document.getElementById('c2_total_peserta').value = pD+pT; document.getElementById('c2_total_aktif').value = aD+aT;
+        }
+
+        // --- GAMBAR ---
         function handleFilesUpload(e) {
             const files = Array.from(e.target.files);
             if(files.length + uploadedFilesBase64.length > 5) {
-                Swal.fire('Batas File', 'Maksimal 5 foto bukti.', 'warning'); e.target.value = ''; return;
+                Swal.fire('Batas', 'Maksimal 5 foto.', 'warning'); e.target.value = ''; return;
             }
-            
             showLoading("Mengkompres Foto...");
             let processed = 0;
-            
             files.forEach(file => {
-                if(file.size > 1024 * 1024) { // Lebih dari 1MB
-                     Swal.fire('Info', file.name + ' lebih dari 1 MB, pastikan ukuran original kurang dari 1MB', 'warning');
-                     e.target.value = ''; hideLoading(); return;
-                }
-
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
+                if(file.size > 1024*1024) { Swal.fire('Info', file.name + ' melebihi 1MB.', 'warning'); e.target.value = ''; hideLoading(); return; }
+                const reader = new FileReader(); reader.readAsDataURL(file);
                 reader.onload = evt => {
-                    const img = new Image();
-                    img.src = evt.target.result;
+                    const img = new Image(); img.src = evt.target.result;
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
-                        let w = img.width, h = img.height;
-                        const MAX = 600; // Resize max
+                        let w = img.width, h = img.height; const MAX = 600;
                         if(w > h && w > MAX) { h *= MAX/w; w = MAX; } else if(h > MAX) { w *= MAX/h; h = MAX; }
                         canvas.width = w; canvas.height = h;
-                        
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, w, h);
-                        
-                        // Kompresi ketat untuk mendekati < 150kb
-                        let q = 0.7;
-                        let b64 = canvas.toDataURL('image/jpeg', q);
-                        while(b64.length > 150000 && q > 0.1) { // 150k chars ~ 110KB
-                            q -= 0.1;
-                            b64 = canvas.toDataURL('image/jpeg', q);
-                        }
-                        
+                        const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, w, h);
+                        let q = 0.7, b64 = canvas.toDataURL('image/jpeg', q);
+                        while(b64.length > 150000 && q > 0.1) { q -= 0.1; b64 = canvas.toDataURL('image/jpeg', q); }
                         uploadedFilesBase64.push({ name: file.name, base64: b64 });
                         processed++;
                         if(processed === files.length) { hideLoading(); renderFilePreview(); document.getElementById('file_persetujuan').value = ''; }
@@ -449,27 +615,22 @@
             uploadedFilesBase64.forEach((f, idx) => {
                 html += `<div class="relative w-24 h-24 border rounded overflow-hidden shadow-sm">
                     <img src="${f.base64}" class="object-cover w-full h-full">
-                    <button type="button" onclick="removeFile(${idx})" class="absolute top-0 right-0 bg-red-500 text-white w-6 h-6 rounded-bl flex items-center justify-center text-xs hover:bg-red-700 transition"><i class="fas fa-times"></i></button>
+                    <button type="button" onclick="removeFile(${idx})" class="absolute top-0 right-0 bg-red-500 text-white w-6 h-6 rounded-bl flex items-center justify-center text-xs"><i class="fas fa-times"></i></button>
                 </div>`;
             });
             document.getElementById('file_preview').innerHTML = html;
         }
         function removeFile(idx) { uploadedFilesBase64.splice(idx, 1); renderFilePreview(); }
 
-        // Builder Data String Flat
-        function getKaryaData(containerId) {
-            let rows = document.getElementById(containerId).querySelectorAll('.karya-row');
+        // --- SUBMIT ---
+        function getListData(containerId, isSila=false) {
+            let rows = document.getElementById(containerId).querySelectorAll(isSila?'.sila-row':'.karya-row');
             if(rows.length === 0) return { jml: 0, rincian: "-" };
             let arr = [];
-            rows.forEach(r => arr.push(r.querySelector('.k-nama').value.trim() + " - " + r.querySelector('.k-wa').value.trim()));
-            return { jml: rows.length, rincian: arr.join("\n") };
-        }
-
-        function getSilaData(containerId) {
-            let rows = document.getElementById(containerId).querySelectorAll('.sila-row');
-            if(rows.length === 0) return { jml: 0, rincian: "-" };
-            let arr = [];
-            rows.forEach(r => arr.push(r.querySelector('.s-nama').value.trim() + " - " + r.querySelector('.s-hasil').value.trim()));
+            rows.forEach(r => {
+                if(isSila) arr.push(r.querySelector('.s-nama').value.trim() + " - " + r.querySelector('.s-hasil').value.trim());
+                else arr.push(r.querySelector('.k-nama').value.trim() + " - " + r.querySelector('.k-wa').value.trim());
+            });
             return { jml: rows.length, rincian: arr.join("\n") };
         }
 
@@ -477,33 +638,25 @@
             let form = document.getElementById('laporan-form');
             if(!form.checkValidity()) {
                 let firstInvalid = form.querySelector(':invalid');
-                if(firstInvalid) {
-                    firstInvalid.classList.add('input-error');
-                    firstInvalid.scrollIntoView({behavior: "smooth", block: "center"});
-                }
-                Swal.fire('Form Tidak Lengkap', 'Periksa kembali kolom yang bergaris merah / bertanda bintang (*).', 'error');
-                return;
+                if(firstInvalid) { firstInvalid.classList.add('input-error'); firstInvalid.scrollIntoView({behavior: "smooth", block: "center"}); }
+                Swal.fire('Form Belum Lengkap', 'Harap isi bagian yang ditandai bintang (*).', 'error'); return;
             }
-            if(uploadedFilesBase64.length === 0) {
-                Swal.fire('Foto Bukti Kosong', 'Wajib melampirkan minimal 1 foto persetujuan pimpinan.', 'warning');
-                return;
+            if(uploadedFilesBase64.length === 0 && !document.getElementById('existing_file_urls').value) {
+                Swal.fire('Bukti Kosong', 'Upload minimal 1 foto persetujuan.', 'warning'); return;
             }
 
-            let d_quran = getKaryaData('karya_quran');
-            let d_murabbi = getKaryaData('karya_murabbi');
-            let d_pengurus = getKaryaData('karya_pengurus');
-            let d_stiba = getKaryaData('karya_stiba');
-            let d_dai = getKaryaData('karya_dai');
-
-            let d_sila_in = getSilaData('silaturahmi_internal');
-            let d_sila_ex = getSilaData('silaturahmi_eksternal');
+            let d_quran = getListData('karya_quran'); let d_murabbi = getListData('karya_murabbi');
+            let d_pengurus = getListData('karya_pengurus'); let d_stiba = getListData('karya_stiba'); let d_dai = getListData('karya_dai');
+            let d_sila_in = getListData('silaturahmi_internal', true); let d_sila_ex = getListData('silaturahmi_eksternal', true);
 
             let payload = {
+                id_laporan: document.getElementById('id_laporan').value,
                 id_pengguna: currentUser.dai_id,
                 nama_dai: currentUser.nama_dai,
-                bulan_laporan: document.getElementById('bulan_laporan').value,
+                bulan_laporan: document.getElementById('lbl_bulan').innerText,
                 amanah: document.getElementById('amanah').value,
                 files: uploadedFilesBase64,
+                existing_file_urls: document.getElementById('existing_file_urls').value,
                 
                 a1_jml: d_quran.jml, a1_rincian: d_quran.rincian,
                 a2_jml: d_murabbi.jml, a2_rincian: d_murabbi.rincian,
@@ -513,50 +666,31 @@
                 
                 waktu_berkantor_jam: document.getElementById('waktu_berkantor_jam').value,
                 
-                c1_halaqah: document.getElementById('c1_halaqah').value,
-                c1_peserta: document.getElementById('c1_peserta').value,
-                c1_aktif: document.getElementById('c1_aktif').value,
+                c1_halaqah: document.getElementById('c1_halaqah').value, c1_peserta: document.getElementById('c1_peserta').value, c1_aktif: document.getElementById('c1_aktif').value,
+                c2_dirosa_halaqah: document.getElementById('c2_dirosa_halaqah').value, c2_dirosa_peserta: document.getElementById('c2_dirosa_peserta').value, c2_dirosa_aktif: document.getElementById('c2_dirosa_aktif').value,
+                c2_tahsin_halaqah: document.getElementById('c2_tahsin_halaqah').value, c2_tahsin_peserta: document.getElementById('c2_tahsin_peserta').value, c2_tahsin_aktif: document.getElementById('c2_tahsin_aktif').value,
+                c2_total_halaqah: document.getElementById('c2_total_halaqah').value, c2_total_peserta: document.getElementById('c2_total_peserta').value, c2_total_aktif: document.getElementById('c2_total_aktif').value,
                 
-                c2_dirosa_halaqah: document.getElementById('c2_dirosa_halaqah').value,
-                c2_dirosa_peserta: document.getElementById('c2_dirosa_peserta').value,
-                c2_dirosa_aktif: document.getElementById('c2_dirosa_aktif').value,
-                c2_tahsin_halaqah: document.getElementById('c2_tahsin_halaqah').value,
-                c2_tahsin_peserta: document.getElementById('c2_tahsin_peserta').value,
-                c2_tahsin_aktif: document.getElementById('c2_tahsin_aktif').value,
-                c2_total_halaqah: document.getElementById('c2_total_halaqah').value,
-                c2_total_peserta: document.getElementById('c2_total_peserta').value,
-                c2_total_aktif: document.getElementById('c2_total_aktif').value,
-                
-                khotbah_jumat: document.getElementById('khotbah_jumat').value,
-                taklim_tablig: document.getElementById('taklim_tablig').value,
+                khotbah_jumat: document.getElementById('khotbah_jumat').value, taklim_tablig: document.getElementById('taklim_tablig').value,
                 
                 silaturahmi_internal_jml: d_sila_in.jml, silaturahmi_internal_rincian: d_sila_in.rincian,
                 silaturahmi_eksternal_jml: d_sila_ex.jml, silaturahmi_eksternal_rincian: d_sila_ex.rincian,
                 
-                marhalah: currentUser.marhalah,
-                nama_murabbi: currentUser.nama_murabbi,
-                wa_murabbi: currentUser.wa_murabbi,
+                marhalah: currentUser.marhalah, nama_murabbi: currentUser.nama_murabbi, wa_murabbi: currentUser.wa_murabbi,
                 ketidakhadiran_tarbiyah: document.getElementById('ketidakhadiran_tarbiyah').value,
-                nama_pimpinan: currentUser.nama_pimpinan,
-                jabatan_pimpinan: currentUser.jabatan_pimpinan,
-                wa_pimpinan: currentUser.wa_pimpinan
+                nama_pimpinan: currentUser.nama_pimpinan, jabatan_pimpinan: currentUser.jabatan_pimpinan, wa_pimpinan: currentUser.wa_pimpinan
             };
 
             Swal.fire({
-                title: 'Kirim Laporan?', 
-                text: "Laporan bulan " + payload.bulan_laporan + " akan dikirim permanen.", 
-                icon: 'question',
+                title: 'Simpan Permanen?', text: "Laporan akan dikirim ke pangkalan data.", icon: 'question',
                 showCancelButton: true, confirmButtonColor: '#0f766e', confirmButtonText: 'Kirim Sekarang'
-            }).then((result) => {
-                if(result.isConfirmed) {
-                    showLoading("Mengirim Data Laporan & Mengunggah Foto...");
+            }).then((res) => {
+                if(res.isConfirmed) {
+                    showLoading("Memproses Laporan...");
                     callBackend('saveLaporan', { data: payload }, res => {
                         hideLoading();
-                        if(res && res.success) {
-                            Swal.fire('Alhamdulillah', res.message, 'success').then(() => location.reload());
-                        } else { 
-                            Swal.fire('Gagal', res ? res.message : 'Kesalahan internal server', 'error'); 
-                        }
+                        if(res && res.success) Swal.fire('Alhamdulillah', res.message, 'success').then(() => location.reload());
+                        else Swal.fire('Gagal', res?res.message:'Gagal terhubung.', 'error');
                     });
                 }
             });
