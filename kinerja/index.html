@@ -8,7 +8,7 @@
     <!-- OpenGraph untuk Preview WhatsApp -->
     <meta property="og:title" content="Laporan Kinerja Dai - Sapadai">
     <meta property="og:description" content="Aplikasi penginputan laporan kinerja bulanan Dai Wahdah Islamiyah.">
-    <!-- Perhatikan path logo_sapadai_2.png di luar folder profil -->
+    <!-- Image mengarah ke logo_sapadai_2.png di luar folder profil -->
     <meta property="og:image" content="../logo_sapadai_2.png">
     <meta property="og:type" content="website">
 
@@ -26,11 +26,8 @@
         .spinner { border: 4px solid rgba(15, 118, 110, 0.1); width: 50px; height: 50px; border-radius: 50%; border-left-color: #0f766e; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         input[readonly], select[readonly] { background-color: #f3f4f6; cursor: not-allowed; color: #6b7280; font-weight: 500; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         .login-tab.active { border-bottom: 2px solid #0f766e; color: #0f766e; font-weight: 600; background-color: #f0fdfa; }
-        .login-tab { border-bottom: 2px solid transparent; color: #6b7280; font-weight: 500; cursor: pointer; }
+        .login-tab { border-bottom: 2px solid transparent; color: #6b7280; font-weight: 500; cursor: pointer; transition: all 0.2s; }
     </style>
 </head>
 <body class="antialiased">
@@ -45,7 +42,7 @@
     <div id="login-page" class="min-h-screen flex items-center justify-center p-4 bg-gray-50">
         <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
             <div class="text-center mb-6">
-                <!-- Logo Aplikasi sapadai 1 -->
+                <!-- Logo Aplikasi mengarah ke logo_sapadai_1.png -->
                 <img src="../logo_sapadai_1.png" alt="Logo Sapadai" class="h-20 mx-auto mb-4 object-contain">
                 <h1 class="text-2xl font-bold text-gray-800 uppercase tracking-wide">LAPORAN KINERJA</h1>
                 <p class="text-sm text-gray-500 font-semibold tracking-wide">DAI WAHDAH ISLAMIYAH</p>
@@ -79,7 +76,7 @@
         <nav class="wahdah-bg text-white p-4 sticky top-0 z-40 shadow-lg">
             <div class="max-w-6xl mx-auto flex justify-between items-center">
                 <div class="font-bold text-lg flex items-center">
-                    <img src="../logo_sapadai_1.png" alt="Logo" class="h-8 mr-2 bg-white rounded p-1"> Laporan Kinerja
+                    <img src="../logo_sapadai_1.png" alt="Logo" class="h-8 mr-2 bg-white rounded p-1 object-contain"> Laporan Kinerja
                 </div>
                 <button type="button" onclick="location.reload()" class="text-sm border border-white hover:bg-white hover:text-teal-700 font-medium px-4 py-1.5 rounded transition"><i class="fas fa-power-off mr-1"></i> Keluar</button>
             </div>
@@ -107,7 +104,7 @@
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-500 uppercase">Amanah Struktural *</label>
-                            <select id="amanah" required class="w-full p-2 border rounded bg-white">
+                            <select id="amanah" required class="w-full p-2 border rounded bg-white border-teal-400">
                                 <option value="">-- Pilih Amanah --</option>
                             </select>
                         </div>
@@ -115,8 +112,8 @@
                     
                     <div class="border-2 border-dashed border-gray-300 p-5 rounded-lg text-center bg-gray-50 hover:bg-teal-50 transition">
                         <label class="block text-sm font-bold text-gray-700 mb-2"><i class="fas fa-camera text-teal-600 mr-1"></i> Upload Persetujuan Pimpinan</label>
-                        <p class="text-xs text-gray-500 mb-3">Maks. 5 Foto (JPG/PNG). Foto otomatis dikompres ke ukuran kecil.</p>
-                        <input type="file" id="file_persetujuan" multiple accept="image/jpeg, image/png" onchange="handleFilesUpload(event)" class="mx-auto text-sm">
+                        <p class="text-xs text-gray-500 mb-3">Maks. 5 Foto (JPG/PNG), masing-masing maks 1 MB. Otomatis dikompres ke < 150KB.</p>
+                        <input type="file" id="file_persetujuan" multiple accept="image/jpeg, image/png" onchange="handleFilesUpload(event)" class="mx-auto text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-teal-50 file:text-teal-700 cursor-pointer">
                         <div id="file_preview" class="flex flex-wrap gap-3 justify-center mt-3"></div>
                     </div>
                 </div>
@@ -124,7 +121,7 @@
                 <!-- KARYA UNGGULAN -->
                 <div class="border-b-2 pb-6 border-teal-100">
                     <h3 class="text-xl font-bold mb-4 text-teal-800"><i class="fas fa-star mr-2"></i>Karya Unggulan</h3>
-                    <p class="text-xs text-gray-500 mb-4">Tambahkan nama dan WA. Kosongkan jika tidak ada.</p>
+                    <p class="text-xs text-gray-500 mb-4">Tambahkan baris jika ada, abaikan jika tidak ada.</p>
                     <div class="space-y-4">
                         <div class="bg-gray-50 p-3 rounded border">
                             <h4 class="font-bold text-sm text-teal-800 mb-2">1. Pengajar Al-Quran</h4>
@@ -158,8 +155,8 @@
                 <div class="border-b-2 pb-6 border-teal-100">
                     <h3 class="text-xl font-bold mb-4 text-teal-800"><i class="fas fa-building mr-2"></i>Waktu Berkantor</h3>
                     <div class="w-full md:w-1/3">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Total Waktu Berkantor (Jam) *</label>
-                        <input type="number" id="waktu_berkantor_jam" required min="0" class="w-full p-2.5 border rounded-lg focus:ring-1 focus:ring-teal-500">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Total Berkantor (Jam) *</label>
+                        <input type="number" id="waktu_berkantor_jam" required min="0" class="w-full p-2.5 border rounded-lg focus:ring-1 focus:ring-teal-500 border-teal-400">
                     </div>
                 </div>
 
@@ -170,28 +167,28 @@
                     <div class="bg-gray-50 p-4 rounded-lg border mb-4">
                         <h4 class="font-bold text-teal-800 border-b pb-2 mb-3">Halaqah Tarbiyah (Total)</h4>
                         <div class="grid grid-cols-3 gap-4">
-                            <div><label class="text-xs text-gray-500">Jml Halaqah *</label><input type="number" id="c1_halaqah" required min="0" class="w-full p-2 border rounded"></div>
-                            <div><label class="text-xs text-gray-500">Total Peserta *</label><input type="number" id="c1_peserta" required min="0" class="w-full p-2 border rounded"></div>
-                            <div><label class="text-xs text-gray-500">Peserta Aktif *</label><input type="number" id="c1_aktif" required min="0" class="w-full p-2 border rounded" onchange="valAktif(this, 'c1_peserta')"></div>
+                            <div><label class="text-xs text-gray-500 font-bold">Jml Halaqah *</label><input type="number" id="c1_halaqah" required min="0" class="w-full p-2 border rounded border-teal-400"></div>
+                            <div><label class="text-xs text-gray-500 font-bold">Total Peserta *</label><input type="number" id="c1_peserta" required min="0" class="w-full p-2 border rounded border-teal-400"></div>
+                            <div><label class="text-xs text-gray-500 font-bold">Peserta Aktif *</label><input type="number" id="c1_aktif" required min="0" class="w-full p-2 border rounded border-teal-400" onchange="valAktif(this, 'c1_peserta')"></div>
                         </div>
                     </div>
 
                     <div class="bg-gray-50 p-4 rounded-lg border">
                         <h4 class="font-bold text-teal-800 border-b pb-2 mb-3">Halaqah Quran</h4>
                         <div class="grid grid-cols-3 gap-4 mb-4">
-                            <div><label class="text-xs text-gray-500 font-bold">DIROSA Halaqah *</label><input type="number" id="c2_dirosa_halaqah" required min="0" value="0" class="w-full p-2 border rounded calc-hq"></div>
-                            <div><label class="text-xs text-gray-500 font-bold">DIROSA Peserta *</label><input type="number" id="c2_dirosa_peserta" required min="0" value="0" class="w-full p-2 border rounded calc-hq"></div>
-                            <div><label class="text-xs text-gray-500 font-bold">DIROSA Aktif *</label><input type="number" id="c2_dirosa_aktif" required min="0" value="0" class="w-full p-2 border rounded calc-hq" onchange="valAktif(this, 'c2_dirosa_peserta')"></div>
+                            <div><label class="text-xs text-gray-500 font-bold">DIROSA Halaqah *</label><input type="number" id="c2_dirosa_halaqah" required min="0" value="0" class="w-full p-2 border rounded calc-hq border-teal-400"></div>
+                            <div><label class="text-xs text-gray-500 font-bold">DIROSA Peserta *</label><input type="number" id="c2_dirosa_peserta" required min="0" value="0" class="w-full p-2 border rounded calc-hq border-teal-400"></div>
+                            <div><label class="text-xs text-gray-500 font-bold">DIROSA Aktif *</label><input type="number" id="c2_dirosa_aktif" required min="0" value="0" class="w-full p-2 border rounded calc-hq border-teal-400" onchange="valAktif(this, 'c2_dirosa_peserta')"></div>
                         </div>
                         <div class="grid grid-cols-3 gap-4 border-b pb-4 mb-4">
-                            <div><label class="text-xs text-gray-500 font-bold">TAHSIN Halaqah *</label><input type="number" id="c2_tahsin_halaqah" required min="0" value="0" class="w-full p-2 border rounded calc-hq"></div>
-                            <div><label class="text-xs text-gray-500 font-bold">TAHSIN Peserta *</label><input type="number" id="c2_tahsin_peserta" required min="0" value="0" class="w-full p-2 border rounded calc-hq"></div>
-                            <div><label class="text-xs text-gray-500 font-bold">TAHSIN Aktif *</label><input type="number" id="c2_tahsin_aktif" required min="0" value="0" class="w-full p-2 border rounded calc-hq" onchange="valAktif(this, 'c2_tahsin_peserta')"></div>
+                            <div><label class="text-xs text-gray-500 font-bold">TAHSIN Halaqah *</label><input type="number" id="c2_tahsin_halaqah" required min="0" value="0" class="w-full p-2 border rounded calc-hq border-teal-400"></div>
+                            <div><label class="text-xs text-gray-500 font-bold">TAHSIN Peserta *</label><input type="number" id="c2_tahsin_peserta" required min="0" value="0" class="w-full p-2 border rounded calc-hq border-teal-400"></div>
+                            <div><label class="text-xs text-gray-500 font-bold">TAHSIN Aktif *</label><input type="number" id="c2_tahsin_aktif" required min="0" value="0" class="w-full p-2 border rounded calc-hq border-teal-400" onchange="valAktif(this, 'c2_tahsin_peserta')"></div>
                         </div>
                         <div class="grid grid-cols-3 gap-4 bg-teal-100/50 p-2 rounded">
-                            <div><label class="text-xs text-teal-800 font-bold">Total HQ</label><input type="text" id="c2_total_halaqah" readonly class="w-full p-2 bg-transparent font-bold"></div>
-                            <div><label class="text-xs text-teal-800 font-bold">Total Peserta HQ</label><input type="text" id="c2_total_peserta" readonly class="w-full p-2 bg-transparent font-bold"></div>
-                            <div><label class="text-xs text-teal-800 font-bold">Total Aktif HQ</label><input type="text" id="c2_total_aktif" readonly class="w-full p-2 bg-transparent font-bold"></div>
+                            <div><label class="text-xs text-teal-800 font-bold">Total Halaqah HQ</label><input type="text" id="c2_total_halaqah" value="0" readonly class="w-full p-2 bg-transparent font-bold"></div>
+                            <div><label class="text-xs text-teal-800 font-bold">Total Peserta HQ</label><input type="text" id="c2_total_peserta" value="0" readonly class="w-full p-2 bg-transparent font-bold"></div>
+                            <div><label class="text-xs text-teal-800 font-bold">Total Aktif HQ</label><input type="text" id="c2_total_aktif" value="0" readonly class="w-full p-2 bg-transparent font-bold"></div>
                         </div>
                     </div>
                 </div>
@@ -202,11 +199,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Khotbah Jumat (Kali) *</label>
-                            <input type="number" id="khotbah_jumat" required min="0" max="5" class="w-full p-2.5 border rounded-lg focus:ring-1 focus:ring-teal-500">
+                            <input type="number" id="khotbah_jumat" required min="0" max="5" class="w-full p-2.5 border rounded-lg focus:ring-1 focus:ring-teal-500 border-teal-400">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Taklim / Tablig Akbar (Kali) *</label>
-                            <input type="number" id="taklim_tablig" required min="0" class="w-full p-2.5 border rounded-lg focus:ring-1 focus:ring-teal-500">
+                            <input type="number" id="taklim_tablig" required min="0" class="w-full p-2.5 border rounded-lg focus:ring-1 focus:ring-teal-500 border-teal-400">
                         </div>
                     </div>
                 </div>
@@ -233,9 +230,9 @@
                     <h3 class="text-xl font-bold mb-4 text-teal-800"><i class="fas fa-list-alt mr-2"></i>Lainnya & Tarbiyah</h3>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5 bg-gray-50 p-4 border rounded-lg">
-                        <div>
+                        <div class="md:col-span-2">
                             <label class="block text-sm font-bold text-gray-700 mb-1">Ketidakhadiran Tarbiyah (Kali) *</label>
-                            <input type="number" id="ketidakhadiran_tarbiyah" required min="0" max="5" placeholder="Range 0-5" class="w-full p-2.5 border rounded-lg border-teal-400">
+                            <input type="number" id="ketidakhadiran_tarbiyah" required min="0" max="5" placeholder="Range 0-5" class="w-full md:w-1/2 p-2.5 border rounded-lg border-teal-400 focus:ring-1 focus:ring-teal-500">
                         </div>
                         <div class="opacity-70"><label class="text-xs text-gray-500 uppercase">Marhalah</label><input type="text" id="marhalah" readonly class="w-full p-2 border rounded"></div>
                         <div class="opacity-70"><label class="text-xs text-gray-500 uppercase">Nama Murabbi</label><input type="text" id="nama_murabbi" readonly class="w-full p-2 border rounded"></div>
@@ -274,7 +271,11 @@
             })
             .then(res => res.json())
             .then(res => { if(onSuccess) onSuccess(res); })
-            .catch(err => { console.error(err); if(onFail) onFail(err); });
+            .catch(err => { 
+                console.error(err); 
+                if(onFail) onFail(err); 
+                else { hideLoading(); Swal.fire('Error', 'Kesalahan koneksi ke server', 'error'); }
+            });
         }
 
         function showLoading(txt) { document.getElementById('loading-text').innerText = txt; document.getElementById('loading-overlay').style.display = 'flex'; }
@@ -282,12 +283,12 @@
 
         // Initial Load
         window.onload = () => {
-            showLoading("Memuat Data Awal...");
+            showLoading("Memuat Data...");
             callBackend('getInitData', {}, res => {
                 hideLoading();
-                if(res.success && res.bulan) {
+                if(res && res.success && res.bulan) {
                     let sel = document.getElementById('bulan_laporan');
-                    sel.innerHTML = '<option value="">-- Pilih Bulan --</option>';
+                    sel.innerHTML = '<option value="">-- Pilih Bulan Laporan --</option>';
                     res.bulan.forEach(b => sel.add(new Option(b, b)));
                 }
             });
@@ -326,18 +327,17 @@
             if(val > max) { el.value = max; Swal.fire('Perhatian', 'Peserta aktif tidak boleh lebih dari total peserta', 'warning'); el.dispatchEvent(new Event('input')); }
         }
 
-        // Login Logic
         function submitLogin() {
             let t = document.getElementById('login-type').value;
             let u = t === 'wa' ? document.getElementById('login-wa').value : document.getElementById('login-email').value;
             let p = document.getElementById('login-password').value;
             
-            showLoading("Verifikasi Data...");
+            showLoading("Verifikasi Kredensial...");
             callBackend('processLogin', { type: t, user: u, pass: p }, res => {
                 hideLoading();
-                if(res.success) setupDashboard(res.data);
+                if(res && res.success) setupDashboard(res.data);
                 else Swal.fire('Gagal Login', res.message, 'error');
-            }, err => { hideLoading(); Swal.fire('Error', 'Gagal koneksi ke server.', 'error'); });
+            });
         }
 
         function setupDashboard(data) {
@@ -345,9 +345,10 @@
             document.getElementById('login-page').style.display = 'none';
             document.getElementById('dashboard-page').style.display = 'block';
             
+            // Populate form readonly fields
             ['nama_dai', 'penempatan', 'marhalah', 'nama_murabbi', 'wa_murabbi', 'nama_pimpinan', 'jabatan_pimpinan', 'wa_pimpinan']
-                .forEach(id => { document.getElementById(id).value = data[id]; });
-            document.getElementById('lbl_nama').innerText = data.nama_dai;
+                .forEach(id => { if(document.getElementById(id)) document.getElementById(id).value = data[id] || ''; });
+            document.getElementById('lbl_nama').innerText = data.nama_dai || 'Dai';
 
             // Set Amanah
             let selAmanah = document.getElementById('amanah');
@@ -357,14 +358,13 @@
             opts.forEach(o => selAmanah.add(new Option(o, o)));
         }
 
-        // Dynamic Rows
         function addKaryaRow(containerId) {
             let div = document.createElement('div');
             div.className = "flex gap-2 items-center karya-row mb-1";
             div.innerHTML = `
                 <input type="text" placeholder="Nama Lengkap" class="w-1/2 p-2 border rounded text-sm k-nama uppercase" required>
                 <input type="tel" placeholder="No WA (08...)" class="w-1/2 p-2 border rounded text-sm wa-validate k-wa" required>
-                <button type="button" onclick="this.parentElement.remove()" class="text-red-500 px-2"><i class="fas fa-times"></i></button>`;
+                <button type="button" onclick="this.parentElement.remove()" class="text-red-500 px-2 hover:text-red-700"><i class="fas fa-times"></i></button>`;
             document.getElementById(containerId).appendChild(div);
         }
 
@@ -374,7 +374,7 @@
             div.innerHTML = `
                 <input type="text" placeholder="Nama Tokoh/Instansi" class="w-full md:w-1/3 p-2 border rounded text-sm s-nama uppercase" required>
                 <input type="text" placeholder="Hasil Singkat" class="w-full md:w-flex-1 p-2 border rounded text-sm s-hasil" required>
-                <button type="button" onclick="this.parentElement.remove()" class="text-red-500 bg-red-50 p-2 rounded w-full md:w-auto"><i class="fas fa-trash"></i> Hapus</button>`;
+                <button type="button" onclick="this.parentElement.remove()" class="text-red-500 bg-red-50 p-2 rounded w-full md:w-auto hover:bg-red-500 hover:text-white transition"><i class="fas fa-trash"></i> Hapus</button>`;
             document.getElementById(containerId).appendChild(div);
         }
 
@@ -384,10 +384,16 @@
             if(files.length + uploadedFilesBase64.length > 5) {
                 Swal.fire('Batas File', 'Maksimal 5 foto bukti.', 'warning'); e.target.value = ''; return;
             }
-            showLoading("Memproses & Kompres Foto...");
             
+            showLoading("Mengkompres Foto...");
             let processed = 0;
+            
             files.forEach(file => {
+                if(file.size > 1024 * 1024) { // Lebih dari 1MB
+                     Swal.fire('Info', file.name + ' lebih dari 1 MB, pastikan ukuran original kurang dari 1MB', 'warning');
+                     e.target.value = ''; hideLoading(); return;
+                }
+
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = evt => {
@@ -396,17 +402,17 @@
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
                         let w = img.width, h = img.height;
-                        const MAX = 800; // Resize max
+                        const MAX = 600; // Resize max
                         if(w > h && w > MAX) { h *= MAX/w; w = MAX; } else if(h > MAX) { w *= MAX/h; h = MAX; }
                         canvas.width = w; canvas.height = h;
                         
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, w, h);
                         
-                        // Kompresi ketat untuk mendekati 150kb
-                        let q = 0.8;
+                        // Kompresi ketat untuk mendekati < 150kb
+                        let q = 0.7;
                         let b64 = canvas.toDataURL('image/jpeg', q);
-                        while(b64.length > 200000 && q > 0.1) { // 200k chars ~ 150KB
+                        while(b64.length > 150000 && q > 0.1) { // 150k chars ~ 110KB
                             q -= 0.1;
                             b64 = canvas.toDataURL('image/jpeg', q);
                         }
@@ -424,7 +430,7 @@
             uploadedFilesBase64.forEach((f, idx) => {
                 html += `<div class="relative w-24 h-24 border rounded overflow-hidden shadow-sm">
                     <img src="${f.base64}" class="object-cover w-full h-full">
-                    <button type="button" onclick="removeFile(${idx})" class="absolute top-0 right-0 bg-red-500 text-white w-6 h-6 rounded-bl flex items-center justify-center text-xs"><i class="fas fa-times"></i></button>
+                    <button type="button" onclick="removeFile(${idx})" class="absolute top-0 right-0 bg-red-500 text-white w-6 h-6 rounded-bl flex items-center justify-center text-xs hover:bg-red-700 transition"><i class="fas fa-times"></i></button>
                 </div>`;
             });
             document.getElementById('file_preview').innerHTML = html;
@@ -435,18 +441,16 @@
         function getKaryaData(containerId) {
             let rows = document.getElementById(containerId).querySelectorAll('.karya-row');
             if(rows.length === 0) return { jml: 0, rincian: "-" };
-            
             let arr = [];
-            rows.forEach(r => arr.push(r.querySelector('.k-nama').value + " - " + r.querySelector('.k-wa').value));
+            rows.forEach(r => arr.push(r.querySelector('.k-nama').value.trim() + " - " + r.querySelector('.k-wa').value.trim()));
             return { jml: rows.length, rincian: arr.join("\n") };
         }
 
         function getSilaData(containerId) {
             let rows = document.getElementById(containerId).querySelectorAll('.sila-row');
             if(rows.length === 0) return { jml: 0, rincian: "-" };
-            
             let arr = [];
-            rows.forEach(r => arr.push(r.querySelector('.s-nama').value + " - " + r.querySelector('.s-hasil').value));
+            rows.forEach(r => arr.push(r.querySelector('.s-nama').value.trim() + " - " + r.querySelector('.s-hasil').value.trim()));
             return { jml: rows.length, rincian: arr.join("\n") };
         }
 
@@ -458,7 +462,7 @@
                     firstInvalid.classList.add('input-error');
                     firstInvalid.scrollIntoView({behavior: "smooth", block: "center"});
                 }
-                Swal.fire('Form Tidak Lengkap', 'Periksa kembali kolom yang bertanda bintang (*).', 'error');
+                Swal.fire('Form Tidak Lengkap', 'Periksa kembali kolom yang bergaris merah / bertanda bintang (*).', 'error');
                 return;
             }
             if(uploadedFilesBase64.length === 0) {
@@ -466,7 +470,7 @@
                 return;
             }
 
-            // Susun data flat
+            // Susun data flat sesuai PDF
             let d_quran = getKaryaData('karya_quran');
             let d_murabbi = getKaryaData('karya_murabbi');
             let d_pengurus = getKaryaData('karya_pengurus');
@@ -477,7 +481,7 @@
             let d_sila_ex = getSilaData('silaturahmi_eksternal');
 
             let payload = {
-                id_pengguna: currentUser.id_pengguna,
+                id_pengguna: currentUser.dai_id,
                 nama_dai: currentUser.nama_dai,
                 bulan_laporan: document.getElementById('bulan_laporan').value,
                 amanah: document.getElementById('amanah').value,
@@ -521,17 +525,21 @@
             };
 
             Swal.fire({
-                title: 'Submit Laporan?', text: "Laporan bulan " + payload.bulan_laporan + " akan dikirim permanen.", icon: 'question',
+                title: 'Kirim Laporan?', 
+                text: "Laporan bulan " + payload.bulan_laporan + " akan dikirim permanen.", 
+                icon: 'question',
                 showCancelButton: true, confirmButtonColor: '#0f766e', confirmButtonText: 'Kirim Sekarang'
             }).then((result) => {
                 if(result.isConfirmed) {
                     showLoading("Mengirim Data Laporan & Mengunggah Foto...");
                     callBackend('saveLaporan', { data: payload }, res => {
                         hideLoading();
-                        if(res.success) {
+                        if(res && res.success) {
                             Swal.fire('Alhamdulillah', res.message, 'success').then(() => location.reload());
-                        } else { Swal.fire('Gagal', res.message, 'error'); }
-                    }, err => { hideLoading(); Swal.fire('Error Server', 'Periksa koneksi Anda.', 'error'); });
+                        } else { 
+                            Swal.fire('Gagal', res ? res.message : 'Kesalahan internal server', 'error'); 
+                        }
+                    });
                 }
             });
         }
