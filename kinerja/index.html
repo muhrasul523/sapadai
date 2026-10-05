@@ -262,19 +262,35 @@
         let currentUser = null;
         let uploadedFilesBase64 = [];
 
-        // Bridge Fetch
+        // Bridge Fetch Anti-HTML Error
         function callBackend(action, data, onSuccess, onFail) {
             fetch(SCRIPT_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify({ action: action, ...data })
             })
-            .then(res => res.json())
-            .then(res => { if(onSuccess) onSuccess(res); })
+            .then(res => {
+                if (!res.ok) throw new Error("HTTP Error: " + res.status);
+                return res.text(); // Ambil sebagai teks dulu agar tidak crash jika di-redirect ke HTML Login Google
+            })
+            .then(text => {
+                try {
+                    let json = JSON.parse(text);
+                    if(onSuccess) onSuccess(json);
+                } catch (e) {
+                    console.error("Format balasan server salah (Bukan JSON):", text);
+                    Swal.fire({
+                        title: 'Error Koneksi App Script',
+                        html: 'Server menolak koneksi.<br><br><b>Penyebab Umum:</b><br>1. WebApp di-deploy salah, pastikan akses adalah <b>"Anyone" (Siapa Saja)</b>.<br>2. Script terputus dari Spreadsheet. Buat Script dari menu <b>Ekstensi > Apps Script</b> di Sheet Anda.',
+                        icon: 'error'
+                    });
+                    if(onFail) onFail(e);
+                }
+            })
             .catch(err => { 
-                console.error(err); 
+                console.error("Fetch Error:", err); 
                 if(onFail) onFail(err); 
-                else { hideLoading(); Swal.fire('Error', 'Kesalahan koneksi ke server', 'error'); }
+                else { hideLoading(); Swal.fire('Error', 'Kesalahan koneksi internet atau server.', 'error'); }
             });
         }
 
@@ -291,6 +307,9 @@
                     sel.innerHTML = '<option value="">-- Pilih Bulan Laporan --</option>';
                     res.bulan.forEach(b => sel.add(new Option(b, b)));
                 }
+            }, err => {
+                hideLoading();
+                console.warn("Gagal memuat init data, namun form login tetap dibuka.", err);
             });
         };
 
@@ -437,7 +456,7 @@
         }
         function removeFile(idx) { uploadedFilesBase64.splice(idx, 1); renderFilePreview(); }
 
-        // Builder Data String Flat (Seperti di PDF)
+        // Builder Data String Flat
         function getKaryaData(containerId) {
             let rows = document.getElementById(containerId).querySelectorAll('.karya-row');
             if(rows.length === 0) return { jml: 0, rincian: "-" };
@@ -470,7 +489,6 @@
                 return;
             }
 
-            // Susun data flat sesuai PDF
             let d_quran = getKaryaData('karya_quran');
             let d_murabbi = getKaryaData('karya_murabbi');
             let d_pengurus = getKaryaData('karya_pengurus');
