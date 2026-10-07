@@ -12,7 +12,11 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="SAPADAI - Wahdah Islamiyah">
     <meta property="og:description" content="Portal utama Sistem Administrasi, Pelayanan, dan Informasi Dai Utusan Wahdah Islamiyah.">
-    <meta property="og:image" content="logo_sapadai_2.png">
+    <!-- SOLUSI WHATSAPP: Wajib menggunakan Absolute URL agar robot WhatsApp bisa mendeteksi gambar -->
+    <meta property="og:image" itemprop="image" content="https://sapadai.wadahdigital.my.id/logo_sapadai_2.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1024">
+    <meta property="og:image:height" content="1024">
     <meta property="og:url" content="https://sapadai.wadahdigital.my.id/">
     
     <!-- Favicon -->
@@ -163,9 +167,12 @@
                     <span class="block">Marhaban ....</span>
                 </h1>
 
-                <!-- Large Logo in Hero Section -->
+                <!-- Large Logo in Hero Section with 20% Cropping Effect -->
                 <div class="flex justify-center mb-8">
-                    <img src="logo_sapadai_2.png" alt="SAPADAI Logo Besar" class="h-48 md:h-72 lg:h-80 w-auto rounded-3xl drop-shadow-2xl animate-fade-in-up" style="animation-delay: 0.1s;">
+                    <div class="overflow-hidden rounded-3xl drop-shadow-2xl w-48 h-48 md:w-72 md:h-72 lg:w-80 lg:h-80 animate-fade-in-up" style="animation-delay: 0.1s;">
+                        <!-- Efek crop dicapai dengan object-cover dan transform scale-[1.5] (zoom 150% untuk memotong tepiannya) -->
+                        <img src="logo_sapadai_2.png" alt="SAPADAI Logo Besar" class="w-full h-full object-cover transform scale-[1.5]">
+                    </div>
                 </div>
                 
                 <p class="text-base md:text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-10">
