@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>SAPADAI - Layanan Manajemen Akun</title>
+  
+  <!-- FAVICON & META TAGS PREVIEW LINK WA/SOCIAL MEDIA -->
+  <link rel="icon" type="image/png" href="logo_sapadai_1.png">
+  <meta property="og:title" content="SAPADAI - Layanan Manajemen Akun">
+  <meta property="og:description" content="Sistem Layanan Manajemen Akun, Ganti WhatsApp, dan Kata Sandi Dai secara mandiri.">
+  <meta property="og:image" content="logo_sapadai_2.png">
+  <meta property="og:type" content="website">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <style>
+    :root {
+      --latar-belakang: #040d08; 
+      --latar-kartu: #0a1710;
+      --hijau-neon: #10b981;
+      --hijau-gelap: #047857;
+      --teks-utama: #f8fafc;
+      --teks-redup: #94a3b8;
+      --garis-batas: #1e293b;
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background-color: var(--latar-belakang); background-image: radial-gradient(circle at top, #0f2b1c 0%, transparent 60%); color: var(--teks-utama); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+    .wadah-utama { width: 100%; max-width: 480px; background: var(--latar-kartu); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 16px; padding: 35px; box-shadow: 0 15px 40px rgba(0,0,0,0.9); }
+    .kepala-halaman { text-align: center; margin-bottom: 30px; }
+    .kepala-halaman h1 { font-size: 1.6rem; font-weight: 700; color: #fff; letter-spacing: 1.5px; }
+    .kepala-halaman h1 span { color: var(--hijau-neon); text-shadow: 0 0 15px rgba(16, 185, 129, 0.6); }
+
+    .navigasi-tab { display: flex; border-bottom: 1px solid var(--garis-batas); margin-bottom: 30px; }
+    .tombol-tab { flex: 1; background: transparent; border: none; padding: 12px 5px; color: var(--teks-redup); font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.3s; border-bottom: 2px solid transparent; }
+    .tombol-tab.aktif { color: var(--hijau-neon); border-bottom: 2px solid var(--hijau-neon); }
+
+    .konten-tab { display: none; animation: munculHalus 0.4s ease forwards; }
+    .konten-tab.aktif { display: block; }
+    @keyframes munculHalus { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .grup-form { margin-bottom: 20px; position: relative; }
+    label { display: block; margin-bottom: 8px; font-size: 0.85rem; color: var(--teks-redup); font-weight: 500; }
+    input { width: 100%; padding: 14px; background: #020805; border: 1px solid var(--garis-batas); border-radius: 8px; color: #fff; font-size: 1rem; transition: all 0.3s; }
+    input:focus { outline: none; border-color: var(--hijau-neon); box-shadow: 0 0 12px rgba(16, 185, 129, 0.2); }
+    
+    .daftar-autocomplete { position: absolute; top: 100%; left: 0; right: 0; background: #06120b; border: 1px solid var(--hijau-gelap); border-radius: 8px; z-index: 999; max-height: 200px; overflow-y: auto; display: none; list-style: none; margin-top: 5px; box-shadow: 0 8px 16px rgba(0,0,0,0.8); }
+    .item-autocomplete { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid var(--garis-batas); font-size: 0.95rem; }
+    .item-autocomplete:hover { background: var(--hijau-gelap); color: #fff; }
+
+    .pengalih-sandi { position: absolute; right: 15px; top: 38px; color: var(--hijau-neon); cursor: pointer; user-select: none; transition: color 0.3s; display: flex; align-items: center; justify-content: center; }
+    .pengalih-sandi svg { width: 22px; height: 22px; }
+    .pengalih-sandi:hover { color: #fff; }
+
+    .tombol-utama { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--hijau-gelap), #025940); color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(4, 120, 87, 0.4); }
+    .tombol-utama:hover { background: linear-gradient(135deg, var(--hijau-neon), var(--hijau-gelap)); color: #000; }
+    .tombol-utama:disabled { background: #1e293b; color: #64748b; cursor: not-allowed; box-shadow: none; }
+
+    .langkah-tersembunyi { display: none; margin-top: 25px; padding-top: 25px; border-top: 1px dashed var(--garis-batas); animation: munculHalus 0.4s ease; }
+    .kotak-info { padding: 15px; background: rgba(16, 185, 129, 0.05); border: 1px solid var(--hijau-gelap); border-radius: 8px; color: var(--hijau-neon); font-size: 0.95rem; margin-bottom: 20px; line-height: 1.6; white-space: pre-line; }
+    
+    .toast-notifikasi { position: fixed; top: 20px; right: 20px; padding: 16px 24px; border-radius: 8px; color: #fff; font-size: 0.95rem; font-weight: 500; transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 1000; }
+    .toast-notifikasi.tampil { transform: translateX(0); }
+    .toast-notifikasi.sukses { background: var(--hijau-gelap); border-left: 5px solid var(--hijau-neon); }
+    .toast-notifikasi.gagal { background: #991b1b; border-left: 5px solid #f87171; }
+
+    /* LAYAR SUKSES KHUSUS */
+    #layar-sukses { display: none; text-align: center; padding: 20px 0; animation: munculHalus 0.5s ease forwards; }
+    .ikon-sukses { width: 80px; height: 80px; color: var(--hijau-neon); margin: 0 auto 20px auto; display: block; }
+  </style>
+</head>
+<body>
+
+  <div id="toast" class="toast-notifikasi">Notifikasi</div>
+
+  <div class="wadah-utama">
+    <div class="kepala-halaman"><h1>Sistem <span>SAPADAI</span></h1></div>
+
+    <div class="navigasi-tab" id="navigasi-utama">
+      <button class="tombol-tab aktif" onclick="app.gantiTab('wa', this)">Ganti WA</button>
+      <button class="tombol-tab" onclick="app.gantiTab('sandi', this)">Ganti Sandi</button>
+      <button class="tombol-tab" onclick="app.gantiTab('info', this)">Cek Akun</button>
+    </div>
+
+    <!-- TAB 1: GANTI WA -->
+    <div id="tab-wa" class="konten-tab aktif">
+      <div id="wa-step-1">
+        <div class="grup-form">
+          <label>Cari Nama Dai</label>
+          <input type="text" id="input-wa-nama" placeholder="Ketik nama Anda..." autocomplete="off">
+          <input type="hidden" id="input-wa-idDai">
+          <ul id="autocomplete-wa" class="daftar-autocomplete"></ul>
+        </div>
+        <div class="grup-form">
+          <label>Nomor WA Saat Ini (Lama)</label>
+          <input type="text" id="input-wa-lama" class="format-wa-otomatis" placeholder="Masukkan nomor WA saat ini">
+        </div>
+        <div class="grup-form">
+          <label>Nomor WA Baru</label>
+          <input type="text" id="input-wa-baru" class="format-wa-otomatis" placeholder="Masukkan nomor WA baru">
+        </div>
+        <button id="btn-wa-req" class="tombol-utama" onclick="app.waReqToken()">Kirim Token</button>
+      </div>
+      <div id="wa-step-2" class="langkah-tersembunyi">
+        <div class="grup-form">
+          <label>Token 4 Angka</label>
+          <input type="text" id="input-wa-token" maxlength="4" placeholder="Cek pesan di WA Baru">
+        </div>
+        <button id="btn-wa-verif" class="tombol-utama" onclick="app.waVerifToken()">Lanjut</button>
+      </div>
+      <div id="wa-step-3" class="langkah-tersembunyi">
+        <div class="grup-form">
+          <label>Kata Sandi Baru</label>
+          <input type="password" id="input-wa-sandi" placeholder="Minimal 6 karakter">
+          <span class="pengalih-sandi" onclick="app.toggleSandi('input-wa-sandi', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </span>
+        </div>
+        <div class="grup-form">
+          <label>Konfirmasi Kata Sandi Baru</label>
+          <input type="password" id="input-wa-sandi-konfirm" placeholder="Ulangi sandi">
+          <span class="pengalih-sandi" onclick="app.toggleSandi('input-wa-sandi-konfirm', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </span>
+        </div>
+        <button id="btn-wa-simpan" class="tombol-utama" onclick="app.waSimpan()">Simpan Perubahan</button>
+      </div>
+    </div>
+
+    <!-- TAB 2: GANTI SANDI -->
+    <div id="tab-sandi" class="konten-tab">
+      <div id="sandi-step-1">
+        <div class="grup-form">
+          <label>Nomor WA Terdaftar</label>
+          <input type="text" id="input-sandi-wa" class="format-wa-otomatis" placeholder="Masukkan nomor WA Anda">
+        </div>
+        <button id="btn-sandi-cek" class="tombol-utama" onclick="app.sandiCekWa()">Lanjutkan</button>
+      </div>
+      <div id="sandi-step-2" class="langkah-tersembunyi">
+        <div id="kotak-info-sandi" class="kotak-info"></div>
+        <button id="btn-sandi-req" class="tombol-utama" onclick="app.sandiReqToken()">Kirim Token</button>
+      </div>
+      <div id="sandi-step-3" class="langkah-tersembunyi">
+        <div class="grup-form">
+          <label>Token 4 Angka</label>
+          <input type="text" id="input-sandi-token" maxlength="4" placeholder="Cek pesan di WA">
+        </div>
+        <button id="btn-sandi-verif" class="tombol-utama" onclick="app.sandiVerifToken()">Lanjut</button>
+      </div>
+      <div id="sandi-step-4" class="langkah-tersembunyi">
+        <div class="grup-form">
+          <label>Kata Sandi Baru</label>
+          <input type="password" id="input-sandi-sandi" placeholder="Minimal 6 karakter">
+          <span class="pengalih-sandi" onclick="app.toggleSandi('input-sandi-sandi', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </span>
+        </div>
+        <div class="grup-form">
+          <label>Konfirmasi Kata Sandi Baru</label>
+          <input type="password" id="input-sandi-konfirm" placeholder="Ulangi sandi">
+          <span class="pengalih-sandi" onclick="app.toggleSandi('input-sandi-konfirm', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </span>
+        </div>
+        <button id="btn-sandi-simpan" class="tombol-utama" onclick="app.sandiSimpan()">Ubah Sandi</button>
+      </div>
+    </div>
+
+    <!-- TAB 3: CEK INFO AKUN -->
+    <div id="tab-info" class="konten-tab">
+      <div id="info-step-1">
+        <div class="grup-form">
+          <label>Nomor WA Terdaftar</label>
+          <input type="text" id="input-info-wa" class="format-wa-otomatis" placeholder="Masukkan nomor WA Anda">
+        </div>
+        <button id="btn-info-cek" class="tombol-utama" onclick="app.infoCekWa()">Cari Akun</button>
+      </div>
+      <div id="info-step-2" class="langkah-tersembunyi">
+        <div id="kotak-info-akun" class="kotak-info"></div>
+        <button id="btn-info-kirim" class="tombol-utama" onclick="app.infoKirimPesan()">Kirim Pesan ke WA & Email</button>
+      </div>
+    </div>
+
+    <!-- LAYAR SUKSES & TOMBOL LANJUT -->
+    <div id="layar-sukses">
+      <svg class="ikon-sukses" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+      <h2 style="font-size: 1.5rem; margin-bottom: 12px; color: #fff;">Proses Berhasil!</h2>
+      <p id="teks-layar-sukses" style="color: var(--teks-redup); margin-bottom: 30px; font-size: 0.95rem; line-height: 1.6;"></p>
+      <button id="btn-lanjut-sukses" class="tombol-utama">LANJUT</button>
+    </div>
+
+  </div>
+
+  <script>
+    // ========================================================
+    // GANTI URL DI BAWAH DENGAN URL DEPLOY APP SCRIPT ANDA
+    // ========================================================
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxQhdn_r2ROFnFhZQxWlyyYelQFeZ1jtDU_QJkoiaxXCLE7VMX4EWES1vSf_9KMEXal/exec'; 
+
+    const svgMataBuka = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+    const svgMataTutup = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+
+    // FUNGSI KOMUNIKASI FETCH API (PENGGANTI google.script.run)
+    async function callBackend(action, payload) {
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: action, payload: payload })
+        });
+        return await response.json();
+      } catch (error) {
+        console.error("Fetch Error:", error);
+        return { sukses: false, pesan: "Koneksi ke server gagal. Pastikan URL App Script benar." };
+      }
+    }
+
+    const app = {
+      device: navigator.userAgent,
+      dataDai: [],
+      tempIdDai: null,
+
+      init: function() {
+        document.querySelectorAll('.format-wa-otomatis').forEach(el => {
+          el.addEventListener('input', function() {
+            let val = this.value.replace(/\D/g, ''); 
+            if (val.startsWith('08')) val = '628' + val.substring(2); 
+            this.value = val;
+          });
+        });
+
+        // REFACTOR: Mengambil data inisialisasi via Fetch API
+        callBackend('dapatkanDataInisialisasi', {}).then(res => {
+          if (res.sukses) this.dataDai = res.data;
+        });
+
+        this.setupAutocomplete('input-wa-nama', 'input-wa-idDai', 'autocomplete-wa');
+      },
+
+      setupAutocomplete: function(inputId, hiddenId, listId) {
+        const input = document.getElementById(inputId);
+        const hidden = document.getElementById(hiddenId);
+        const list = document.getElementById(listId);
+        
+        input.addEventListener('input', () => {
+          const val = input.value.toLowerCase();
+          list.innerHTML = '';
+          hidden.value = ''; 
+          if (!val) { list.style.display = 'none'; return; }
+          
+          const filtered = this.dataDai.filter(d => d.namaDai.toLowerCase().includes(val)).slice(0, 7);
+          if (filtered.length === 0) { list.style.display = 'none'; return; }
+
+          filtered.forEach(d => {
+            const li = document.createElement('li');
+            li.className = 'item-autocomplete';
+            li.textContent = d.namaDai;
+            li.onclick = () => {
+              input.value = d.namaDai;
+              hidden.value = d.idDai;
+              list.style.display = 'none';
+            };
+            list.appendChild(li);
+          });
+          list.style.display = 'block';
+        });
+
+        document.addEventListener('click', e => { if(e.target !== input) list.style.display = 'none'; });
+      },
+
+      gantiTab: function(idTab, btn) {
+        document.querySelectorAll('.konten-tab').forEach(el => el.classList.remove('aktif'));
+        document.querySelectorAll('.tombol-tab').forEach(el => el.classList.remove('aktif'));
+        document.getElementById('tab-' + idTab).classList.add('aktif');
+        btn.classList.add('aktif');
+      },
+
+      toast: function(pesan, sukses) {
+        const t = document.getElementById('toast');
+        t.textContent = pesan;
+        t.className = `toast-notifikasi tampil ${sukses ? 'sukses' : 'gagal'}`;
+        setTimeout(() => t.classList.remove('tampil'), 4500);
+      },
+
+      loading: function(idBtn, isLoading, txt) {
+        const btn = document.getElementById(idBtn);
+        btn.disabled = isLoading;
+        btn.textContent = isLoading ? 'Sedang memproses...' : txt;
+      },
+
+      toggleSandi: function(idInput, iconContainer) {
+        const field = document.getElementById(idInput);
+        if (field.type === 'password') {
+          field.type = 'text'; iconContainer.innerHTML = svgMataTutup;
+        } else {
+          field.type = 'password'; iconContainer.innerHTML = svgMataBuka;
+        }
+      },
+
+      tampilkanLayarSukses: function(teksPesan, urlTujuan) {
+        document.getElementById('navigasi-utama').style.display = 'none';
+        document.querySelectorAll('.konten-tab').forEach(el => el.style.display = 'none');
+        
+        const layar = document.getElementById('layar-sukses');
+        document.getElementById('teks-layar-sukses').textContent = teksPesan;
+        layar.style.display = 'block';
+        
+        document.getElementById('btn-lanjut-sukses').onclick = () => {
+          const win = window.open(urlTujuan, '_blank');
+          if (!win || win.closed || typeof win.closed === 'undefined') {
+            window.location.href = urlTujuan;
+          }
+        };
+      },
+
+      // ================= ALUR GANTI WA =================
+      waReqToken: function() {
+        const idTerpilih = document.getElementById('input-wa-idDai').value;
+        const waLama = document.getElementById('input-wa-lama').value;
+        const waBaru = document.getElementById('input-wa-baru').value;
+        
+        if(!idTerpilih) return this.toast("Pilih nama dari daftar pilihan!", false);
+        if(!waLama || !waBaru) return this.toast("Lengkapi Nomor WA!", false);
+
+        this.loading('btn-wa-req', true, 'Kirim Token');
+        callBackend('prosesPermintaanOtpWa', { idDai: idTerpilih, waLama: waLama, waBaru: waBaru, device: this.device }).then(res => {
+          this.loading('btn-wa-req', false, 'Kirim Ulang Token');
+          if(res.sukses) {
+            this.toast(res.pesan, true);
+            document.getElementById('wa-step-1').style.display = 'none';
+            document.getElementById('wa-step-2').style.display = 'block';
+          } else this.toast(res.pesan, false);
+        });
+      },
+
+      waVerifToken: function() {
+        const token = document.getElementById('input-wa-token').value;
+        const idDai = document.getElementById('input-wa-idDai').value;
+        if(!token) return this.toast("Masukkan token OTP!", false);
+
+        this.loading('btn-wa-verif', true, 'Memeriksa Token...');
+        callBackend('validasiTokenOtp', { idDai: idDai, token: token, prefix: 'OTP_WA_' }).then(res => {
+          this.loading('btn-wa-verif', false, 'Lanjut');
+          if(res.sukses) {
+            document.getElementById('wa-step-2').style.display = 'none';
+            document.getElementById('wa-step-3').style.display = 'block';
+          } else this.toast(res.pesan, false);
+        });
+      },
+
+      waSimpan: function() {
+        const idDai = document.getElementById('input-wa-idDai').value;
+        const waBaru = document.getElementById('input-wa-baru').value;
+        const token = document.getElementById('input-wa-token').value;
+        const sandi = document.getElementById('input-wa-sandi').value;
+        const sandiConf = document.getElementById('input-wa-sandi-konfirm').value;
+
+        if(sandi.length < 6) return this.toast("Kata Sandi minimal 6 karakter!", false);
+        if(sandi !== sandiConf) return this.toast("Konfirmasi sandi tidak sama!", false);
+
+        this.loading('btn-wa-simpan', true, 'Menyimpan Data...');
+        callBackend('eksekusiGantiWaDanSandi', { idDai: idDai, waBaru: waBaru, token: token, sandi: sandi, device: this.device }).then(res => {
+          this.loading('btn-wa-simpan', false, 'Simpan Perubahan');
+          if(res.sukses) {
+            this.tampilkanLayarSukses("Kata sandi dan nomor WhatsApp Anda telah berhasil diperbarui di dalam sistem.", res.urlRedirect);
+          } else this.toast(res.pesan, false);
+        });
+      },
+
+      // ================= ALUR GANTI SANDI =================
+      sandiCekWa: function() {
+        const wa = document.getElementById('input-sandi-wa').value;
+        if(!wa) return this.toast("Masukkan nomor WhatsApp Anda!", false);
+
+        this.loading('btn-sandi-cek', true, 'Mencari Akun...');
+        callBackend('cekWaUntukGantiSandi', { wa: wa, device: this.device }).then(res => {
+          this.loading('btn-sandi-cek', false, 'Lanjutkan');
+          if(res.sukses) {
+            this.tempIdDai = res.idDai;
+            document.getElementById('kotak-info-sandi').textContent = res.ringkasan;
+            document.getElementById('sandi-step-1').style.display = 'none';
+            document.getElementById('sandi-step-2').style.display = 'block';
+          } else this.toast(res.pesan, false);
+        });
+      },
+
+      sandiReqToken: function() {
+        const wa = document.getElementById('input-sandi-wa').value;
+        this.loading('btn-sandi-req', true, 'Mengirim Token...');
+        callBackend('prosesPermintaanOtpSandi', { idDai: this.tempIdDai, wa: wa, device: this.device }).then(res => {
+          this.loading('btn-sandi-req', false, 'Kirim Ulang Token');
+          if(res.sukses) {
+            this.toast(res.pesan, true);
+            document.getElementById('sandi-step-2').style.display = 'none';
+            document.getElementById('sandi-step-3').style.display = 'block';
+          } else this.toast(res.pesan, false);
+        });
+      },
+
+      sandiVerifToken: function() {
+        const token = document.getElementById('input-sandi-token').value;
+        if(!token) return this.toast("Masukkan token OTP!", false);
+        
+        this.loading('btn-sandi-verif', true, 'Memeriksa Token...');
+        callBackend('validasiTokenOtp', { idDai: this.tempIdDai, token: token, prefix: 'OTP_SANDI_' }).then(res => {
+          this.loading('btn-sandi-verif', false, 'Lanjut');
+          if(res.sukses) {
+            document.getElementById('sandi-step-3').style.display = 'none';
+            document.getElementById('sandi-step-4').style.display = 'block';
+          } else this.toast(res.pesan, false);
+        });
+      },
+
+      sandiSimpan: function() {
+        const token = document.getElementById('input-sandi-token').value;
+        const sandi = document.getElementById('input-sandi-sandi').value;
+        const sandiConf = document.getElementById('input-sandi-konfirm').value;
+
+        if(sandi.length < 6) return this.toast("Kata Sandi minimal 6 karakter!", false);
+        if(sandi !== sandiConf) return this.toast("Konfirmasi sandi tidak sama!", false);
+
+        this.loading('btn-sandi-simpan', true, 'Menyimpan Data...');
+        callBackend('eksekusiGantiSandi', { idDai: this.tempIdDai, token: token, sandi: sandi, device: this.device }).then(res => {
+          this.loading('btn-sandi-simpan', false, 'Ubah Sandi');
+          if(res.sukses) {
+             this.tampilkanLayarSukses("Kata sandi akun Anda telah berhasil diperbarui dan disinkronisasi.", res.urlRedirect);
+          } else this.toast(res.pesan, false);
+        });
+      },
+
+      // ================= ALUR CEK INFO AKUN =================
+      infoCekWa: function() {
+        const wa = document.getElementById('input-info-wa').value;
+        if(!wa) return this.toast("Masukkan nomor WhatsApp Anda!", false);
+
+        this.loading('btn-info-cek', true, 'Mencari Akun...');
+        callBackend('cariAkunBerdasarkanWa', { wa: wa }).then(res => {
+          this.loading('btn-info-cek', false, 'Cari Akun');
+          if(res.sukses) {
+            this.tempIdDai = res.idDai;
+            document.getElementById('kotak-info-akun').textContent = res.ringkasan;
+            document.getElementById('info-step-1').style.display = 'none';
+            document.getElementById('info-step-2').style.display = 'block';
+          } else this.toast(res.pesan, false);
+        });
+      },
+
+      infoKirimPesan: function() {
+        if(!this.tempIdDai) return;
+
+        this.loading('btn-info-kirim', true, 'Mengirim Pesan...');
+        callBackend('eksekusiKirimInfoAkun', { idDai: this.tempIdDai, device: this.device }).then(res => {
+          this.loading('btn-info-kirim', false, 'Kirim Pesan ke WA & Email');
+          if(res.sukses) {
+             this.tampilkanLayarSukses("Rincian akun Anda telah sukses dikirimkan ke nomor WhatsApp dan Email yang terdaftar.", res.urlRedirect);
+          } else this.toast(res.pesan, false);
+        });
+      }
+    };
+
+    document.addEventListener("DOMContentLoaded", () => app.init());
+  </script>
+</body>
+</html>
