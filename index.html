@@ -12,10 +12,11 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="SAPADAI - Wahdah Islamiyah">
     <meta property="og:description" content="Portal utama Sistem Administrasi, Pelayanan, dan Informasi Dai Utusan Wahdah Islamiyah.">
-    <meta property="og:image" content="SAPADAI LOGO.png">
+    <meta property="og:image" content="SAPADAI.png">
+    <meta property="og:url" content="https://sapadai.wadahdigital.my.id/">
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="SAPADAI LOGO.png">
+    <link rel="icon" type="image/png" href="SAPADAI.png">
 
     <!-- Google Fonts: Montserrat -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,20 +37,26 @@
                     },
                     colors: {
                         sapadai: {
-                            // Extracted from logo: Teal/Cyan to Gold gradient
-                            primary: '#3b9e9b', // Main Teal
-                            primaryDark: '#2a7c79',
-                            primaryLight: '#5bc0bd',
-                            // Gold/Yellow
-                            accent: '#eab308', // Main Gold
-                            accentLight: '#fde047',
-                            accentDark: '#ca8a04',
-                            // Backgrounds
-                            bgLight: '#f8fafc', // slate-50
-                            bgDark: '#0f172a', // slate-900
-                            cardLight: '#ffffff',
-                            cardDark: '#1e293b', // slate-800
+                            // Teal/Cyan palette based on provided codes
+                            primary: '#2c9795', 
+                            primaryLight: '#64b4b1',
+                            primaryLighter: '#8ac7c3',
+                            primaryLightest: '#afd6d4',
+                            // Gold/Yellow palette
+                            accent: '#efb52a',
+                            accentDark: '#d0b64d',
+                            // Greens/Neutrals
+                            neutralGreen: '#afb973',
+                            bgLight: '#fdfcfc',
+                            bgGray: '#d3d7dc',
+                            // Dark mode backgrounds
+                            bgDark: '#0f172a',
+                            cardDark: '#1e293b',
                         }
+                    },
+                    backgroundImage: {
+                        'sapadai-gradient': 'linear-gradient(to right, #2c9795, #efb52a)',
+                        'sapadai-gradient-hover': 'linear-gradient(to right, #64b4b1, #d0b64d)',
                     },
                     backgroundImage: {
                         'sapadai-gradient': 'linear-gradient(to right, #3b9e9b, #eab308)',
@@ -77,14 +84,15 @@
 <body class="bg-sapadai-bgLight dark:bg-sapadai-bgDark text-gray-800 dark:text-gray-200 font-sans antialiased min-h-screen flex flex-col">
 
     <!-- ==================== HEADER / NAVBAR ==================== -->
-    <header class="fixed w-full top-0 z-50 bg-white/80 dark:bg-sapadai-bgDark/90 backdrop-blur-md shadow-sm transition-colors duration-300 border-b border-gray-200 dark:border-gray-800">
+    <header class="fixed w-full top-0 z-50 bg-sapadai-bgLight/80 dark:bg-sapadai-bgDark/90 backdrop-blur-md shadow-sm transition-colors duration-300 border-b border-sapadai-bgGray dark:border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 
                 <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center">
                     <a href="#" class="flex items-center gap-3 group">
-                        <img class="h-10 w-auto transition-transform group-hover:scale-105" src="SAPADAI LOGO.png" alt="Logo SAPADAI" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0NCIgZmlsbD0iIzNiOWU5YiIvPjx0ZXh0IHg9IjUwIiB5PSI2MCIgZm9udC1zaXplPSI0MCIgZmlsbD0iI2VhYjMwOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Ik1vbnRzZXJyYXQsIHNhbnMtc2VyaWYiPlM8L3RleHQ+PC9zdmc+'"> <!-- Fallback SVG if image not found -->
+                        <!-- Ensure SAPADAI.png is in the same directory as index.html -->
+                        <img class="h-10 w-auto transition-transform group-hover:scale-105" src="SAPADAI.png" alt="Logo SAPADAI"> 
                         <span class="font-bold text-2xl tracking-tight text-sapadai-primary dark:text-sapadai-primaryLight group-hover:text-sapadai-accent transition-colors">
                             SAPADAI
                         </span>
@@ -123,7 +131,7 @@
         </div>
 
         <!-- Mobile Menu -->
-        <div class="md:hidden hidden bg-white dark:bg-sapadai-bgDark border-b border-gray-200 dark:border-gray-800 transition-all" id="mobile-menu">
+        <div class="md:hidden hidden bg-sapadai-bgLight dark:bg-sapadai-bgDark border-b border-sapadai-bgGray dark:border-gray-800 transition-all" id="mobile-menu">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="#beranda" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:text-sapadai-primary hover:bg-gray-50 dark:hover:bg-gray-800">Beranda</a>
                 <a href="#layanan" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:text-sapadai-primary hover:bg-gray-50 dark:hover:bg-gray-800">Layanan Sistem</a>
@@ -137,8 +145,8 @@
             <!-- Background Decoration (Abstract Geometry) -->
             <div class="absolute inset-0 z-0 opacity-30 dark:opacity-10 pointer-events-none flex justify-center items-center">
                 <svg width="100%" height="100%" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="400" cy="400" r="300" fill="none" stroke="#3b9e9b" stroke-width="2" stroke-dasharray="10 20" opacity="0.3"/>
-                    <circle cx="400" cy="400" r="200" fill="none" stroke="#eab308" stroke-width="1" stroke-dasharray="5 10" opacity="0.4"/>
+                    <circle cx="400" cy="400" r="300" fill="none" stroke="#2c9795" stroke-width="2" stroke-dasharray="10 20" opacity="0.3"/>
+                    <circle cx="400" cy="400" r="200" fill="none" stroke="#efb52a" stroke-width="1" stroke-dasharray="5 10" opacity="0.4"/>
                 </svg>
             </div>
             
@@ -174,7 +182,7 @@
         </section>
 
         <!-- ==================== LAYANAN NAVIGASI ==================== -->
-        <section id="layanan" class="py-16 bg-white dark:bg-sapadai-cardDark border-y border-gray-100 dark:border-gray-800 transition-colors duration-300">
+        <section id="layanan" class="py-16 bg-white dark:bg-sapadai-cardDark border-y border-sapadai-bgGray dark:border-gray-800 transition-colors duration-300">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
                     <h3 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Pilih Layanan Sistem</h3>
@@ -184,7 +192,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                     
                     <!-- Layanan 1: Akun -->
-                    <a href="./akun/index.html" class="group relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-soft hover:shadow-hover border border-gray-100 dark:border-gray-700 transform transition-all duration-300 hover:-translate-y-2 flex flex-col items-center text-center overflow-hidden">
+                    <a href="https://sapadai.wadahdigital.my.id/akun" class="group relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-soft hover:shadow-hover border border-gray-100 dark:border-gray-700 transform transition-all duration-300 hover:-translate-y-2 flex flex-col items-center text-center overflow-hidden">
                         <div class="absolute inset-0 bg-gradient-to-br from-sapadai-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <div class="w-16 h-16 rounded-full bg-sapadai-bgLight dark:bg-gray-700 flex items-center justify-center mb-6 group-hover:bg-sapadai-primary group-hover:text-white text-sapadai-primary dark:text-sapadai-primaryLight transition-colors duration-300">
                             <!-- User SVG Icon -->
@@ -202,7 +210,7 @@
                     </a>
 
                     <!-- Layanan 2: Kinerja -->
-                    <a href="./kinerja/index.html" class="group relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-soft hover:shadow-hover border border-gray-100 dark:border-gray-700 transform transition-all duration-300 hover:-translate-y-2 flex flex-col items-center text-center overflow-hidden">
+                    <a href="https://sapadai.wadahdigital.my.id/kinerja" class="group relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-soft hover:shadow-hover border border-gray-100 dark:border-gray-700 transform transition-all duration-300 hover:-translate-y-2 flex flex-col items-center text-center overflow-hidden">
                         <div class="absolute inset-0 bg-gradient-to-br from-sapadai-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <div class="w-16 h-16 rounded-full bg-sapadai-bgLight dark:bg-gray-700 flex items-center justify-center mb-6 group-hover:bg-sapadai-accent group-hover:text-white text-sapadai-accent transition-colors duration-300">
                             <!-- Chart SVG Icon -->
@@ -220,7 +228,7 @@
                     </a>
 
                     <!-- Layanan 3: Profil -->
-                    <a href="./profil/index.html" class="group relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-soft hover:shadow-hover border border-gray-100 dark:border-gray-700 transform transition-all duration-300 hover:-translate-y-2 flex flex-col items-center text-center overflow-hidden">
+                    <a href="https://sapadai.wadahdigital.my.id/profil" class="group relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-soft hover:shadow-hover border border-gray-100 dark:border-gray-700 transform transition-all duration-300 hover:-translate-y-2 flex flex-col items-center text-center overflow-hidden">
                         <div class="absolute inset-0 bg-gradient-to-br from-sapadai-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <div class="w-16 h-16 rounded-full bg-sapadai-bgLight dark:bg-gray-700 flex items-center justify-center mb-6 group-hover:bg-sapadai-primary group-hover:text-white text-sapadai-primary dark:text-sapadai-primaryLight transition-colors duration-300">
                             <!-- Edit Doc SVG Icon -->
@@ -240,9 +248,9 @@
                     <!-- Placeholder for future services -->
                     <!-- Uncomment and edit when adding new services -->
                     <!--
-                    <a href="./perizinan/index.html" class="group relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-soft hover:shadow-hover border border-gray-100 dark:border-gray-700 transform transition-all duration-300 hover:-translate-y-2 flex flex-col items-center text-center overflow-hidden">
+                    <a href="https://sapadai.wadahdigital.my.id/perizinan" class="group relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-soft hover:shadow-hover border border-gray-100 dark:border-gray-700 transform transition-all duration-300 hover:-translate-y-2 flex flex-col items-center text-center overflow-hidden">
                         <div class="absolute inset-0 bg-gradient-to-br from-sapadai-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="w-16 h-16 rounded-full bg-sapadai-bgLight dark:bg-gray-700 flex items-center justify-center mb-6 group-hover:bg-sapadai-accent group-hover:text-white text-sapadai-accent transition-colors duration-300">
+                        <div class="w-16 h-16 rounded-full bg-sapadai-bgLight dark:bg-gray-700 flex items-center justify-center mb-6 group-hover:bg-sapadai-neutralGreen group-hover:text-white text-sapadai-neutralGreen transition-colors duration-300">
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
@@ -260,78 +268,10 @@
                 </div>
             </div>
         </section>
-
-        <!-- ==================== MODUL NAVIGASI ==================== -->
-        <section id="modul" class="py-16 bg-white dark:bg-sapadai-cardDark border-y border-gray-100 dark:border-gray-800 transition-colors duration-300">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-16">
-                    <h3 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Pilih Modul Sistem</h3>
-                    <div class="h-1 w-20 bg-sapadai-accent mx-auto rounded-full"></div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    
-                    <!-- Modul 1: Akun -->
-                    <a href="./akun/index.html" class="group relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-soft hover:shadow-hover border border-gray-100 dark:border-gray-700 transform transition-all duration-300 hover:-translate-y-2 flex flex-col items-center text-center overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-br from-sapadai-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="w-20 h-20 rounded-full bg-sapadai-bgLight dark:bg-gray-700 flex items-center justify-center mb-6 group-hover:bg-sapadai-primary group-hover:text-white text-sapadai-primary dark:text-sapadai-primaryLight transition-colors duration-300">
-                            <!-- User SVG Icon -->
-                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path>
-                            </svg>
-                        </div>
-                        <h4 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">Modul Akun</h4>
-                        <p class="text-gray-500 dark:text-gray-400 mb-6 flex-grow">
-                            Manajemen kredensial, pengaturan hak akses, verifikasi identitas, dan preferensi akun pengguna sistem.
-                        </p>
-                        <span class="inline-flex items-center text-sm font-semibold text-sapadai-accent group-hover:text-sapadai-accentLight transition-colors">
-                            Masuk Modul <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </span>
-                    </a>
-
-                    <!-- Modul 2: Kinerja -->
-                    <a href="./kinerja/index.html" class="group relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-soft hover:shadow-hover border border-gray-100 dark:border-gray-700 transform transition-all duration-300 hover:-translate-y-2 flex flex-col items-center text-center overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-br from-sapadai-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="w-20 h-20 rounded-full bg-sapadai-bgLight dark:bg-gray-700 flex items-center justify-center mb-6 group-hover:bg-sapadai-accent group-hover:text-white text-sapadai-accent transition-colors duration-300">
-                            <!-- Chart SVG Icon -->
-                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                            </svg>
-                        </div>
-                        <h4 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">Modul Kinerja</h4>
-                        <p class="text-gray-500 dark:text-gray-400 mb-6 flex-grow">
-                            Pelaporan aktivitas dakwah bulanan, pencatatan mutaba'ah, dan monitoring indikator pencapaian Dai.
-                        </p>
-                        <span class="inline-flex items-center text-sm font-semibold text-sapadai-primary group-hover:text-sapadai-primaryLight transition-colors">
-                            Masuk Modul <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </span>
-                    </a>
-
-                    <!-- Modul 3: Profil -->
-                    <a href="./profil/index.html" class="group relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-soft hover:shadow-hover border border-gray-100 dark:border-gray-700 transform transition-all duration-300 hover:-translate-y-2 flex flex-col items-center text-center overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-br from-sapadai-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="w-20 h-20 rounded-full bg-sapadai-bgLight dark:bg-gray-700 flex items-center justify-center mb-6 group-hover:bg-sapadai-primary group-hover:text-white text-sapadai-primary dark:text-sapadai-primaryLight transition-colors duration-300">
-                            <!-- Building/Doc SVG Icon -->
-                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                            </svg>
-                        </div>
-                        <h4 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">Modul Profil</h4>
-                        <p class="text-gray-500 dark:text-gray-400 mb-6 flex-grow">
-                            Pengelolaan data demografi, riwayat pendidikan, penugasan wilayah, dan status keaktifan kelembagaan.
-                        </p>
-                        <span class="inline-flex items-center text-sm font-semibold text-sapadai-accent group-hover:text-sapadai-accentLight transition-colors">
-                            Masuk Modul <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </span>
-                    </a>
-
-                </div>
-            </div>
-        </section>
     </main>
 
     <!-- ==================== FOOTER ==================== -->
-    <footer class="bg-white dark:bg-sapadai-bgDark py-8 border-t border-gray-200 dark:border-gray-800 transition-colors duration-300 mt-auto">
+    <footer class="bg-sapadai-bgLight dark:bg-sapadai-bgDark py-8 border-t border-sapadai-bgGray dark:border-gray-800 transition-colors duration-300 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="text-center md:text-left">
                 <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">
