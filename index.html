@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAPADAI - Sistem Administrasi, Pelayanan, dan Informasi Dai</title>
+    <meta name="description" content="Portal utama Sistem Administrasi, Pelayanan, dan Informasi Dai Utusan Wahdah Islamiyah.">
+    <meta name="keywords" content="SAPADAI, Wahdah Islamiyah, Dai, Sistem Informasi, Administrasi">
+    <meta name="author" content="Wahdah Islamiyah">
+    
+    <!-- Open Graph / WhatsApp Preview -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="SAPADAI - Wahdah Islamiyah">
+    <meta property="og:description" content="Portal utama Sistem Administrasi, Pelayanan, dan Informasi Dai Utusan Wahdah Islamiyah.">
+    <meta property="og:image" content="SAPADAI LOGO.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="SAPADAI LOGO.png">
+
+    <!-- Google Fonts: Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                    },
+                    colors: {
+                        sapadai: {
+                            // Extracted from logo: Teal/Cyan to Gold gradient
+                            primary: '#3b9e9b', // Main Teal
+                            primaryDark: '#2a7c79',
+                            primaryLight: '#5bc0bd',
+                            // Gold/Yellow
+                            accent: '#eab308', // Main Gold
+                            accentLight: '#fde047',
+                            accentDark: '#ca8a04',
+                            // Backgrounds
+                            bgLight: '#f8fafc', // slate-50
+                            bgDark: '#0f172a', // slate-900
+                            cardLight: '#ffffff',
+                            cardDark: '#1e293b', // slate-800
+                        }
+                    },
+                    backgroundImage: {
+                        'sapadai-gradient': 'linear-gradient(to right, #3b9e9b, #eab308)',
+                        'sapadai-gradient-hover': 'linear-gradient(to right, #2a7c79, #ca8a04)',
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01)',
+                        'hover': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for better UI */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        
+        /* Smooth transitions for all elements affected by dark mode */
+        body { transition: background-color 0.3s ease, color 0.3s ease; }
+    </style>
+</head>
+<body class="bg-sapadai-bgLight dark:bg-sapadai-bgDark text-gray-800 dark:text-gray-200 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- ==================== HEADER / NAVBAR ==================== -->
+    <header class="fixed w-full top-0 z-50 bg-white/80 dark:bg-sapadai-bgDark/90 backdrop-blur-md shadow-sm transition-colors duration-300 border-b border-gray-200 dark:border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="#" class="flex items-center gap-3 group">
+                        <img class="h-10 w-auto transition-transform group-hover:scale-105" src="SAPADAI LOGO.png" alt="Logo SAPADAI" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0NCIgZmlsbD0iIzNiOWU5YiIvPjx0ZXh0IHg9IjUwIiB5PSI2MCIgZm9udC1zaXplPSI0MCIgZmlsbD0iI2VhYjMwOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Ik1vbnRzZXJyYXQsIHNhbnMtc2VyaWYiPlM8L3RleHQ+PC9zdmc+'"> <!-- Fallback SVG if image not found -->
+                        <span class="font-bold text-2xl tracking-tight text-sapadai-primary dark:text-sapadai-primaryLight group-hover:text-sapadai-accent transition-colors">
+                            SAPADAI
+                        </span>
+                    </a>
+                </div>
+
+                <!-- Desktop Menu -->
+                <nav class="hidden md:flex space-x-8 items-center">
+                    <a href="#beranda" class="text-gray-600 dark:text-gray-300 hover:text-sapadai-primary dark:hover:text-sapadai-primaryLight font-medium transition-colors">Beranda</a>
+                    <a href="#layanan" class="text-gray-600 dark:text-gray-300 hover:text-sapadai-primary dark:hover:text-sapadai-primaryLight font-medium transition-colors">Layanan Sistem</a>
+                    
+                    <!-- Dark Mode Toggle Button -->
+                    <button id="theme-toggle" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 transition-colors" aria-label="Toggle Dark Mode">
+                        <!-- Sun icon (for dark mode) -->
+                        <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                        <!-- Moon icon (for light mode) -->
+                        <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    </button>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center gap-2">
+                    <button id="theme-toggle-mobile" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none rounded-lg text-sm p-2 transition-colors">
+                        <svg id="theme-toggle-light-icon-mobile" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                        <svg id="theme-toggle-dark-icon-mobile" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    </button>
+                    
+                    <button id="mobile-menu-button" type="button" class="text-gray-600 dark:text-gray-300 hover:text-sapadai-primary focus:outline-none p-2" aria-controls="mobile-menu" aria-expanded="false">
+                        <span class="sr-only">Buka menu utama</span>
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="md:hidden hidden bg-white dark:bg-sapadai-bgDark border-b border-gray-200 dark:border-gray-800 transition-all" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#beranda" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:text-sapadai-primary hover:bg-gray-50 dark:hover:bg-gray-800">Beranda</a>
+                <a href="#layanan" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:text-sapadai-primary hover:bg-gray-50 dark:hover:bg-gray-800">Layanan Sistem</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== HERO SECTION ==================== -->
+    <main class="flex-grow pt-20" id="beranda">
+        <section class="relative overflow-hidden py-16 sm:py-24 lg:py-32">
+            <!-- Background Decoration (Abstract Geometry) -->
+            <div class="absolute inset-0 z-0 opacity-30 dark:opacity-10 pointer-events-none flex justify-center items-center">
+                <svg width="100%" height="100%" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="400" cy="400" r="300" fill="none" stroke="#3b9e9b" stroke-width="2" stroke-dasharray="10 20" opacity="0.3"/>
+                    <circle cx="400" cy="400" r="200" fill="none" stroke="#eab308" stroke-width="1" stroke-dasharray="5 10" opacity="0.4"/>
+                </svg>
+            </div>
+            
+            <div class="absolute -top-24 -right-24 w-96 h-96 bg-sapadai-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-sapadai-accent/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-gray-800 border border-sapadai-primary/20 shadow-sm text-sm font-semibold text-sapadai-primary dark:text-sapadai-primaryLight mb-8 animate-fade-in-up">
+                    <svg class="w-4 h-4 text-sapadai-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+                    Portal Resmi Terpusat
+                </div>
+                
+                <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-gray-900 dark:text-white mb-6">
+                    <span class="block">Selamat Datang di</span>
+                    <span class="block text-transparent bg-clip-text bg-sapadai-gradient mt-2 pb-2">SAPADAI</span>
+                </h1>
+                
+                <h2 class="text-xl md:text-2xl font-medium text-gray-700 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+                    Sistem Administrasi, Pelayanan, dan Informasi<br class="hidden md:block"> Dai Utusan Wahdah Islamiyah
+                </h2>
+                
+                <p class="text-base md:text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-10">
+                    Pintu gerbang terpadu untuk mempermudah tata kelola administrasi, perekaman jejak kinerja dakwah, dan pelayanan informasi profil Dai secara efektif, transparan, dan profesional.
+                </p>
+                
+                <div>
+                    <a href="#layanan" class="inline-flex items-center justify-center px-8 py-4 text-base font-bold rounded-xl text-white bg-sapadai-gradient hover:bg-sapadai-gradient-hover shadow-lg shadow-sapadai-primary/30 hover:shadow-sapadai-primary/50 transition-all duration-300 transform hover:-translate-y-1">
+                        Mulai Akses Layanan
+                        <svg class="ml-2 -mr-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== LAYANAN NAVIGASI ==================== -->
+        <section id="layanan" class="py-16 bg-white dark:bg-sapadai-cardDark border-y border-gray-100 dark:border-gray-800 transition-colors duration-300">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h3 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Pilih Layanan Sistem</h3>
+                    <div class="h-1 w-20 bg-sapadai-accent mx-auto rounded-full"></div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    
+                    <!-- Layanan 1: Akun -->
+                    <a href="./akun/index.html" class="group relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-soft hover:shadow-hover border border-gray-100 dark:border-gray-700 transform transition-all duration-300 hover:-translate-y-2 flex flex-col items-center text-center overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-sapadai-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="w-16 h-16 rounded-full bg-sapadai-bgLight dark:bg-gray-700 flex items-center justify-center mb-6 group-hover:bg-sapadai-primary group-hover:text-white text-sapadai-primary dark:text-sapadai-primaryLight transition-colors duration-300">
+                            <!-- User SVG Icon -->
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path>
+                            </svg>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Layanan Akun</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-6 flex-grow">
+                            Pengaturan hak akses, ganti password, verifikasi identitas, dan preferensi akun Anda.
+                        </p>
+                        <span class="inline-flex items-center text-sm font-semibold text-sapadai-accent group-hover:text-sapadai-accentLight transition-colors">
+                            Buka Layanan <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </span>
+                    </a>
+
+                    <!-- Layanan 2: Kinerja -->
+                    <a href="./kinerja/index.html" class="group relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-soft hover:shadow-hover border border-gray-100 dark:border-gray-700 transform transition-all duration-300 hover:-translate-y-2 flex flex-col items-center text-center overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-sapadai-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="w-16 h-16 rounded-full bg-sapadai-bgLight dark:bg-gray-700 flex items-center justify-center mb-6 group-hover:bg-sapadai-accent group-hover:text-white text-sapadai-accent transition-colors duration-300">
+                            <!-- Chart SVG Icon -->
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Input Kinerja</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-6 flex-grow">
+                            Pelaporan aktivitas dakwah, pencatatan mutaba'ah, dan monitoring indikator capaian.
+                        </p>
+                        <span class="inline-flex items-center text-sm font-semibold text-sapadai-primary group-hover:text-sapadai-primaryLight transition-colors">
+                            Buka Layanan <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </span>
+                    </a>
+
+                    <!-- Layanan 3: Profil -->
+                    <a href="./profil/index.html" class="group relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-soft hover:shadow-hover border border-gray-100 dark:border-gray-700 transform transition-all duration-300 hover:-translate-y-2 flex flex-col items-center text-center overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-sapadai-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="w-16 h-16 rounded-full bg-sapadai-bgLight dark:bg-gray-700 flex items-center justify-center mb-6 group-hover:bg-sapadai-primary group-hover:text-white text-sapadai-primary dark:text-sapadai-primaryLight transition-colors duration-300">
+                            <!-- Edit Doc SVG Icon -->
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Edit Profil</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-6 flex-grow">
+                            Pembaruan data diri, riwayat pendidikan, penugasan wilayah, dan status keaktifan.
+                        </p>
+                        <span class="inline-flex items-center text-sm font-semibold text-sapadai-accent group-hover:text-sapadai-accentLight transition-colors">
+                            Buka Layanan <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </span>
+                    </a>
+                    
+                    <!-- Placeholder for future services -->
+                    <!-- Uncomment and edit when adding new services -->
+                    <!--
+                    <a href="./perizinan/index.html" class="group relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-soft hover:shadow-hover border border-gray-100 dark:border-gray-700 transform transition-all duration-300 hover:-translate-y-2 flex flex-col items-center text-center overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-sapadai-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="w-16 h-16 rounded-full bg-sapadai-bgLight dark:bg-gray-700 flex items-center justify-center mb-6 group-hover:bg-sapadai-accent group-hover:text-white text-sapadai-accent transition-colors duration-300">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Perizinan</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-6 flex-grow">
+                            Pengajuan izin cuti, sakit, atau keperluan lainnya secara sistem terpadu.
+                        </p>
+                        <span class="inline-flex items-center text-sm font-semibold text-sapadai-primary group-hover:text-sapadai-primaryLight transition-colors">
+                            Buka Layanan <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </span>
+                    </a>
+                    -->
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== MODUL NAVIGASI ==================== -->
+        <section id="modul" class="py-16 bg-white dark:bg-sapadai-cardDark border-y border-gray-100 dark:border-gray-800 transition-colors duration-300">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h3 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Pilih Modul Sistem</h3>
+                    <div class="h-1 w-20 bg-sapadai-accent mx-auto rounded-full"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    
+                    <!-- Modul 1: Akun -->
+                    <a href="./akun/index.html" class="group relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-soft hover:shadow-hover border border-gray-100 dark:border-gray-700 transform transition-all duration-300 hover:-translate-y-2 flex flex-col items-center text-center overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-sapadai-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="w-20 h-20 rounded-full bg-sapadai-bgLight dark:bg-gray-700 flex items-center justify-center mb-6 group-hover:bg-sapadai-primary group-hover:text-white text-sapadai-primary dark:text-sapadai-primaryLight transition-colors duration-300">
+                            <!-- User SVG Icon -->
+                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path>
+                            </svg>
+                        </div>
+                        <h4 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">Modul Akun</h4>
+                        <p class="text-gray-500 dark:text-gray-400 mb-6 flex-grow">
+                            Manajemen kredensial, pengaturan hak akses, verifikasi identitas, dan preferensi akun pengguna sistem.
+                        </p>
+                        <span class="inline-flex items-center text-sm font-semibold text-sapadai-accent group-hover:text-sapadai-accentLight transition-colors">
+                            Masuk Modul <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </span>
+                    </a>
+
+                    <!-- Modul 2: Kinerja -->
+                    <a href="./kinerja/index.html" class="group relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-soft hover:shadow-hover border border-gray-100 dark:border-gray-700 transform transition-all duration-300 hover:-translate-y-2 flex flex-col items-center text-center overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-sapadai-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="w-20 h-20 rounded-full bg-sapadai-bgLight dark:bg-gray-700 flex items-center justify-center mb-6 group-hover:bg-sapadai-accent group-hover:text-white text-sapadai-accent transition-colors duration-300">
+                            <!-- Chart SVG Icon -->
+                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                        <h4 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">Modul Kinerja</h4>
+                        <p class="text-gray-500 dark:text-gray-400 mb-6 flex-grow">
+                            Pelaporan aktivitas dakwah bulanan, pencatatan mutaba'ah, dan monitoring indikator pencapaian Dai.
+                        </p>
+                        <span class="inline-flex items-center text-sm font-semibold text-sapadai-primary group-hover:text-sapadai-primaryLight transition-colors">
+                            Masuk Modul <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </span>
+                    </a>
+
+                    <!-- Modul 3: Profil -->
+                    <a href="./profil/index.html" class="group relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-soft hover:shadow-hover border border-gray-100 dark:border-gray-700 transform transition-all duration-300 hover:-translate-y-2 flex flex-col items-center text-center overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-sapadai-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="w-20 h-20 rounded-full bg-sapadai-bgLight dark:bg-gray-700 flex items-center justify-center mb-6 group-hover:bg-sapadai-primary group-hover:text-white text-sapadai-primary dark:text-sapadai-primaryLight transition-colors duration-300">
+                            <!-- Building/Doc SVG Icon -->
+                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                        </div>
+                        <h4 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">Modul Profil</h4>
+                        <p class="text-gray-500 dark:text-gray-400 mb-6 flex-grow">
+                            Pengelolaan data demografi, riwayat pendidikan, penugasan wilayah, dan status keaktifan kelembagaan.
+                        </p>
+                        <span class="inline-flex items-center text-sm font-semibold text-sapadai-accent group-hover:text-sapadai-accentLight transition-colors">
+                            Masuk Modul <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </span>
+                    </a>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="bg-white dark:bg-sapadai-bgDark py-8 border-t border-gray-200 dark:border-gray-800 transition-colors duration-300 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-center md:text-left">
+                <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">
+                    &copy; <span id="currentYear"></span> SAPADAI. Hak Cipta Dilindungi.<br class="md:hidden"> 
+                    <span class="text-sapadai-primary dark:text-sapadai-primaryLight font-bold">Wahdah Islamiyah</span>
+                </p>
+            </div>
+            <div class="flex space-x-6">
+                <span class="text-gray-400 dark:text-gray-500 text-sm flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg>
+                    Internal Use Only
+                </span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        // Set dynamic year in footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // 1. Mobile Menu Toggle
+        const btn = document.getElementById('mobile-menu-button');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+            const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+            btn.setAttribute('aria-expanded', !isExpanded);
+        });
+
+        // Close mobile menu when clicking a link
+        menu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+                btn.setAttribute('aria-expanded', 'false');
+            });
+        });
+
+        // 2. Dark Mode Setup & Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeToggleBtnMobile = document.getElementById('theme-toggle-mobile');
+        
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+        const themeToggleDarkIconMobile = document.getElementById('theme-toggle-dark-icon-mobile');
+        const themeToggleLightIconMobile = document.getElementById('theme-toggle-light-icon-mobile');
+
+        // Function to update icon visibility based on current theme
+        const updateIcons = () => {
+            if (document.documentElement.classList.contains('dark')) {
+                themeToggleLightIcon.classList.remove('hidden');
+                themeToggleDarkIcon.classList.add('hidden');
+                themeToggleLightIconMobile.classList.remove('hidden');
+                themeToggleDarkIconMobile.classList.add('hidden');
+            } else {
+                themeToggleLightIcon.classList.add('hidden');
+                themeToggleDarkIcon.classList.remove('hidden');
+                themeToggleLightIconMobile.classList.add('hidden');
+                themeToggleDarkIconMobile.classList.remove('hidden');
+            }
+        };
+
+        // Check local storage or system preference on load
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        
+        // Initial icon update
+        updateIcons();
+
+        // Toggle Function
+        const toggleTheme = () => {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('color-theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('color-theme', 'dark');
+            }
+            updateIcons();
+        };
+
+        // Event listeners for toggle buttons (Desktop & Mobile)
+        themeToggleBtn.addEventListener('click', toggleTheme);
+        themeToggleBtnMobile.addEventListener('click', toggleTheme);
+    </script>
+</body>
+</html>
