@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Manajemen Akun SAPADAI</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Tambahan Bootstrap JS untuk Modal -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        /* Desain & UI Style */
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #1f2937; margin: 0; padding: 0; }
+        .bg-theme { background-color: #0f766e !important; color: white !important;}
+        .text-theme { color: #0f766e !important; }
+        .btn-theme { background-color: #0f766e; color: white; border: none; }
+        .btn-theme:hover { background-color: #0d5f58; color: white; }
+        
+        .input-elegant { border: 1px solid #d1d5db; border-radius: 8px; padding: 10px 14px; width: 100%; transition: all 0.3s; background-color: white; }
+        .input-elegant:focus { outline: none; box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.2); border-color: #0f766e; }
+        .input-elegant.val-success { border-color: #10b981 !important; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2) !important;}
+        .input-elegant.val-error { border-color: #ef4444 !important; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;}
+        
+        .card-custom { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); border: none; }
+        
+        .toolbar-select { max-width: 160px; }
+        .page-item.active .page-link { background-color: #0f766e; border-color: #0f766e; color: white; }
+        .page-link { color: #0f766e; cursor: pointer; }
+        .duplicate-text { color: #dc3545 !important; font-weight: bold; background: #ffe6e6; padding: 2px 4px; border-radius: 4px;}
+        
+        #loadingOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.8); display: flex; justify-content: center; align-items: center;
+            z-index: 9999; visibility: hidden; opacity: 0; transition: opacity 0.3s;
+        }
+        #loadingOverlay.show { visibility: visible; opacity: 1; }
+        .spinner { width: 50px; height: 50px; border: 5px solid #e5e7eb; border-top: 5px solid #0f766e; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Login Background Baru */
+        .login-wrapper { 
+            height: 100vh; display: flex; align-items: center; justify-content: center; 
+            background: linear-gradient(135deg, #0f766e, #14b8a6);
+        }
+        .app-title { font-weight: 700; letter-spacing: -0.5px; }
+        
+        /* Dashboard Cards */
+        .stat-card { border-radius: 10px; padding: 15px; color: white; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .stat-card h3 { margin: 0; font-weight: 700; }
+        .stat-card p { margin: 0; font-size: 0.9rem; opacity: 0.9;}
+        .stat-icon { font-size: 2.5rem; opacity: 0.3; }
+
+        /* Sortable Header */
+        th.sortable { cursor: pointer; user-select: none; transition: background 0.2s; }
+        th.sortable:hover { background-color: #e5e7eb; }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay">
+        <div class="text-center">
+            <div class="spinner mb-3"></div>
+            <h5 class="text-theme fw-semibold">Memproses Data...</h5>
+        </div>
+    </div>
+
+    <!-- 1. LOGIN SCREEN -->
+    <div id="screen-login" class="login-wrapper">
+        <div class="col-11 col-md-4 col-lg-3">
+            <div class="card-custom p-4 text-center shadow-lg border-0" style="background: rgba(255, 255, 255, 0.95);">
+                <div class="mb-4">
+                    <!-- Penambahan Logo SAPADAI 2 -->
+                    <img src="logo_sapadai_2.png" alt="Logo SAPADAI" class="img-fluid mb-3 mx-auto" style="max-height: 110px; object-fit: contain;">
+                    <h3 class="app-title text-theme">SAPADAI</h3>
+                    <p class="text-muted small mb-0">Sistem Manajemen Akun Terpadu</p>
+                </div>
+                <form id="formLogin" onsubmit="handleLogin(event)">
+                    <div class="mb-3 text-start">
+                        <input type="password" id="inputKode" class="input-elegant text-center fw-bold fs-5" placeholder="Masukkan Kode Admin" required>
+                    </div>
+                    <button type="submit" class="btn btn-theme w-100 py-2 fw-semibold rounded-3 shadow-sm">Masuk <i class="bi bi-box-arrow-in-right ms-1"></i></button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. DASHBOARD SCREEN -->
+    <div id="screen-dashboard" style="display: none;">
+        <!-- Navbar -->
+        <nav class="navbar bg-theme shadow-sm mb-4">
+            <div class="container-fluid px-4">
+                <span class="navbar-brand mb-0 h5 fw-bold text-white d-flex align-items-center">
+                    <!-- Penambahan Logo SAPADAI 1 -->
+                    <img src="logo_sapadai_1.png" alt="Logo" class="me-2 rounded p-1 bg-white" style="height: 35px; width: auto; object-fit: contain;">
+                    SAPADAI Dashboard
+                </span>
+                <div class="d-flex align-items-center">
+                    <span class="text-white me-3 small d-none d-md-block">Halo, <b id="lblAdminName">Admin</b></span>
+                    <button class="btn btn-sm btn-light text-theme fw-bold rounded-pill px-3 shadow-sm" onclick="logout()"><i class="bi bi-power"></i> Keluar</button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container-fluid px-4">
+            
+            <!-- Dashboard Stats -->
+            <div class="row mb-4 g-3">
+                <div class="col-6 col-md-2">
+                    <div class="stat-card bg-primary">
+                        <div>
+                            <p>Total SDM</p>
+                            <h3 id="stat-total">0</h3>
+                        </div>
+                        <i class="bi bi-people-fill stat-icon"></i>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="stat-card bg-success">
+                        <div>
+                            <p>Akun Aktif</p>
+                            <h3 id="stat-aktif">0</h3>
+                        </div>
+                        <i class="bi bi-person-check-fill stat-icon"></i>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="stat-card bg-secondary">
+                        <div>
+                            <p>Non-Aktif</p>
+                            <h3 id="stat-nonaktif">0</h3>
+                        </div>
+                        <i class="bi bi-person-x-fill stat-icon"></i>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-card bg-info text-dark">
+                        <div>
+                            <p>Ikhwan (Laki-laki)</p>
+                            <h3 id="stat-laki">0</h3>
+                        </div>
+                        <i class="bi bi-gender-male stat-icon"></i>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <div class="stat-card" style="background-color: #ec4899;">
+                        <div>
+                            <p>Akhwat (Perempuan)</p>
+                            <h3 id="stat-perempuan">0</h3>
+                        </div>
+                        <i class="bi bi-gender-female stat-icon"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabel Daftar Akun -->
+            <div class="card-custom p-4 mb-4 border shadow-sm">
+                
+                <!-- Toolbar Atas -->
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                    <h5 class="fw-bold mb-0 text-theme"><i class="bi bi-card-list"></i> Daftar Akun SDM</h5>
+                    
+                    <div class="d-flex align-items-center gap-2 flex-wrap flex-grow-1 justify-content-end">
+                        <button class="btn btn-theme shadow-sm" onclick="openModalAdd()"><i class="bi bi-plus-circle"></i> Tambah SDM</button>
+                        
+                        <div class="vr mx-1 d-none d-md-block"></div>
+
+                        <select id="filterGender" class="form-select toolbar-select shadow-sm" onchange="applyFilters()">
+                            <option value="">Semua Gender</option>
+                            <option value="Laki-laki">Ikhwan (L)</option>
+                            <option value="Perempuan">Akhwat (P)</option>
+                        </select>
+                        <select id="filterStatus" class="form-select toolbar-select shadow-sm" onchange="applyFilters()">
+                            <option value="">Semua Status</option>
+                            <option value="Aktif">Aktif</option>
+                            <option value="Non-Aktif">Non-Aktif</option>
+                        </select>
+                        <div class="input-group shadow-sm" style="max-width: 250px;">
+                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                            <input type="text" id="searchBox" class="form-control border-start-0" placeholder="Cari nama, ID, WA..." onkeyup="applyFilters()">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-responsive" style="min-height: 350px;">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="sortable" onclick="setSort('ID')">ID Akun <i class="bi bi-arrow-down-up small text-muted"></i></th>
+                                <th class="sortable" onclick="setSort('Nama')">Nama <i class="bi bi-arrow-down-up small text-muted"></i></th>
+                                <th class="sortable" onclick="setSort('Gender')">Gender <i class="bi bi-arrow-down-up small text-muted"></i></th>
+                                <th>Kontak & Akses</th>
+                                <th class="sortable" onclick="setSort('Status')">Status <i class="bi bi-arrow-down-up small text-muted"></i></th>
+                                <th class="text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Data rendered here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2 border-top pt-3">
+                    <div class="d-flex align-items-center">
+                        <span class="small text-muted me-2" id="pageInfo">Menampilkan 0 data</span>
+                        <select id="limitSelect" class="form-select form-select-sm w-auto shadow-sm" onchange="changeLimit(this.value)">
+                            <option value="5">5 / Halaman</option>
+                            <option value="10" selected>10 / Halaman</option>
+                            <option value="20">20 / Halaman</option>
+                            <option value="50">50 / Halaman</option>
+                            <option value="all">Semua Data</option>
+                        </select>
+                    </div>
+                    <ul class="pagination pagination-sm mb-0 flex-wrap shadow-sm" id="paginationControls">
+                        <!-- Pagination generated here -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. MODAL TAMBAH / EDIT SDM -->
+    <div class="modal fade" id="modalSDM" tabindex="-1" aria-labelledby="modalSDMLabel" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-theme text-white border-0">
+                    <h5 class="modal-title fw-bold" id="modalSDMLabel"><i class="bi bi-person-plus"></i> Form Registrasi Akun</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" onclick="resetForm()"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="formAkun" onsubmit="saveAkun(event)">
+                        <input type="hidden" id="formMode" value="add">
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label class="form-label small fw-semibold">Jenis Kelamin *</label>
+                                <select id="f_gender" class="input-elegant" required onchange="handleGenderChange(); validateField(this)">
+                                    <option value="">-- Pilih --</option>
+                                    <option value="Laki-laki">Ikhwan (Laki-laki)</option>
+                                    <option value="Perempuan">Akhwat (Perempuan)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">ID Akun (Otomatis)</label>
+                                <input type="text" id="f_id" class="input-elegant bg-light fw-bold text-theme" readonly placeholder="Pilih Jenis Kelamin Dulu">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Nama Lengkap *</label>
+                            <input type="text" id="f_nama" class="input-elegant" required onkeyup="validateField(this)">
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label class="form-label small fw-semibold">No. WhatsApp *</label>
+                                <input type="number" id="f_wa" class="input-elegant" required onkeyup="validateField(this, 'number')">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Email *</label>
+                                <input type="email" id="f_email" class="input-elegant" required onkeyup="validateField(this, 'email')">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label small fw-semibold">Password Akun *</label>
+                            <input type="text" id="f_password" class="input-elegant" required onkeyup="validateField(this)" placeholder="Masukkan password...">
+                        </div>
+                        <div class="text-end border-top pt-3">
+                            <button type="button" class="btn btn-light border me-2" data-bs-dismiss="modal" onclick="resetForm()">Batal</button>
+                            <button type="submit" class="btn btn-theme px-4" id="btnSubmitForm">Simpan Akun</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbzY0GVGVqgo2-HUe_s0xxibhCDYScaE9fFx3J1M-E3icWik3RhprGRZ67_VdoSI8biu/exec";
+
+        // ==========================================
+        // 1. STATE & CORE API
+        // ==========================================
+        let db = { admin: [], akun: [] };
+        let currentAdmin = "";
+        let filteredData = [];
+        let currentPage = 1;
+        let rowsPerPage = 10;
+        let sortConfig = { column: 'ID', order: 'desc' };
+        
+        let modalInst = null;
+
+        // Core API Caller - Mendukung Github (fetch) & GAS (google.script.run)
+        async function callAPI(action, payload = {}) {
+            payload.action = action;
+            
+            if (typeof google !== 'undefined' && google.script) {
+                return new Promise((resolve) => {
+                    let runner = google.script.run
+                        .withSuccessHandler(res => resolve({success: true, data: res}))
+                        .withFailureHandler(err => resolve({success: false, message: err.message}));
+                    
+                    if (action === 'login') runner.login(payload.kode);
+                    else if (action === 'getAllData') runner.getAllData();
+                    else if (action === 'generateID') runner.generateID(payload.gender);
+                    else if (action === 'saveData') runner.saveData(payload.data, payload.adminName);
+                    else if (action === 'updateData') runner.updateData(payload.data, payload.adminName);
+                    else if (action === 'toggleStatus') runner.toggleStatus(payload.id, payload.newStatus, payload.adminName);
+                    else if (action === 'deleteData') runner.deleteData(payload.id, payload.adminName);
+                });
+            } else {
+                try {
+                    const response = await fetch(GAS_URL, {
+                        method: 'POST',
+                        body: JSON.stringify(payload)
+                    });
+                    return await response.json();
+                } catch (error) {
+                    console.error("Fetch API Error:", error);
+                    return { success: false, message: "Koneksi ke server gagal. Periksa koneksi internet atau URL GAS." };
+                }
+            }
+        }
+
+        // ==========================================
+        // 2. UI HELPERS
+        // ==========================================
+        function startLoading() { document.getElementById('loadingOverlay').classList.add('show'); }
+        function endLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            modalInst = new bootstrap.Modal(document.getElementById('modalSDM'));
+        });
+
+        // ==========================================
+        // 3. AUTH & INIT
+        // ==========================================
+        async function handleLogin(e) {
+            e.preventDefault();
+            const kode = document.getElementById('inputKode').value;
+            startLoading();
+
+            const res = await callAPI('login', { kode: kode });
+            
+            if (res.success) {
+                const responseData = res.data;
+                if (responseData.success === false) {
+                    Swal.fire('Gagal', responseData.message || 'Kode Admin tidak valid', 'error');
+                    endLoading();
+                } else {
+                    currentAdmin = responseData.adminName || responseData;
+                    fetchDataGasAndInit();
+                }
+            } else {
+                Swal.fire('Error', res.message, 'error'); 
+                endLoading();
+            }
+        }
+
+        async function fetchDataGasAndInit() {
+            const res = await callAPI('getAllData');
+            if (res.success) {
+                db = res.data;
+                initDashboard();
+            } else {
+                Swal.fire('Gagal Memuat Data', res.message, 'error');
+            }
+            endLoading();
+        }
+
+        function initDashboard() {
+            document.getElementById('screen-login').style.display = 'none';
+            document.getElementById('screen-dashboard').style.display = 'block';
+            document.getElementById('lblAdminName').innerText = currentAdmin;
+            document.getElementById('inputKode').value = "";
+            applyFilters();
+        }
+
+        function logout() {
+            currentAdmin = "";
+            document.getElementById('screen-dashboard').style.display = 'none';
+            document.getElementById('screen-login').style.display = 'flex';
+        }
+
+        // ==========================================
+        // 4. STATS & SORTING
+        // ==========================================
+        function updateStats() {
+            let tTotal = db.akun.length;
+            let tAktif = 0, tNonAktif = 0, tLaki = 0, tPerempuan = 0;
+            
+            db.akun.forEach(a => {
+                if(a.Status === 'Aktif') tAktif++;
+                else if(a.Status === 'Non-Aktif') tNonAktif++;
+                
+                if(a.Gender === 'Laki-laki') tLaki++;
+                else if(a.Gender === 'Perempuan') tPerempuan++;
+            });
+
+            document.getElementById('stat-total').innerText = tTotal;
+            document.getElementById('stat-aktif').innerText = tAktif;
+            document.getElementById('stat-nonaktif').innerText = tNonAktif;
+            document.getElementById('stat-laki').innerText = tLaki;
+            document.getElementById('stat-perempuan').innerText = tPerempuan;
+        }
+
+        function setSort(column) {
+            if (sortConfig.column === column) {
+                sortConfig.order = sortConfig.order === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortConfig.column = column;
+                sortConfig.order = 'asc';
+            }
+            applyFilters();
+        }
+
+        // ==========================================
+        // 5. MODAL & ID GENERATION
+        // ==========================================
+        function openModalAdd() {
+            resetForm();
+            document.getElementById('modalSDMLabel').innerHTML = '<i class="bi bi-person-plus"></i> Tambah Akun Baru';
+            modalInst.show();
+        }
+
+        function resetForm() {
+            document.getElementById('formAkun').reset();
+            document.getElementById('formMode').value = 'add';
+            document.getElementById('f_id').value = '';
+            document.getElementById('f_gender').disabled = false;
+            document.getElementById('btnSubmitForm').disabled = false;
+            document.querySelectorAll('.input-elegant').forEach(el => el.classList.remove('val-success', 'val-error'));
+        }
+
+        async function handleGenderChange() {
+            const gender = document.getElementById('f_gender').value;
+            const inputId = document.getElementById('f_id');
+            const mode = document.getElementById('formMode').value;
+            
+            if(!gender || mode === 'edit') return;
+            inputId.value = "Membuat ID...";
+            
+            const res = await callAPI('generateID', { gender: gender });
+            if (res.success) {
+                inputId.value = res.data;
+            } else {
+                inputId.value = "Gagal membuat ID";
+                Swal.fire('Error', res.message, 'error');
+            }
+        }
+
+        function validateField(el, type = 'text') {
+            const val = el.value.trim();
+            let isValid = val.length > 0;
+            if (type === 'email' && isValid) { isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val); }
+            if (type === 'number' && isValid) { isValid = /^\d+$/.test(val); }
+
+            if (isValid) { el.classList.remove('val-error'); el.classList.add('val-success'); } 
+            else {
+                el.classList.remove('val-success');
+                if (val.length > 0) el.classList.add('val-error'); else el.classList.remove('val-error');
+            }
+        }
+
+        // ==========================================
+        // 6. CRUD OPERATIONS
+        // ==========================================
+        function checkDuplicateLocal(data, isEdit) {
+            const existing = db.akun.filter(a => a.ID !== data.ID || !isEdit);
+            const dupID = existing.find(a => a.ID === data.ID);
+            const dupWA = existing.find(a => a.WA !== "" && a.WA === data.WA);
+            const dupEmail = existing.find(a => a.Email !== "" && a.Email.toLowerCase() === data.Email.toLowerCase());
+
+            if (dupID && !isEdit) return `ID ${data.ID} sudah ada! Harap ubah Jenis Kelamin untuk reset ID.`;
+            if (dupWA) return `No WA ${data.WA} sudah dipakai oleh ${dupWA.Nama}.`;
+            if (dupEmail) return `Email ${data.Email} sudah dipakai oleh ${dupEmail.Nama}.`;
+            return null;
+        }
+
+        async function saveAkun(e) {
+            e.preventDefault();
+            const errs = document.querySelectorAll('.val-error');
+            if(errs.length > 0) {
+                Swal.fire('Perhatian', 'Pastikan semua kolom diisi dengan benar (Hijau)', 'warning'); return;
+            }
+
+            const data = {
+                ID: document.getElementById('f_id').value,
+                Nama: document.getElementById('f_nama').value,
+                WA: document.getElementById('f_wa').value,
+                Email: document.getElementById('f_email').value,
+                Password: document.getElementById('f_password').value,
+                Gender: document.getElementById('f_gender').value
+            };
+            
+            const mode = document.getElementById('formMode').value;
+            const isEdit = mode === 'edit';
+            
+            const duplicateMsg = checkDuplicateLocal(data, isEdit);
+            if(duplicateMsg) { Swal.fire('Data Duplikat!', duplicateMsg, 'error'); return; }
+
+            document.getElementById('btnSubmitForm').disabled = true;
+            startLoading();
+
+            const action = isEdit ? 'updateData' : 'saveData';
+            const res = await callAPI(action, { data: data, adminName: currentAdmin });
+
+            if (res.success) {
+                db = res.data;
+                finishFormAction();
+                Swal.fire('Sukses', isEdit ? 'Data diupdate' : 'Data disimpan', 'success');
+            } else {
+                endLoading();
+                document.getElementById('btnSubmitForm').disabled = false;
+                Swal.fire('Gagal!', res.message || (res.data && res.data.message), 'error');
+            }
+        }
+
+        function finishFormAction() {
+            modalInst.hide();
+            resetForm();
+            applyFilters(); 
+            endLoading();
+        }
+
+        function editData(id) {
+            const data = db.akun.find(a => a.ID === id);
+            if(!data) return;
+
+            resetForm();
+            document.getElementById('modalSDMLabel').innerHTML = '<i class="bi bi-pencil-square"></i> Edit Akun SDM';
+            document.getElementById('formMode').value = 'edit';
+            document.getElementById('f_id').value = data.ID;
+            document.getElementById('f_nama').value = data.Nama;
+            document.getElementById('f_wa').value = data.WA;
+            document.getElementById('f_email').value = data.Email;
+            document.getElementById('f_password').value = data.Password;
+            
+            const selGender = document.getElementById('f_gender');
+            selGender.value = data.Gender;
+            selGender.disabled = true;
+
+            document.querySelectorAll('.input-elegant').forEach(el => validateField(el, el.type));
+            modalInst.show();
+        }
+
+        function ubahStatus(id, currentStatus) {
+            const newStatus = currentStatus === 'Aktif' ? 'Non-Aktif' : 'Aktif';
+            Swal.fire({
+                title: 'Ubah Status', text: `Jadikan status akun ini ${newStatus}?`, icon: 'question',
+                showCancelButton: true, confirmButtonText: 'Ya, Ubah', confirmButtonColor: '#0f766e'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    startLoading();
+                    const res = await callAPI('toggleStatus', { id: id, newStatus: newStatus, adminName: currentAdmin });
+                    if (res.success) {
+                        db = res.data; applyFilters(); Swal.fire('Sukses', 'Status diubah', 'success');
+                    } else {
+                        Swal.fire('Gagal', res.message, 'error');
+                    }
+                    endLoading();
+                }
+            });
+        }
+
+        function hapusData(id) {
+            Swal.fire({
+                title: 'Hapus Permanen?', text: "Data akan dihapus dari aplikasi dan database!", icon: 'warning',
+                showCancelButton: true, confirmButtonColor: '#ef4444', confirmButtonText: 'Ya, Hapus!'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    startLoading();
+                    const res = await callAPI('deleteData', { id: id, adminName: currentAdmin });
+                    if (res.success) {
+                        db = res.data; applyFilters(); Swal.fire('Dihapus!', 'Data dihapus.', 'success');
+                    } else {
+                        Swal.fire('Gagal', res.message, 'error');
+                    }
+                    endLoading();
+                }
+            });
+        }
+
+        // ==========================================
+        // 7. FILTER, RENDER & PAGINATION
+        // ==========================================
+        function applyFilters() {
+            updateStats(); // Update dashboard cards
+
+            const q = document.getElementById('searchBox').value.toLowerCase();
+            const fGender = document.getElementById('filterGender').value;
+            const fStatus = document.getElementById('filterStatus').value;
+
+            filteredData = db.akun.filter(a => {
+                const matchSearch = 
+                    (a.Nama && a.Nama.toLowerCase().includes(q)) || 
+                    (a.ID && a.ID.toLowerCase().includes(q)) || 
+                    (a.WA && a.WA.toLowerCase().includes(q));
+                const matchGender = fGender === "" || a.Gender === fGender;
+                const matchStatus = fStatus === "" || a.Status === fStatus;
+                return matchSearch && matchGender && matchStatus;
+            });
+            
+            // Logika Sorting
+            filteredData.sort((a, b) => {
+                let valA = a[sortConfig.column] ? a[sortConfig.column].toString().toLowerCase() : '';
+                let valB = b[sortConfig.column] ? b[sortConfig.column].toString().toLowerCase() : '';
+                
+                if (valA < valB) return sortConfig.order === 'asc' ? -1 : 1;
+                if (valA > valB) return sortConfig.order === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            currentPage = 1; 
+            renderTable();
+        }
+
+        function changeLimit(limit) {
+            rowsPerPage = limit === 'all' ? filteredData.length || 1 : parseInt(limit);
+            currentPage = 1;
+            renderTable();
+        }
+
+        function getDuplicateCounts() {
+            const idCount = {}; const waCount = {}; const emailCount = {};
+            db.akun.forEach(a => {
+                if(a.ID) idCount[a.ID] = (idCount[a.ID] || 0) + 1;
+                if(a.WA) waCount[a.WA] = (waCount[a.WA] || 0) + 1;
+                if(a.Email) emailCount[a.Email] = (emailCount[a.Email] || 0) + 1;
+            });
+            return { idCount, waCount, emailCount };
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            const totalRows = filteredData.length;
+            
+            if (totalRows === 0) {
+                document.getElementById('pageInfo').innerText = "Menampilkan 0 data";
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-5 text-muted"><i class="bi bi-folder2-open fs-1 d-block mb-2"></i> Belum ada data / tidak ditemukan.</td></tr>`;
+                renderPagination(0);
+                return;
+            }
+
+            const totalPages = Math.ceil(totalRows / rowsPerPage);
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex = Math.min(startIndex + rowsPerPage, totalRows);
+            const pageData = filteredData.slice(startIndex, endIndex);
+
+            document.getElementById('pageInfo').innerText = `Data ${startIndex + 1} - ${endIndex} dari total ${totalRows} data`;
+            
+            const counts = getDuplicateCounts();
+
+            pageData.forEach(row => {
+                const badgeClass = row.Status === 'Aktif' ? 'bg-success' : 'bg-secondary';
+                const toggleIcon = row.Status === 'Aktif' ? 'bi-toggle-on' : 'bi-toggle-off';
+                const toggleBtn = row.Status === 'Aktif' ? 'btn-outline-warning' : 'btn-outline-success';
+                
+                const isDupID = counts.idCount[row.ID] > 1;
+                const isDupWA = row.WA && counts.waCount[row.WA] > 1;
+                const isDupEmail = row.Email && counts.emailCount[row.Email] > 1;
+
+                const idHTML = isDupID ? `<span class="duplicate-text" title="ID Duplikat!">${row.ID}</span>` : (row.ID || '-');
+                const waHTML = isDupWA ? `<span class="duplicate-text" title="WA Duplikat!">${row.WA}</span>` : (row.WA || '-');
+                const emHTML = row.Email ? (isDupEmail ? `<span class="duplicate-text" title="Email Duplikat!">${row.Email}</span>` : row.Email) : '-';
+                const passHTML = row.Password || '-';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><span class="badge bg-light text-dark border font-monospace">${idHTML}</span></td>
+                    <td class="fw-semibold text-dark">${row.Nama || '-'}</td>
+                    <td>${row.Gender || '-'}</td>
+                    <td>
+                        <div class="small"><i class="bi bi-whatsapp text-success me-1"></i> ${waHTML}</div>
+                        <div class="small"><i class="bi bi-envelope text-secondary me-1"></i> ${emHTML}</div>
+                        <div class="small"><i class="bi bi-key text-warning me-1"></i> ${passHTML}</div>
+                    </td>
+                    <td><span class="badge ${badgeClass}">${row.Status || '-'}</span></td>
+                    <td class="text-center">
+                        <button class="btn btn-sm ${toggleBtn} me-1" title="Ubah Status" onclick="ubahStatus('${row.ID}', '${row.Status}')"><i class="bi ${toggleIcon}"></i></button>
+                        <button class="btn btn-sm btn-outline-primary me-1" title="Edit" onclick="editData('${row.ID}')"><i class="bi bi-pencil-square"></i></button>
+                        <button class="btn btn-sm btn-outline-danger" title="Hapus" onclick="hapusData('${row.ID}')"><i class="bi bi-trash3-fill"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            renderPagination(totalPages);
+        }
+
+        // SMART PAGINATION
+        function renderPagination(totalPages) {
+            const paginationEl = document.getElementById('paginationControls');
+            paginationEl.innerHTML = '';
+            if (totalPages <= 1) return;
+
+            let html = '';
+            const prevDisabled = currentPage === 1 ? 'disabled' : '';
+            html += `<li class="page-item ${prevDisabled}"><a class="page-link" onclick="changePage(${currentPage - 1})">Prev</a></li>`;
+
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, currentPage + 2);
+            
+            if (startPage > 1) {
+                html += `<li class="page-item"><a class="page-link" onclick="changePage(1)">1</a></li>`;
+                if (startPage > 2) html += `<li class="page-item disabled"><a class="page-link">...</a></li>`;
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                const activeClass = i === currentPage ? 'active' : '';
+                html += `<li class="page-item ${activeClass}"><a class="page-link" onclick="changePage(${i})">${i}</a></li>`;
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) html += `<li class="page-item disabled"><a class="page-link">...</a></li>`;
+                html += `<li class="page-item"><a class="page-link" onclick="changePage(${totalPages})">${totalPages}</a></li>`;
+            }
+
+            const nextDisabled = currentPage === totalPages ? 'disabled' : '';
+            html += `<li class="page-item ${nextDisabled}"><a class="page-link" onclick="changePage(${currentPage + 1})">Next</a></li>`;
+            
+            paginationEl.innerHTML = html;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            renderTable();
+        }
+
+    </script>
+</body>
+</html>
