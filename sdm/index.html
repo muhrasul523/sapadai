@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Manajemen Akun SAPADAI</title>
+    <title>Sistem Manajemen SDM SAPADAI</title>
     
+    <!-- Favicon Tab Browser -->
+    <link rel="icon" type="image/png" href="../logo_sapadai_1.png">
+
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -31,7 +34,10 @@
             --text-muted: #6b7280;
             --border-color: #e5e7eb;
             --input-bg: #ffffff;
-            --table-hover: #f8fafc;
+            --table-hover: #f0fdfa;
+            --table-odd: #ffffff;
+            --table-even: #f8fafc;
+            --table-header-bg: #f1f5f9;
             --theme-color: #0f766e;
             --theme-hover: #0d5f58;
             --glass-bg: rgba(255, 255, 255, 0.95);
@@ -43,12 +49,15 @@
             --bg-body: #0f172a;
             --bg-card: #1e293b;
             --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+            --text-muted: #cbd5e1; /* Diperterang agar lebih terbaca */
             --border-color: #334155;
             --input-bg: #0f172a;
-            --table-hover: #334155;
+            --table-hover: #1e293b;
+            --table-odd: #1e293b;
+            --table-even: #162032; /* Sedikit lebih gelap dari card */
+            --table-header-bg: #0f172a;
             --theme-color: #14b8a6;
-            --theme-hover: #0f766e;
+            --theme-hover: #2dd4bf;
             --glass-bg: rgba(30, 41, 59, 0.85);
             --shadow-color: rgba(0, 0, 0, 0.4);
             --duplicate-bg: #450a0a;
@@ -113,18 +122,23 @@
         .stat-icon { font-size: 3.5rem; position: absolute; right: -10px; bottom: -15px; opacity: 0.2; transform: rotate(-10deg); transition: transform 0.3s; }
         .stat-card:hover .stat-icon { transform: rotate(0deg) scale(1.1); }
         
-        .bg-gradient-1 { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        /* Modifikasi warna gradasi agar teks putih jelas terbaca */
+        .bg-gradient-1 { background: linear-gradient(135deg, #2563eb, #1e40af); } /* Biru lebih pekat */
         .bg-gradient-2 { background: linear-gradient(135deg, #10b981, #047857); }
         .bg-gradient-3 { background: linear-gradient(135deg, #64748b, #334155); }
         .bg-gradient-4 { background: linear-gradient(135deg, #f59e0b, #b45309); }
         .bg-gradient-5 { background: linear-gradient(135deg, #ec4899, #be185d); }
 
-        /* Sortable & Table Custom */
+        /* Sortable, Table Zebra & Header Custom */
         .table { color: var(--text-main); border-color: var(--border-color); }
-        .table-hover tbody tr:hover { background-color: var(--table-hover); color: var(--text-main); }
-        .table>thead { background-color: var(--bg-card); color: var(--text-muted); border-bottom: 2px solid var(--border-color); }
+        .table-striped-custom > tbody > tr:nth-of-type(odd) > td { background-color: var(--table-odd); border-bottom-color: var(--border-color); }
+        .table-striped-custom > tbody > tr:nth-of-type(even) > td { background-color: var(--table-even); border-bottom-color: var(--border-color); }
+        .table-striped-custom > tbody > tr:hover > td { background-color: var(--table-hover); transition: background-color 0.2s;}
+        
+        .table-custom-header > th { background-color: var(--table-header-bg) !important; color: var(--text-main) !important; border-bottom: 2px solid var(--theme-color) !important; font-weight: 600; }
+        
         th.sortable { cursor: pointer; user-select: none; transition: color 0.2s, background-color 0.2s; }
-        th.sortable:hover { color: var(--theme-color); background-color: var(--table-hover); }
+        th.sortable:hover { color: var(--theme-color) !important; background-color: var(--table-hover) !important; }
     </style>
 </head>
 <body>
@@ -142,8 +156,10 @@
         <div class="col-11 col-md-5 col-lg-4">
             <div class="card-custom glass-effect p-5 text-center border-0">
                 <div class="mb-4">
-                    <!-- Path gambar dinaikkan 1 level agar bisa mengakses logo di luar folder sdm -->
-                    <img src="../logo_sapadai_2.png" alt="Logo SAPADAI" class="img-fluid mb-4 mx-auto" style="max-height: 120px; object-fit: contain; filter: drop-shadow(0 10px 8px rgba(0,0,0,0.1));">
+                    <!-- Ukuran diperbesar & dibulatkan sudutnya -->
+                    <div style="background: var(--bg-card); padding: 15px; border-radius: 24px; display: inline-block; box-shadow: 0 4px 15px var(--shadow-color); margin-bottom: 20px;">
+                        <img src="../logo_sapadai_2.png" alt="Logo SAPADAI" class="img-fluid mx-auto" style="max-height: 150px; object-fit: contain;">
+                    </div>
                     <h3 class="app-title text-theme mb-1">SAPADAI</h3>
                     <p class="text-muted-custom small mb-0 fw-medium">Sistem Manajemen Akun Terpadu</p>
                 </div>
@@ -261,15 +277,16 @@
                 </div>
                 
                 <div class="table-responsive" style="min-height: 350px;">
-                    <table class="table table-hover align-middle border-0">
+                    <table class="table align-middle border-0 table-striped-custom">
                         <thead>
-                            <tr>
-                                <th class="sortable text-muted-custom py-3" onclick="setSort('ID')">ID Akun <i class="bi bi-arrow-down-up small ms-1 opacity-50"></i></th>
-                                <th class="sortable text-muted-custom py-3" onclick="setSort('Nama')">Nama <i class="bi bi-arrow-down-up small ms-1 opacity-50"></i></th>
-                                <th class="sortable text-muted-custom py-3" onclick="setSort('Gender')">Gender <i class="bi bi-arrow-down-up small ms-1 opacity-50"></i></th>
-                                <th class="text-muted-custom py-3">Kontak & Akses</th>
-                                <th class="sortable text-muted-custom py-3" onclick="setSort('Status')">Status <i class="bi bi-arrow-down-up small ms-1 opacity-50"></i></th>
-                                <th class="text-center text-muted-custom py-3">Aksi</th>
+                            <tr class="table-custom-header">
+                                <th class="text-center py-3" style="width: 50px;">No.</th>
+                                <th class="sortable py-3" onclick="setSort('ID')">ID Akun <i class="bi bi-arrow-down-up small ms-1 opacity-50"></i></th>
+                                <th class="sortable py-3" onclick="setSort('Nama')">Nama <i class="bi bi-arrow-down-up small ms-1 opacity-50"></i></th>
+                                <th class="sortable py-3" onclick="setSort('Gender')">Gender <i class="bi bi-arrow-down-up small ms-1 opacity-50"></i></th>
+                                <th class="py-3">Kontak & Akses</th>
+                                <th class="sortable py-3" onclick="setSort('Status')">Status <i class="bi bi-arrow-down-up small ms-1 opacity-50"></i></th>
+                                <th class="text-center py-3">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody" class="border-top-0">
@@ -331,16 +348,17 @@
                         <div class="row mb-3">
                             <div class="col-md-6 mb-3 mb-md-0">
                                 <label class="form-label small fw-semibold">No. WhatsApp *</label>
-                                <input type="number" id="f_wa" class="input-elegant" required onkeyup="validateField(this, 'number')">
+                                <!-- Menggunakan type text + format oninput realtime -->
+                                <input type="text" id="f_wa" class="input-elegant" required oninput="formatWA(this); validateField(this, 'wa')" placeholder="Contoh: 628...">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-semibold">Email *</label>
-                                <input type="email" id="f_email" class="input-elegant" required onkeyup="validateField(this, 'email')">
+                                <label class="form-label small fw-semibold">Email</label>
+                                <input type="email" id="f_email" class="input-elegant" onkeyup="validateField(this, 'email')" placeholder="(Opsional)">
                             </div>
                         </div>
                         <div class="mb-4">
-                            <label class="form-label small fw-semibold">Password Akun *</label>
-                            <input type="text" id="f_password" class="input-elegant" required onkeyup="validateField(this)" placeholder="Masukkan password...">
+                            <label class="form-label small fw-semibold">Password Akun</label>
+                            <input type="text" id="f_password" class="input-elegant" onkeyup="validateField(this)" placeholder="(Opsional)">
                         </div>
                         <div class="text-end border-top pt-3">
                             <button type="button" class="btn btn-light border me-2" data-bs-dismiss="modal" onclick="resetForm()">Batal</button>
@@ -498,6 +516,16 @@
         // ==========================================
         // 5. MODAL & ID GENERATION
         // ==========================================
+        function formatWA(el) {
+            // Hapus karakter selain angka
+            let val = el.value.replace(/\D/g, ''); 
+            // Jika diawali 08, ganti otomatis menjadi 628
+            if (val.startsWith('08')) {
+                val = '628' + val.substring(2);
+            }
+            el.value = val;
+        }
+
         function openModalAdd() {
             resetForm();
             document.getElementById('modalSDMLabel').innerHTML = '<i class="bi bi-person-plus"></i> Tambah Akun Baru';
@@ -532,14 +560,22 @@
 
         function validateField(el, type = 'text') {
             const val = el.value.trim();
+            const isReq = el.hasAttribute('required');
+            
+            // Jika field tidak wajib dan kosong, hilangkan error/success
+            if (!isReq && val === '') {
+                el.classList.remove('val-error', 'val-success');
+                return;
+            }
+
             let isValid = val.length > 0;
-            if (type === 'email' && isValid) { isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val); }
-            if (type === 'number' && isValid) { isValid = /^\d+$/.test(val); }
+            if (type === 'email' && val.length > 0) { isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val); }
+            if (type === 'wa' && val.length > 0) { isValid = val.length >= 10; } // WA minimal 10 digit
 
             if (isValid) { el.classList.remove('val-error'); el.classList.add('val-success'); } 
             else {
                 el.classList.remove('val-success');
-                if (val.length > 0) el.classList.add('val-error'); else el.classList.remove('val-error');
+                if (val.length > 0 || isReq) el.classList.add('val-error'); else el.classList.remove('val-error');
             }
         }
 
@@ -735,7 +771,7 @@
             
             const counts = getDuplicateCounts();
 
-            pageData.forEach(row => {
+            pageData.forEach((row, index) => {
                 const badgeClass = row.Status === 'Aktif' ? 'bg-success' : 'bg-secondary';
                 const toggleIcon = row.Status === 'Aktif' ? 'bi-toggle-on' : 'bi-toggle-off';
                 const toggleBtn = row.Status === 'Aktif' ? 'btn-outline-warning' : 'btn-outline-success';
@@ -748,9 +784,11 @@
                 const waHTML = isDupWA ? `<span class="duplicate-text" title="WA Duplikat!">${row.WA}</span>` : (row.WA || '-');
                 const emHTML = row.Email ? (isDupEmail ? `<span class="duplicate-text" title="Email Duplikat!">${row.Email}</span>` : row.Email) : '-';
                 const passHTML = row.Password || '-';
+                const noUrut = startIndex + index + 1;
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
+                    <td class="text-center fw-medium text-muted-custom">${noUrut}</td>
                     <td><span class="badge border font-monospace" style="background: var(--bg-body); color: var(--text-main);">${idHTML}</span></td>
                     <td class="fw-bold">${row.Nama || '-'}</td>
                     <td class="text-muted-custom">${row.Gender || '-'}</td>
