@@ -45,8 +45,38 @@
         <h2 class="text-xl font-semibold wahdah-text" id="loading-text">Memuat...</h2>
     </div>
 
+    <!-- Halaman Form Ditutup -->
+    <div id="closed-page" class="hidden min-h-screen flex items-center justify-center p-4 bg-gray-50">
+        <div class="bg-white p-10 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 text-center">
+            <i class="fas fa-lock text-5xl text-gray-400 mb-4"></i>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Laporan Ditutup</h2>
+            <p class="text-gray-600">Pengisian Laporan Kinerja Dai sudah ditutup atau belum memasuki jadwal yang ditentukan.</p>
+        </div>
+    </div>
+
+    <!-- Halaman Countdown -->
+    <div id="countdown-page" class="hidden min-h-screen flex items-center justify-center p-4 bg-gray-50">
+        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 text-center">
+            <i class="fas fa-clock text-5xl text-teal-600 mb-4"></i>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Belum Dibuka</h2>
+            <p class="text-gray-600 mb-6">Pengisian Laporan Kinerja Dai akan dibuka dalam:</p>
+            
+            <div id="countdown-timer-div" class="grid grid-cols-4 gap-2 mb-4">
+                <div class="bg-teal-50 p-2 rounded-lg border border-teal-100"><span id="cd-days" class="block text-2xl font-bold text-teal-700">0</span><span class="text-xs text-gray-500 uppercase">Hari</span></div>
+                <div class="bg-teal-50 p-2 rounded-lg border border-teal-100"><span id="cd-hours" class="block text-2xl font-bold text-teal-700">0</span><span class="text-xs text-gray-500 uppercase">Jam</span></div>
+                <div class="bg-teal-50 p-2 rounded-lg border border-teal-100"><span id="cd-mins" class="block text-2xl font-bold text-teal-700">0</span><span class="text-xs text-gray-500 uppercase">Menit</span></div>
+                <div class="bg-teal-50 p-2 rounded-lg border border-teal-100"><span id="cd-secs" class="block text-2xl font-bold text-teal-700">0</span><span class="text-xs text-gray-500 uppercase">Detik</span></div>
+            </div>
+
+            <div id="countdown-refresh-div" class="hidden">
+                <p class="text-teal-700 font-bold mb-4">Waktu pengisian telah tiba!</p>
+                <button onclick="location.reload()" class="w-full wahdah-bg text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-800 transition shadow-lg"><i class="fas fa-sync-alt mr-2"></i> Muat Ulang Halaman</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Login Page -->
-    <div id="login-page" class="min-h-screen flex items-center justify-center p-4 bg-gray-50">
+    <div id="login-page" class="hidden min-h-screen flex items-center justify-center p-4 bg-gray-50">
         <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
             <div class="text-center mb-6">
                 <img src="https://muhrasul523.github.io/sapadai/logo_sapadai_1.png" alt="Logo" class="h-20 mx-auto mb-4 object-contain">
@@ -310,6 +340,9 @@
         let uploadedFilesBase64 = [];
         let initAmanahList = [];
         let appConfig = {};
+        
+        let serverTimeOffsetMs = 0; // Selisih waktu device (HP) dan server waktu Makassar
+        let countdownInterval;
 
         function callBackend(action, data, onSuccess, onFail) {
             fetch(SCRIPT_URL, {
@@ -353,11 +386,74 @@
             if(e.target.classList.contains('input-error') && e.target.checkValidity()) e.target.classList.remove('input-error');
         });
 
+        // PARSER WAKTU DARI FORMAT "d/m/yyyy hh:mm:ss" KE TIME MS (WITA GMT+8)
+        function parseWaktuMakassar(dateStr) {
+            if (!dateStr) return 0;
+            try {
+                let parts = dateStr.trim().split(' ');
+                let dateParts = parts[0].split('/');
+                let timeParts = parts[1] || "00:00:00";
+                // Standarisasi ISO YYYY-MM-DDTHH:mm:ss+08:00
+                let isoStr = `${dateParts[2]}-${dateParts[1].padStart(2, '0')}-${dateParts[0].padStart(2, '0')}T${timeParts}+08:00`;
+                return new Date(isoStr).getTime();
+            } catch(e) {
+                return 0;
+            }
+        }
+
         window.onload = () => {
-            showLoading("Memuat...");
+            showLoading("Memuat Data & Sinkronisasi Waktu...");
             callBackend('getInitData', {}, res => {
                 hideLoading();
                 if(res && res.success) {
+                    
+                    // Kalibrasi Waktu dengan Server
+                    if(res.serverTimeWita) {
+                        let serverMs = new Date(res.serverTimeWita).getTime();
+                        let clientMs = new Date().getTime();
+                        serverTimeOffsetMs = serverMs - clientMs;
+                    }
+
+                    if(res.config) appConfig = res.config;
+
+                    // Cek Jadwal
+                    let nowWita = new Date().getTime() + serverTimeOffsetMs;
+                    let isOpen = false;
+                    let jadwal1Buka = 0;
+
+                    if (appConfig.jadwal && appConfig.jadwal.length > 0) {
+                        jadwal1Buka = parseWaktuMakassar(appConfig.jadwal[0].buka);
+                        
+                        // Periksa apakah waktu saat ini berada di dalam salah satu jadwal
+                        for (let i = 0; i < appConfig.jadwal.length; i++) {
+                            let b = parseWaktuMakassar(appConfig.jadwal[i].buka);
+                            let t = parseWaktuMakassar(appConfig.jadwal[i].tutup);
+                            if (nowWita >= b && nowWita <= t) {
+                                isOpen = true;
+                                break;
+                            }
+                        }
+                    } else {
+                        // Jika tidak ada jadwal disetel di sheet, anggap terbuka terus
+                        isOpen = true; 
+                    }
+
+                    if (isOpen) {
+                        // TAMPILKAN LOGIN JIKA DALAM JADWAL BUKA
+                        document.getElementById('login-page').style.display = 'flex';
+                    } else {
+                        // JIKA TIDAK BUKA, CEK APAKAH 1 PEKAN SEBELUM JADWAL 1
+                        const satuPekanMs = 7 * 24 * 60 * 60 * 1000;
+                        if (jadwal1Buka > 0 && nowWita < jadwal1Buka && (jadwal1Buka - nowWita) <= satuPekanMs) {
+                            document.getElementById('countdown-page').style.display = 'flex';
+                            mulaiCountdown(jadwal1Buka);
+                        } else {
+                            // JIKA LEWAT, ATAU BELUM MASUK 1 PEKAN JADWAL 1
+                            document.getElementById('closed-page').style.display = 'flex';
+                        }
+                    }
+
+                    // Setup Data Dropdown
                     let sel = document.getElementById('select-bulan');
                     sel.innerHTML = '<option value="">-- Pilih Bulan Laporan --</option>';
                     if(res.bulan && res.bulan.length > 0) {
@@ -367,10 +463,33 @@
                         document.getElementById('btn-lanjut').disabled = true;
                     }
                     if(res.amanah) initAmanahList = res.amanah;
-                    if(res.config) appConfig = res.config;
                 }
             });
         };
+
+        function mulaiCountdown(targetMs) {
+            countdownInterval = setInterval(() => {
+                let nowWita = new Date().getTime() + serverTimeOffsetMs;
+                let sisaMs = targetMs - nowWita;
+
+                if (sisaMs <= 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById('countdown-timer-div').style.display = 'none';
+                    document.getElementById('countdown-refresh-div').style.display = 'block';
+                    return;
+                }
+
+                let d = Math.floor(sisaMs / (1000 * 60 * 60 * 24));
+                let h = Math.floor((sisaMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                let m = Math.floor((sisaMs % (1000 * 60 * 60)) / (1000 * 60));
+                let s = Math.floor((sisaMs % (1000 * 60)) / 1000);
+
+                document.getElementById('cd-days').innerText = d;
+                document.getElementById('cd-hours').innerText = h;
+                document.getElementById('cd-mins').innerText = m;
+                document.getElementById('cd-secs').innerText = s;
+            }, 1000);
+        }
 
         function switchLoginTab(type) {
             document.getElementById('login-type').value = type;
