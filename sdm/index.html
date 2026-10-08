@@ -13,51 +13,118 @@
     <!-- Tambahan Bootstrap JS untuk Modal -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Script Deteksi Tema (Ditaruh di atas agar tidak flicker saat dimuat) -->
+    <script>
+        const getPreferredTheme = () => {
+            if (localStorage.getItem('sapadai-theme')) return localStorage.getItem('sapadai-theme');
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        };
+        document.documentElement.setAttribute('data-bs-theme', getPreferredTheme());
+    </script>
+
     <style>
-        /* Desain & UI Style */
-        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #1f2937; margin: 0; padding: 0; }
-        .bg-theme { background-color: #0f766e !important; color: white !important;}
-        .text-theme { color: #0f766e !important; }
-        .btn-theme { background-color: #0f766e; color: white; border: none; }
-        .btn-theme:hover { background-color: #0d5f58; color: white; }
+        /* Desain & UI Style Premium */
+        :root {
+            --bg-body: #f4f7f6;
+            --bg-card: #ffffff;
+            --text-main: #2b3440;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --input-bg: #ffffff;
+            --table-hover: #f8fafc;
+            --theme-color: #0f766e;
+            --theme-hover: #0d5f58;
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            --duplicate-bg: #ffe6e6;
+        }
         
-        .input-elegant { border: 1px solid #d1d5db; border-radius: 8px; padding: 10px 14px; width: 100%; transition: all 0.3s; background-color: white; }
-        .input-elegant:focus { outline: none; box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.2); border-color: #0f766e; }
-        .input-elegant.val-success { border-color: #10b981 !important; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2) !important;}
-        .input-elegant.val-error { border-color: #ef4444 !important; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;}
+        [data-bs-theme="dark"] {
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --input-bg: #0f172a;
+            --table-hover: #334155;
+            --theme-color: #14b8a6;
+            --theme-hover: #0f766e;
+            --glass-bg: rgba(30, 41, 59, 0.85);
+            --shadow-color: rgba(0, 0, 0, 0.4);
+            --duplicate-bg: #450a0a;
+        }
+
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-main); margin: 0; padding: 0; transition: background-color 0.3s, color 0.3s; }
+        .bg-theme { background-color: var(--theme-color) !important; color: white !important; transition: background-color 0.3s; }
+        .text-theme { color: var(--theme-color) !important; transition: color 0.3s; }
+        .text-muted-custom { color: var(--text-muted) !important; }
+        .btn-theme { background-color: var(--theme-color); color: white; border: none; transition: all 0.3s ease; }
+        .btn-theme:hover { background-color: var(--theme-hover); color: white; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3); }
         
-        .card-custom { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); border: none; }
+        .input-elegant { border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 16px; width: 100%; transition: all 0.3s; background-color: var(--input-bg); color: var(--text-main); }
+        .input-elegant:focus { outline: none; box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15); border-color: var(--theme-color); }
+        .input-elegant.val-success { border-color: #10b981 !important; }
+        .input-elegant.val-error { border-color: #ef4444 !important; }
+        
+        .card-custom { background: var(--bg-card); border-radius: 20px; box-shadow: 0 10px 30px var(--shadow-color); border: 1px solid var(--border-color); transition: background-color 0.3s, border-color 0.3s; }
+        .glass-effect { backdrop-filter: blur(16px); background: var(--glass-bg); }
         
         .toolbar-select { max-width: 160px; }
-        .page-item.active .page-link { background-color: #0f766e; border-color: #0f766e; color: white; }
-        .page-link { color: #0f766e; cursor: pointer; }
-        .duplicate-text { color: #dc3545 !important; font-weight: bold; background: #ffe6e6; padding: 2px 4px; border-radius: 4px;}
+        .page-item.active .page-link { background-color: var(--theme-color); border-color: var(--theme-color); color: white; }
+        .page-link { color: var(--theme-color); background-color: var(--bg-card); border-color: var(--border-color); transition: background-color 0.3s, border-color 0.3s, color 0.3s;}
+        .page-link:hover { background-color: var(--table-hover); color: var(--theme-hover); }
+        .duplicate-text { color: #ef4444 !important; font-weight: bold; background: var(--duplicate-bg); padding: 4px 8px; border-radius: 6px; }
         
+        /* Modal Theme overrides */
+        .modal-content { background-color: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 20px; }
+        .modal-header { border-bottom: 1px solid var(--border-color); }
+        .form-label { color: var(--text-main); }
+        
+        /* Toolbar inputs theme */
+        .form-control, .form-select, .input-group-text { background-color: var(--input-bg); color: var(--text-main); border-color: var(--border-color); transition: background-color 0.3s, color 0.3s, border-color 0.3s; }
+        .form-control:focus, .form-select:focus { background-color: var(--input-bg); color: var(--text-main); border-color: var(--theme-color); box-shadow: 0 0 0 0.25rem rgba(20, 184, 166, 0.25); }
+        .input-group-text { background-color: var(--bg-card); color: var(--text-muted); }
+
         #loadingOverlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.8); display: flex; justify-content: center; align-items: center;
+            background: var(--glass-bg); backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center;
             z-index: 9999; visibility: hidden; opacity: 0; transition: opacity 0.3s;
         }
         #loadingOverlay.show { visibility: visible; opacity: 1; }
-        .spinner { width: 50px; height: 50px; border: 5px solid #e5e7eb; border-top: 5px solid #0f766e; border-radius: 50%; animation: spin 1s linear infinite; }
+        .spinner { width: 50px; height: 50px; border: 4px solid var(--border-color); border-top: 4px solid var(--theme-color); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Login Background Baru */
+        /* Login Background Premium */
         .login-wrapper { 
             height: 100vh; display: flex; align-items: center; justify-content: center; 
-            background: linear-gradient(135deg, #0f766e, #14b8a6);
+            background: linear-gradient(135deg, #022c22, #0f766e, #14b8a6);
+            background-size: 200% 200%;
+            animation: gradientMove 12s ease infinite;
         }
-        .app-title { font-weight: 700; letter-spacing: -0.5px; }
+        @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .app-title { font-weight: 800; letter-spacing: -0.5px; }
         
-        /* Dashboard Cards */
-        .stat-card { border-radius: 10px; padding: 15px; color: white; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .stat-card h3 { margin: 0; font-weight: 700; }
-        .stat-card p { margin: 0; font-size: 0.9rem; opacity: 0.9;}
-        .stat-icon { font-size: 2.5rem; opacity: 0.3; }
+        /* Dashboard Cards Premium */
+        .stat-card { border-radius: 16px; padding: 24px; color: white; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 20px var(--shadow-color); border: none; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.15); }
+        .stat-card::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 100%); pointer-events: none; }
+        .stat-card h3 { margin: 0; font-weight: 800; font-size: 2rem; position: relative; z-index: 1;}
+        .stat-card p { margin: 0; font-size: 0.95rem; opacity: 0.85; font-weight: 500; position: relative; z-index: 1;}
+        .stat-icon { font-size: 3.5rem; position: absolute; right: -10px; bottom: -15px; opacity: 0.2; transform: rotate(-10deg); transition: transform 0.3s; }
+        .stat-card:hover .stat-icon { transform: rotate(0deg) scale(1.1); }
+        
+        .bg-gradient-1 { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .bg-gradient-2 { background: linear-gradient(135deg, #10b981, #047857); }
+        .bg-gradient-3 { background: linear-gradient(135deg, #64748b, #334155); }
+        .bg-gradient-4 { background: linear-gradient(135deg, #f59e0b, #b45309); }
+        .bg-gradient-5 { background: linear-gradient(135deg, #ec4899, #be185d); }
 
-        /* Sortable Header */
-        th.sortable { cursor: pointer; user-select: none; transition: background 0.2s; }
-        th.sortable:hover { background-color: #e5e7eb; }
+        /* Sortable & Table Custom */
+        .table { color: var(--text-main); border-color: var(--border-color); }
+        .table-hover tbody tr:hover { background-color: var(--table-hover); color: var(--text-main); }
+        .table>thead { background-color: var(--bg-card); color: var(--text-muted); border-bottom: 2px solid var(--border-color); }
+        th.sortable { cursor: pointer; user-select: none; transition: color 0.2s, background-color 0.2s; }
+        th.sortable:hover { color: var(--theme-color); background-color: var(--table-hover); }
     </style>
 </head>
 <body>
@@ -72,19 +139,19 @@
 
     <!-- 1. LOGIN SCREEN -->
     <div id="screen-login" class="login-wrapper">
-        <div class="col-11 col-md-4 col-lg-3">
-            <div class="card-custom p-4 text-center shadow-lg border-0" style="background: rgba(255, 255, 255, 0.95);">
+        <div class="col-11 col-md-5 col-lg-4">
+            <div class="card-custom glass-effect p-5 text-center border-0">
                 <div class="mb-4">
-                    <!-- Penambahan Logo SAPADAI 2 -->
-                    <img src="logo_sapadai_2.png" alt="Logo SAPADAI" class="img-fluid mb-3 mx-auto" style="max-height: 110px; object-fit: contain;">
-                    <h3 class="app-title text-theme">SAPADAI</h3>
-                    <p class="text-muted small mb-0">Sistem Manajemen Akun Terpadu</p>
+                    <!-- Path gambar dinaikkan 1 level agar bisa mengakses logo di luar folder sdm -->
+                    <img src="../logo_sapadai_2.png" alt="Logo SAPADAI" class="img-fluid mb-4 mx-auto" style="max-height: 120px; object-fit: contain; filter: drop-shadow(0 10px 8px rgba(0,0,0,0.1));">
+                    <h3 class="app-title text-theme mb-1">SAPADAI</h3>
+                    <p class="text-muted-custom small mb-0 fw-medium">Sistem Manajemen Akun Terpadu</p>
                 </div>
                 <form id="formLogin" onsubmit="handleLogin(event)">
-                    <div class="mb-3 text-start">
-                        <input type="password" id="inputKode" class="input-elegant text-center fw-bold fs-5" placeholder="Masukkan Kode Admin" required>
+                    <div class="mb-4 text-start">
+                        <input type="password" id="inputKode" class="input-elegant text-center fw-bold fs-5 shadow-sm" placeholder="Masukkan Kode Admin" required>
                     </div>
-                    <button type="submit" class="btn btn-theme w-100 py-2 fw-semibold rounded-3 shadow-sm">Masuk <i class="bi bi-box-arrow-in-right ms-1"></i></button>
+                    <button type="submit" class="btn btn-theme w-100 py-3 fw-bold rounded-pill shadow-sm fs-6">Masuk Dashboard <i class="bi bi-arrow-right-circle ms-2"></i></button>
                 </form>
             </div>
         </div>
@@ -93,16 +160,22 @@
     <!-- 2. DASHBOARD SCREEN -->
     <div id="screen-dashboard" style="display: none;">
         <!-- Navbar -->
-        <nav class="navbar bg-theme shadow-sm mb-4">
+        <nav class="navbar bg-theme shadow-sm mb-4 py-3">
             <div class="container-fluid px-4">
                 <span class="navbar-brand mb-0 h5 fw-bold text-white d-flex align-items-center">
-                    <!-- Penambahan Logo SAPADAI 1 -->
-                    <img src="logo_sapadai_1.png" alt="Logo" class="me-2 rounded p-1 bg-white" style="height: 35px; width: auto; object-fit: contain;">
-                    SAPADAI Dashboard
+                    <!-- Path gambar dinaikkan 1 level agar terbaca di luar folder sdm -->
+                    <img src="../logo_sapadai_1.png" alt="Logo" class="me-3 rounded-3 p-1 bg-white shadow-sm" style="height: 42px; width: auto; object-fit: contain;">
+                    <span class="tracking-tight">SAPADAI Dashboard</span>
                 </span>
-                <div class="d-flex align-items-center">
-                    <span class="text-white me-3 small d-none d-md-block">Halo, <b id="lblAdminName">Admin</b></span>
-                    <button class="btn btn-sm btn-light text-theme fw-bold rounded-pill px-3 shadow-sm" onclick="logout()"><i class="bi bi-power"></i> Keluar</button>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="text-white small d-none d-md-block opacity-75">Halo, <b id="lblAdminName" class="opacity-100">Admin</b></span>
+                    
+                    <!-- Tombol Dark/Light Mode -->
+                    <button class="btn btn-sm btn-outline-light rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" onclick="toggleTheme()" title="Ganti Tema">
+                        <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+                    </button>
+
+                    <button class="btn btn-sm btn-light text-theme fw-bold rounded-pill px-4 shadow-sm" onclick="logout()"><i class="bi bi-power me-1"></i> Keluar</button>
                 </div>
             </div>
         </nav>
@@ -110,9 +183,9 @@
         <div class="container-fluid px-4">
             
             <!-- Dashboard Stats -->
-            <div class="row mb-4 g-3">
+            <div class="row mb-4 g-4">
                 <div class="col-6 col-md-2">
-                    <div class="stat-card bg-primary">
+                    <div class="stat-card bg-gradient-1">
                         <div>
                             <p>Total SDM</p>
                             <h3 id="stat-total">0</h3>
@@ -121,7 +194,7 @@
                     </div>
                 </div>
                 <div class="col-6 col-md-2">
-                    <div class="stat-card bg-success">
+                    <div class="stat-card bg-gradient-2">
                         <div>
                             <p>Akun Aktif</p>
                             <h3 id="stat-aktif">0</h3>
@@ -130,7 +203,7 @@
                     </div>
                 </div>
                 <div class="col-6 col-md-2">
-                    <div class="stat-card bg-secondary">
+                    <div class="stat-card bg-gradient-3">
                         <div>
                             <p>Non-Aktif</p>
                             <h3 id="stat-nonaktif">0</h3>
@@ -139,7 +212,7 @@
                     </div>
                 </div>
                 <div class="col-6 col-md-3">
-                    <div class="stat-card bg-info text-dark">
+                    <div class="stat-card bg-gradient-4">
                         <div>
                             <p>Ikhwan (Laki-laki)</p>
                             <h3 id="stat-laki">0</h3>
@@ -148,7 +221,7 @@
                     </div>
                 </div>
                 <div class="col-12 col-md-3">
-                    <div class="stat-card" style="background-color: #ec4899;">
+                    <div class="stat-card bg-gradient-5">
                         <div>
                             <p>Akhwat (Perempuan)</p>
                             <h3 id="stat-perempuan">0</h3>
@@ -188,18 +261,18 @@
                 </div>
                 
                 <div class="table-responsive" style="min-height: 350px;">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-light">
+                    <table class="table table-hover align-middle border-0">
+                        <thead>
                             <tr>
-                                <th class="sortable" onclick="setSort('ID')">ID Akun <i class="bi bi-arrow-down-up small text-muted"></i></th>
-                                <th class="sortable" onclick="setSort('Nama')">Nama <i class="bi bi-arrow-down-up small text-muted"></i></th>
-                                <th class="sortable" onclick="setSort('Gender')">Gender <i class="bi bi-arrow-down-up small text-muted"></i></th>
-                                <th>Kontak & Akses</th>
-                                <th class="sortable" onclick="setSort('Status')">Status <i class="bi bi-arrow-down-up small text-muted"></i></th>
-                                <th class="text-center">Aksi</th>
+                                <th class="sortable text-muted-custom py-3" onclick="setSort('ID')">ID Akun <i class="bi bi-arrow-down-up small ms-1 opacity-50"></i></th>
+                                <th class="sortable text-muted-custom py-3" onclick="setSort('Nama')">Nama <i class="bi bi-arrow-down-up small ms-1 opacity-50"></i></th>
+                                <th class="sortable text-muted-custom py-3" onclick="setSort('Gender')">Gender <i class="bi bi-arrow-down-up small ms-1 opacity-50"></i></th>
+                                <th class="text-muted-custom py-3">Kontak & Akses</th>
+                                <th class="sortable text-muted-custom py-3" onclick="setSort('Status')">Status <i class="bi bi-arrow-down-up small ms-1 opacity-50"></i></th>
+                                <th class="text-center text-muted-custom py-3">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody id="tableBody">
+                        <tbody id="tableBody" class="border-top-0">
                             <!-- Data rendered here -->
                         </tbody>
                     </table>
@@ -334,6 +407,9 @@
         function endLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
         
         document.addEventListener("DOMContentLoaded", () => {
+            const currentTheme = document.documentElement.getAttribute('data-bs-theme');
+            updateThemeIcon(currentTheme);
+            
             modalInst = new bootstrap.Modal(document.getElementById('modalSDM'));
         });
 
@@ -675,19 +751,19 @@
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><span class="badge bg-light text-dark border font-monospace">${idHTML}</span></td>
-                    <td class="fw-semibold text-dark">${row.Nama || '-'}</td>
-                    <td>${row.Gender || '-'}</td>
+                    <td><span class="badge border font-monospace" style="background: var(--bg-body); color: var(--text-main);">${idHTML}</span></td>
+                    <td class="fw-bold">${row.Nama || '-'}</td>
+                    <td class="text-muted-custom">${row.Gender || '-'}</td>
                     <td>
-                        <div class="small"><i class="bi bi-whatsapp text-success me-1"></i> ${waHTML}</div>
-                        <div class="small"><i class="bi bi-envelope text-secondary me-1"></i> ${emHTML}</div>
-                        <div class="small"><i class="bi bi-key text-warning me-1"></i> ${passHTML}</div>
+                        <div class="small mb-1"><i class="bi bi-whatsapp text-success me-2"></i> ${waHTML}</div>
+                        <div class="small mb-1"><i class="bi bi-envelope text-primary me-2"></i> ${emHTML}</div>
+                        <div class="small"><i class="bi bi-key text-warning me-2"></i> <span class="text-muted-custom">${passHTML}</span></div>
                     </td>
-                    <td><span class="badge ${badgeClass}">${row.Status || '-'}</span></td>
+                    <td><span class="badge ${badgeClass} px-3 py-2 rounded-pill shadow-sm">${row.Status || '-'}</span></td>
                     <td class="text-center">
-                        <button class="btn btn-sm ${toggleBtn} me-1" title="Ubah Status" onclick="ubahStatus('${row.ID}', '${row.Status}')"><i class="bi ${toggleIcon}"></i></button>
-                        <button class="btn btn-sm btn-outline-primary me-1" title="Edit" onclick="editData('${row.ID}')"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn btn-sm btn-outline-danger" title="Hapus" onclick="hapusData('${row.ID}')"><i class="bi bi-trash3-fill"></i></button>
+                        <button class="btn btn-sm ${toggleBtn} me-1 rounded-circle shadow-sm" style="width:32px; height:32px;" title="Ubah Status" onclick="ubahStatus('${row.ID}', '${row.Status}')"><i class="bi ${toggleIcon}"></i></button>
+                        <button class="btn btn-sm btn-outline-primary me-1 rounded-circle shadow-sm" style="width:32px; height:32px;" title="Edit" onclick="editData('${row.ID}')"><i class="bi bi-pencil-square"></i></button>
+                        <button class="btn btn-sm btn-outline-danger rounded-circle shadow-sm" style="width:32px; height:32px;" title="Hapus" onclick="hapusData('${row.ID}')"><i class="bi bi-trash3-fill"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -733,6 +809,29 @@
         function changePage(page) {
             currentPage = page;
             renderTable();
+        }
+
+        // ==========================================
+        // 8. LOGIKA TEMA (DARK / LIGHT MODE)
+        // ==========================================
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-bs-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-bs-theme', newTheme);
+            localStorage.setItem('sapadai-theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('themeIcon');
+            if (theme === 'dark') {
+                icon.classList.remove('bi-moon-stars-fill');
+                icon.classList.add('bi-brightness-high-fill');
+            } else {
+                icon.classList.remove('bi-brightness-high-fill');
+                icon.classList.add('bi-moon-stars-fill');
+            }
         }
 
     </script>
