@@ -418,11 +418,10 @@
     </div>
 
     <script>
-        // ================= PERUBAHAN HANYA DI BLOK INI =================
-        // MASUKKAN URL DEPLOY WEB APP ANDA DI SINI
-        var SCRIPT_URL = 'https://script.google.com/macros/s/GANTI_DENGAN_URL_WEB_APP_ANDA/exec'; 
+        // MASUKKAN URL DEPLOY WEB APP ANDA DI SINI BILA MENGGUNAKAN GITHUB PAGES
+        var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz9SonD2MR79YdfqP0UqSzNwe9ixTiLR_Uchu8lOPIrX1pRBwzGiPVHW0d_ttfOSmF_VQ/exec'; 
         
-        var isSimulation = false; 
+        var isSimulation = typeof google === 'undefined'; 
 
         // BRIDGE POLYFILL (Mengubah google.script.run menjadi fetch API secara otomatis)
         if (typeof google === 'undefined' || !google.script) {
@@ -455,7 +454,6 @@
                 }
             };
         }
-        // ================= AKHIR PERUBAHAN ==============================
 
         var currentUser = null;
         var cropper = null;
@@ -522,31 +520,23 @@
             showLoading('Mencocokkan data...');
             document.getElementById('login-error-msg').classList.add('hidden');
 
-            if (isSimulation) {
-                setTimeout(function() {
-                    loginSuccess({ dai_id: "DAI-001", wa: user, email: "simulasi@mail.com", nama_awal: "Bapak Simulasi", 
-                                   nama_sesuai_ktp: "SIMULASI BIN FULAN", tempat_lahir: "JAKARTA", status_pernikahan: "BELUM MENIKAH",
-                                   timestamp: "8/9/2026 07:52:54" });
-                }, 1200);
-            } else {
-                try {
-                    google.script.run
-                        .withSuccessHandler(function(res) {
-                            if(res && res.success) {
-                                loginSuccess(res.data);
-                            } else { 
-                                hideLoading(); 
-                                showLoginError(res ? res.message : "Sistem gagal memuat data. Silakan coba lagi."); 
-                            }
-                        })
-                        .withFailureHandler(function(err) { 
+            try {
+                google.script.run
+                    .withSuccessHandler(function(res) {
+                        if(res && res.success) {
+                            loginSuccess(res.data);
+                        } else { 
                             hideLoading(); 
-                            showLoginError("Gagal memuat data, periksa koneksi internet Anda."); 
-                        })
-                        .processLogin(type, user, pass);
-                } catch(e) {
-                    hideLoading(); showLoginError("Kesalahan sistem browser.");
-                }
+                            showLoginError(res ? res.message : "Sistem gagal memuat data. Silakan coba lagi."); 
+                        }
+                    })
+                    .withFailureHandler(function(err) { 
+                        hideLoading(); 
+                        showLoginError("Gagal memuat data, periksa koneksi internet Anda."); 
+                    })
+                    .processLogin(type, user, pass);
+            } catch(e) {
+                hideLoading(); showLoginError("Kesalahan sistem browser.");
             }
         });
 
@@ -705,25 +695,15 @@
         }
 
         function fetchWilayahData() {
-            if (isSimulation) {
-                wilayahCache = {
-                    prov: [{id: "11", value: "ACEH"}, {id: "73", value: "SULAWESI SELATAN"}],
-                    kabkota: [{id: "11.01", value: "KAB. ACEH SELATAN"}, {id: "73.71", value: "KOTA MAKASSAR"}],
-                    kec: [{id: "11.01.01", value: "KEC. BAKONGAN"}, {id: "73.71.01", value: "KEC. MANGGALA"}],
-                    desakel: [{id: "11.01.01.2002", value: "KEUDE BAKONGAN"}, {id: "73.71.01.1001", value: "TAMANGAPA"}]
-                };
-                wilayahReady = true;
-            } else {
-                try {
-                    google.script.run
-                        .withSuccessHandler(function(res) { 
-                            if(res && res.success) wilayahCache = res.data; 
-                            wilayahReady = true;
-                            if(currentUser) triggerAutoSetWilayah();
-                        })
-                        .getWilayahData();
-                } catch(e) { console.error("Error loading wilayah"); }
-            }
+            try {
+                google.script.run
+                    .withSuccessHandler(function(res) { 
+                        if(res && res.success) wilayahCache = res.data; 
+                        wilayahReady = true;
+                        if(currentUser) triggerAutoSetWilayah();
+                    })
+                    .getWilayahData();
+            } catch(e) { console.error("Error loading wilayah"); }
         }
 
         function triggerAutoSetWilayah() {
@@ -1055,32 +1035,28 @@
 
         function executeSubmit(data) {
             showLoading('Menyimpan data dan foto...\nProses ini membutuhkan waktu.');
-            if (isSimulation) {
-                setTimeout(function() { hideLoading(); Swal.fire('Berhasil!', 'Profil diperbarui dalam mode Simulasi.', 'success'); }, 2000);
-            } else {
-                try {
-                    google.script.run
-                        .withSuccessHandler(function(res) {
-                            hideLoading();
-                            if(res && res.success) {
-                                Swal.fire('Alhamdulillah!', res.message, 'success').then(function() {
-                                    document.getElementById('base64_ktp').value = ''; document.getElementById('base64_wajah').value = '';
-                                    document.getElementById('file_name_ktp').value = ''; document.getElementById('file_name_wajah').value = '';
-                                    document.getElementById('foto_ktp_url').value = res.newKtp || 'uploaded';
-                                    document.getElementById('foto_wajah_url').value = res.newWajah || 'uploaded';
-                                });
-                            } else {
-                                Swal.fire('Gagal Menyimpan', res ? res.message : "Sistem gagal memproses penyimpanan. Silakan coba lagi.", 'error');
-                            }
-                        })
-                        .withFailureHandler(function(err) { 
-                            hideLoading(); 
-                            Swal.fire('Kesalahan Sistem', "Terjadi kesalahan sistem saat menyimpan.", 'error'); 
-                        })
-                        .saveProfile(data);
-                } catch(e) {
-                    hideLoading(); Swal.fire('Kesalahan Sistem', "Sistem browser menolak permintaan.", 'error');
-                }
+            try {
+                google.script.run
+                    .withSuccessHandler(function(res) {
+                        hideLoading();
+                        if(res && res.success) {
+                            Swal.fire('Alhamdulillah!', res.message, 'success').then(function() {
+                                document.getElementById('base64_ktp').value = ''; document.getElementById('base64_wajah').value = '';
+                                document.getElementById('file_name_ktp').value = ''; document.getElementById('file_name_wajah').value = '';
+                                document.getElementById('foto_ktp_url').value = res.newKtp || 'uploaded';
+                                document.getElementById('foto_wajah_url').value = res.newWajah || 'uploaded';
+                            });
+                        } else {
+                            Swal.fire('Gagal Menyimpan', res ? res.message : "Sistem gagal memproses penyimpanan. Silakan coba lagi.", 'error');
+                        }
+                    })
+                    .withFailureHandler(function(err) { 
+                        hideLoading(); 
+                        Swal.fire('Kesalahan Sistem', "Terjadi kesalahan sistem saat menyimpan.", 'error'); 
+                    })
+                    .saveProfile(data);
+            } catch(e) {
+                hideLoading(); Swal.fire('Kesalahan Sistem', "Sistem browser menolak permintaan.", 'error');
             }
         }
         
