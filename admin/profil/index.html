@@ -5,22 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- OpenGraph Meta Tags untuk Preview WhatsApp/Facebook/Telegram -->
-    <meta property="og:title" content="Profil Dai - Wahdah Islamiyah">
+    <meta property="og:title" content="PROFIL DAI UTUSAN WAHDAH ISLAMIYAH">
     <meta property="og:description" content="Sistem Informasi Profil Dai Utusan Wahdah Islamiyah">
-    <meta property="og:image" content="../logo_sapadai_2.png">
+    <!-- Menggunakan ../../ karena file index.html ada di dalam admin/profil/ -->
+    <meta property="og:image" content="../../logo_sapadai_2.png"> 
     <meta property="og:type" content="website">
     
     <!-- Favicon Tab Browser -->
-    <link rel="icon" type="image/png" href="../logo_sapadai_1.png">
+    <link rel="icon" type="image/png" href="../../logo_sapadai_1.png">
 
-    <title>Profil Dai Utusan - Wahdah Islamiyah</title>
+    <title>PROFIL DAI UTUSAN WAHDAH ISLAMIYAH</title>
     
-    <!-- Bootstrap 5 & Icons -->
+    <!-- Library CSS & JS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
@@ -32,7 +31,7 @@
             --light-gray: #F8F9FA;
             --text-dark: #2C3E50;
             --text-muted: #7F8C8D;
-            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-bg: rgba(255, 255, 255, 0.9);
         }
 
         body {
@@ -44,30 +43,31 @@
             overflow-x: hidden;
         }
 
-        /* Glassmorphism Components */
         .glass-card {
             background: var(--glass-bg);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.4);
             border-radius: 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
             transition: transform 0.3s ease;
         }
 
-        /* Gatekeeper / Login */
         #login-view {
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: opacity 0.5s ease-in-out;
+            padding: 20px;
         }
+        
         .login-box {
-            max-width: 400px;
-            width: 90%;
+            max-width: 420px;
+            width: 100%;
             padding: 40px 30px;
             text-align: center;
         }
+
         .btn-gold {
             background-color: var(--gold);
             color: white;
@@ -78,29 +78,34 @@
             width: 100%;
             transition: all 0.3s;
         }
-        .btn-gold:hover { background-color: var(--gold-hover); }
+        .btn-gold:hover { background-color: var(--gold-hover); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3); }
 
         #dashboard-view {
             padding-top: 80px;
             padding-bottom: 50px;
             transition: opacity 0.5s ease-in-out;
         }
+        
         .custom-navbar {
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
             position: fixed;
             top: 0; width: 100%; z-index: 1000;
-            padding: 15px 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            padding: 12px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            border-bottom: 1px solid rgba(255,255,255,0.5);
         }
 
-        /* Table custom dgn list zebra */
-        .table-custom {
-            background: white;
+        .table-responsive {
             border-radius: 12px;
-            overflow: hidden;
             box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            background: white;
+            overflow-x: auto;
+        }
+        
+        .table-custom {
             margin-bottom: 0;
+            width: 100%;
         }
         .table-custom th {
             background-color: var(--primary-blue);
@@ -108,35 +113,29 @@
             font-weight: 600;
             padding: 16px;
             border: none;
+            white-space: nowrap;
         }
         .table-custom td {
             padding: 16px;
             vertical-align: middle;
-            border-color: #f1f5f9;
+            border-bottom: 1px solid #f1f5f9;
         }
-        /* Pewarnaan Zebra Ganjil Genap */
-        .table-custom tbody tr:nth-child(odd) {
-            background-color: #ffffff;
-        }
-        .table-custom tbody tr:nth-child(even) {
-            background-color: #f8fafc;
-        }
-        .table-custom tbody tr:hover {
-            background-color: #e2e8f0;
-        }
+        .table-custom tbody tr:nth-child(even) { background-color: #f8fafc; }
+        .table-custom tbody tr:hover { background-color: #f1f5f9; }
 
-        /* Card / Grid View */
         .dai-card {
             padding: 24px;
             height: 100%;
             display: flex;
             flex-direction: column;
             background: white;
+            border-radius: 16px;
+            border: 1px solid rgba(0,0,0,0.05);
         }
         .dai-card:hover { transform: translateY(-5px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
 
         .avatar-initial {
-            width: 45px; height: 45px;
+            width: 48px; height: 48px;
             border-radius: 12px;
             background: linear-gradient(135deg, var(--text-dark), var(--text-muted));
             color: var(--gold);
@@ -146,56 +145,80 @@
         }
 
         .badge-status {
-            padding: 5px 10px; border-radius: 50px; font-size: 11px; font-weight: 600;
+            padding: 6px 12px; border-radius: 50px; font-size: 11px; font-weight: 600;
+            white-space: nowrap; display: inline-flex; align-items: center; justify-content: center;
         }
-        .badge-status.lengkap { background: #d1e7dd; color: #0f5132; }
-        .badge-status.kosong { background: #f8d7da; color: #842029; }
+        .badge-status.lengkap { background: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; }
+        .badge-status.kosong { background: #f8d7da; color: #842029; border: 1px solid #f5c2c7; }
 
         .modal-content {
             border-radius: 20px;
             border: none;
             background: #f8f9fa;
+            overflow: hidden;
         }
-        .modal-header {
-            background: white; border-radius: 20px 20px 0 0;
-        }
+        .modal-header { background: white; border-bottom: 1px solid #eee; padding: 20px 24px; }
+        .modal-body { padding: 24px; }
+        
         .detail-card {
             background: white;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.04);
+            height: 100%;
         }
+        
         .section-title {
-            font-size: 13px; font-weight: 700; color: var(--accent-blue);
+            font-size: 14px; font-weight: 700; color: var(--accent-blue);
             text-transform: uppercase; letter-spacing: 1px;
-            margin-bottom: 12px; border-bottom: 2px solid var(--primary-blue);
-            padding-bottom: 6px;
+            margin-bottom: 16px; border-bottom: 2px solid var(--primary-blue);
+            padding-bottom: 8px; display: flex; align-items: center; gap: 8px;
         }
+        
         .data-label {
-            font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 2px;
+            font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 4px;
         }
         .data-value {
-            font-size: 14px; font-weight: 500; color: var(--text-dark); margin-bottom: 12px;
+            font-size: 14px; font-weight: 500; color: var(--text-dark); margin-bottom: 16px;
+            word-wrap: break-word; /* Mencegah teks panjang tembus card */
+            overflow-wrap: break-word; /* Standar modern untuk word-wrap */
+            word-break: break-word;
         }
         
         .foto-preview {
-            width: 100%; height: 250px;
-            object-fit: cover; border-radius: 12px;
-            border: 2px solid var(--primary-blue);
-            cursor: zoom-in; transition: transform 0.2s;
+            width: 100%; height: auto; max-height: 250px;
+            object-fit: contain; border-radius: 12px;
+            border: 2px dashed #cbd5e1;
+            padding: 4px; background: #fff;
+            transition: transform 0.2s; cursor: pointer;
         }
-        .foto-preview:hover { transform: scale(1.02); }
+        .foto-preview:hover { transform: scale(1.02); border-color: var(--accent-blue); }
+
+        .nav-pills .nav-link {
+            border-radius: 50px; padding: 8px 20px; color: var(--text-muted); font-weight: 500; margin-right: 8px; margin-bottom: 8px;
+        }
+        .nav-pills .nav-link.active {
+            background-color: var(--accent-blue); color: white;
+        }
 
         .loader-overlay {
             position: fixed; top:0; left:0; right:0; bottom:0;
-            background: rgba(255,255,255,0.8); z-index: 2000;
+            background: rgba(255,255,255,0.9); z-index: 2000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             backdrop-filter: blur(5px);
         }
         .fade-out { opacity: 0; pointer-events: none; }
         .fade-in { opacity: 1 !important; }
         .d-none { display: none !important; }
+        
+        @media (max-width: 768px) {
+            .detail-card { margin-bottom: 16px; padding: 16px; }
+            .nav-pills { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 10px; }
+            .nav-pills .nav-link { white-space: nowrap; }
+            .modal-body { padding: 16px; }
+        }
     </style>
 </head>
 <body>
@@ -203,49 +226,54 @@
     <div id="login-view">
         <div class="glass-card login-box">
             <div class="mb-4">
-                <img src="../logo_sapadai_2.png" alt="Logo Wahdah" class="mx-auto" style="max-height: 140px; object-fit: contain; border-radius: 0;">
+                <!-- Gunakan ../../ untuk merujuk ke folder root sapadai -->
+                <img src="../../logo_sapadai_2.png" alt="Logo Wahdah" class="mx-auto" style="max-height: 120px; width: 100%; object-fit: contain; border-radius: 0;" onerror="this.src='https://placehold.co/400x120/e8f0fe/4a90e2?text=Logo+Wahdah'">
             </div>
-            <h4 class="fw-bold mb-1 text-uppercase" style="letter-spacing: 1px;">PROFIL DAI UTUSAN</h4>
+            <h4 class="fw-bold mb-1 text-uppercase" style="letter-spacing: 1px; font-size: 1.25rem;">PROFIL DAI UTUSAN</h4>
             <p class="text-muted small mb-4 fw-bold">WAHDAH ISLAMIYAH</p>
             
             <form id="authForm">
-                <input type="text" id="loginUser" class="form-control mb-3 p-3 rounded-3" placeholder="Nomor WA atau Email" required autocomplete="off">
-                <input type="password" id="loginPass" class="form-control mb-3 p-3 rounded-3" placeholder="Kata Sandi" required autocomplete="off">
-                <button type="submit" id="btnSubmit" class="btn-gold">
-                    <i class="bi bi-box-arrow-in-right me-2"></i> Masuk
+                <input type="password" id="loginPass" class="form-control mb-4 p-3 rounded-3 text-center shadow-sm" style="letter-spacing: 2px; font-size: 1.1rem;" placeholder="Masukkan Kode Akses" required autocomplete="off">
+                <button type="submit" id="btnSubmit" class="btn-gold shadow-sm">
+                    <i class="bi bi-box-arrow-in-right me-2"></i> Akses Direktori
                 </button>
             </form>
+            
+            <p class="mt-4 text-muted" style="font-size: 11px;">
+                <i class="bi bi-shield-lock me-1"></i> Sistem Informasi Terproteksi
+            </p>
         </div>
     </div>
 
     <div id="dashboard-view" class="d-none" style="opacity: 0;">
         <nav class="custom-navbar">
             <div class="container d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center gap-2">
-                    <img src="../logo_sapadai_1.png" alt="Icon" style="height: 28px;">
-                    <h5 class="mb-0 fw-bold">Profil<span style="color: var(--text-muted); font-weight:400;">Dai</span></h5>
+                <div class="d-flex align-items-center gap-3">
+                    <!-- Gunakan ../../ untuk logo navbar -->
+                    <img src="../../logo_sapadai_1.png" alt="Icon" style="height: 35px; width: auto; object-fit: contain;" onerror="this.src='https://placehold.co/35x35/e8f0fe/4a90e2?text=W'">
+                    <h5 class="mb-0 fw-bold d-none d-sm-block">Profil<span style="color: var(--text-muted); font-weight:400;">Dai</span></h5>
                 </div>
-                <button class="btn btn-sm btn-light rounded-pill px-3 shadow-sm border" onclick="logout()">
-                    <i class="bi bi-box-arrow-right text-danger"></i> Keluar
+                <button class="btn btn-sm btn-danger rounded-pill px-4 shadow-sm fw-medium d-flex align-items-center gap-2" onclick="logout()">
+                    <i class="bi bi-power"></i> Keluar
                 </button>
             </div>
         </nav>
 
         <div class="container mt-4">
-            <div class="row mb-4 align-items-end">
-                <div class="col-md-5 mb-3 mb-md-0">
-                    <h3 class="fw-bold">Daftar Utusan</h3>
-                    <p class="text-muted mb-0">Total <span id="totalData" class="fw-bold text-dark">0</span> profil ditemukan.</p>
+            <div class="row mb-4 align-items-end g-3">
+                <div class="col-md-5">
+                    <h3 class="fw-bold mb-1">Daftar Utusan</h3>
+                    <p class="text-muted mb-0 small">Total <span id="totalData" class="fw-bold text-dark badge bg-light border text-dark ms-1">0</span> profil ditemukan.</p>
                 </div>
-                <div class="col-md-7 d-flex justify-content-md-end gap-2 align-items-center">
-                    <div class="input-group" style="max-width: 300px;">
-                        <span class="input-group-text bg-white border-0 shadow-sm rounded-start-pill ps-3"><i class="bi bi-search text-muted"></i></span>
-                        <input type="text" id="searchInput" class="form-control border-0 shadow-sm rounded-end-pill py-2" placeholder="Cari nama atau area...">
+                <div class="col-md-7 d-flex justify-content-md-end gap-2 align-items-center flex-wrap flex-md-nowrap">
+                    <div class="input-group shadow-sm" style="max-width: 350px; width: 100%;">
+                        <span class="input-group-text bg-white border-0 rounded-start-pill ps-3"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" id="searchInput" class="form-control border-0 rounded-end-pill py-2" placeholder="Cari nama atau area...">
                     </div>
                     
-                    <div class="btn-group shadow-sm bg-white p-1 rounded-3" role="group">
-                        <button type="button" class="btn btn-sm" id="btnViewList" onclick="setViewMode('list')" title="Tampilan Daftar"><i class="bi bi-list-ul"></i></button>
-                        <button type="button" class="btn btn-sm" id="btnViewGrid" onclick="setViewMode('grid')" title="Tampilan Kotak"><i class="bi bi-grid-fill"></i></button>
+                    <div class="btn-group shadow-sm bg-white p-1 rounded-pill flex-shrink-0" role="group">
+                        <button type="button" class="btn btn-sm rounded-pill" id="btnViewList" onclick="setViewMode('list')" title="Tampilan Daftar"><i class="bi bi-list-ul"></i></button>
+                        <button type="button" class="btn btn-sm rounded-pill" id="btnViewGrid" onclick="setViewMode('grid')" title="Tampilan Kotak"><i class="bi bi-grid-fill"></i></button>
                     </div>
                 </div>
             </div>
@@ -257,36 +285,37 @@
     <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
-                <div class="modal-header align-items-center pb-3">
-                    <div class="d-flex align-items-center gap-3">
-                        <div id="modalAvatar" class="avatar-initial" style="width:50px; height:50px;"></div>
-                        <div>
-                            <h5 class="mb-0 fw-bold" id="modalNama">Nama</h5>
-                            <p class="text-muted small mb-0" id="modalStatusUpdate">Status</p>
+                <div class="modal-header align-items-center">
+                    <div class="d-flex align-items-center gap-3 w-100 pe-3">
+                        <div id="modalAvatar" class="avatar-initial" style="width:55px; height:55px; font-size:22px;"></div>
+                        <div style="flex: 1; min-width: 0;"> <!-- min-width 0 penting utk flex child truncate -->
+                            <h5 class="mb-1 fw-bold text-truncate" id="modalNama" style="max-width: 100%;">Nama Lengkap</h5>
+                            <div class="small" id="modalStatusUpdate">Status</div>
                         </div>
                     </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 
-                <div class="modal-body p-4">
-                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                        <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-profil">Profil & Kontak</button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-wilayah">Area Tugas</button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-keluarga">Keluarga</button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-lainnya">Organisasi & Bank</button></li>
+                <div class="modal-body bg-light">
+                    <!-- Nav Tabs (Scrollable on mobile) -->
+                    <ul class="nav nav-pills mb-4" id="pills-tab" role="tablist" style="flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                        <li class="nav-item flex-shrink-0"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-profil"><i class="bi bi-person-lines-fill me-2"></i>Profil Utama</button></li>
+                        <li class="nav-item flex-shrink-0"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-wilayah"><i class="bi bi-geo-alt-fill me-2"></i>Area Tugas</button></li>
+                        <li class="nav-item flex-shrink-0"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-keluarga"><i class="bi bi-people-fill me-2"></i>Data Keluarga</button></li>
+                        <li class="nav-item flex-shrink-0"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-lainnya"><i class="bi bi-bank2 me-2"></i>Tarbiyah & Bank</button></li>
                     </ul>
 
                     <div class="tab-content" id="pills-tabContent">
                         <!-- TAB PROFIL -->
                         <div class="tab-pane fade show active" id="tab-profil">
-                            <div class="row">
+                            <div class="row g-3">
                                 <div class="col-lg-8">
                                     <div class="detail-card">
-                                        <h6 class="section-title">Informasi Utama</h6>
+                                        <h6 class="section-title"><i class="bi bi-info-circle-fill"></i> Informasi Identitas</h6>
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="data-label">Nama Lengkap & Gelar</div>
-                                                <div class="data-value" id="mdl_nama_lengkap">-</div>
+                                                <div class="data-value fw-bold text-primary" id="mdl_nama_lengkap">-</div>
                                                 <div class="data-label">Nama Sesuai KTP</div>
                                                 <div class="data-value" id="mdl_nama_ktp">-</div>
                                                 <div class="data-label">Tempat, Tanggal Lahir</div>
@@ -294,16 +323,17 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="data-label">ID Dai</div>
-                                                <div class="data-value" id="mdl_id">-</div>
-                                                <div class="data-label">NIK</div>
-                                                <div class="data-value" id="mdl_nik">-</div>
-                                                <div class="data-label">Email / Kontak</div>
+                                                <div class="data-value font-monospace" id="mdl_id">-</div>
+                                                <div class="data-label">NIK (16 Digit)</div>
+                                                <div class="data-value font-monospace" id="mdl_nik">-</div>
+                                                <div class="data-label">Email Aktif</div>
                                                 <div class="data-value" id="mdl_email">-</div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="detail-card">
-                                        <h6 class="section-title">Pendidikan & Pengutusan</h6>
+                                    
+                                    <div class="detail-card mb-0">
+                                        <h6 class="section-title"><i class="bi bi-mortarboard-fill"></i> Pendidikan & Pengutusan</h6>
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="data-label">Pendidikan Terakhir</div>
@@ -315,24 +345,24 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="data-label">Tahun Diutus</div>
-                                                <div class="data-value" id="mdl_diutus">-</div>
+                                                <div class="data-value fw-bold" id="mdl_diutus">-</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
-                                    <div class="detail-card text-center">
-                                        <h6 class="section-title">Dokumen Visual</h6>
-                                        <div class="mb-3">
-                                            <div class="data-label">Foto Wajah</div>
-                                            <a id="linkFotoWajah" href="#" target="_blank" title="Klik untuk perbesar">
-                                                <img id="imgFotoWajah" src="" class="foto-preview mt-1" alt="Foto Wajah" onerror="this.src='https://placehold.co/300x400/e8f0fe/4a90e2?text=Tidak+Ada+Foto'">
+                                    <div class="detail-card text-center mb-0 h-100 d-flex flex-column justify-content-center">
+                                        <h6 class="section-title justify-content-center"><i class="bi bi-camera-fill"></i> Dokumen Visual</h6>
+                                        <div class="mb-4">
+                                            <div class="data-label mb-2">Foto Wajah Formal</div>
+                                            <a id="linkFotoWajah" href="#" target="_blank" title="Klik untuk lihat gambar asli">
+                                                <img id="imgFotoWajah" src="" class="foto-preview mx-auto" alt="Foto Wajah" onerror="this.src='https://placehold.co/300x400/e8f0fe/4a90e2?text=Tidak+Ada+Foto'">
                                             </a>
                                         </div>
                                         <div>
-                                            <div class="data-label">Scan KTP</div>
-                                            <a id="linkFotoKTP" href="#" target="_blank" title="Klik untuk perbesar">
-                                                <img id="imgFotoKTP" src="" class="foto-preview mt-1" style="height: 150px;" alt="Foto KTP" onerror="this.src='https://placehold.co/400x250/e8f0fe/4a90e2?text=Tidak+Ada+KTP'">
+                                            <div class="data-label mb-2">Scan KTP</div>
+                                            <a id="linkFotoKTP" href="#" target="_blank" title="Klik untuk lihat gambar asli">
+                                                <img id="imgFotoKTP" src="" class="foto-preview mx-auto" style="max-height: 160px;" alt="Foto KTP" onerror="this.src='https://placehold.co/400x250/e8f0fe/4a90e2?text=Tidak+Ada+KTP'">
                                             </a>
                                         </div>
                                     </div>
@@ -342,23 +372,27 @@
 
                         <!-- TAB WILAYAH -->
                         <div class="tab-pane fade" id="tab-wilayah">
-                            <div class="row">
+                            <div class="row g-3">
                                 <div class="col-md-6">
-                                    <div class="detail-card">
-                                        <h6 class="section-title">Domisili / Wilayah Tugas</h6>
-                                        <div class="data-label">Provinsi</div><div class="data-value" id="mdl_dom_prov">-</div>
-                                        <div class="data-label">Kab/Kota</div><div class="data-value" id="mdl_dom_kab">-</div>
-                                        <div class="data-label">Kecamatan</div><div class="data-value" id="mdl_dom_kec">-</div>
-                                        <div class="data-label">Desa/Kelurahan</div><div class="data-value" id="mdl_dom_kel">-</div>
+                                    <div class="detail-card h-100 mb-0">
+                                        <h6 class="section-title"><i class="bi bi-house-door-fill"></i> Domisili / Wilayah Tugas</h6>
+                                        <div class="p-3 bg-light rounded-3 border">
+                                            <div class="data-label">Provinsi</div><div class="data-value fw-bold" id="mdl_dom_prov">-</div>
+                                            <div class="data-label">Kabupaten/Kota</div><div class="data-value fw-bold" id="mdl_dom_kab">-</div>
+                                            <div class="data-label">Kecamatan</div><div class="data-value" id="mdl_dom_kec">-</div>
+                                            <div class="data-label">Desa/Kelurahan</div><div class="data-value mb-0" id="mdl_dom_kel">-</div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="detail-card">
-                                        <h6 class="section-title">Asal Daerah</h6>
-                                        <div class="data-label">Provinsi</div><div class="data-value" id="mdl_asal_prov">-</div>
-                                        <div class="data-label">Kab/Kota</div><div class="data-value" id="mdl_asal_kab">-</div>
-                                        <div class="data-label">Kecamatan</div><div class="data-value" id="mdl_asal_kec">-</div>
-                                        <div class="data-label">Desa/Kelurahan</div><div class="data-value" id="mdl_asal_kel">-</div>
+                                    <div class="detail-card h-100 mb-0">
+                                        <h6 class="section-title"><i class="bi bi-signpost-split-fill"></i> Asal Daerah</h6>
+                                        <div class="p-3 bg-light rounded-3 border">
+                                            <div class="data-label">Provinsi</div><div class="data-value fw-bold" id="mdl_asal_prov">-</div>
+                                            <div class="data-label">Kabupaten/Kota</div><div class="data-value fw-bold" id="mdl_asal_kab">-</div>
+                                            <div class="data-label">Kecamatan</div><div class="data-value" id="mdl_asal_kec">-</div>
+                                            <div class="data-label">Desa/Kelurahan</div><div class="data-value mb-0" id="mdl_asal_kel">-</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -367,43 +401,50 @@
                         <!-- TAB KELUARGA -->
                         <div class="tab-pane fade" id="tab-keluarga">
                             <div class="detail-card">
-                                <h6 class="section-title">Orang Tua & Status</h6>
+                                <h6 class="section-title"><i class="bi bi-heart-fill text-danger"></i> Orang Tua, Status & BPJS</h6>
                                 <div class="row">
-                                    <div class="col-md-3"><div class="data-label">Nama Ayah</div><div class="data-value" id="mdl_ayah">-</div></div>
-                                    <div class="col-md-3"><div class="data-label">Nama Ibu</div><div class="data-value" id="mdl_ibu">-</div></div>
-                                    <div class="col-md-3"><div class="data-label">Status Pernikahan</div><div class="data-value" id="mdl_status_nikah">-</div></div>
-                                    <div class="col-md-3"><div class="data-label">BPJS</div><div class="data-value" id="mdl_bpjs">-</div></div>
+                                    <div class="col-sm-6 col-md-3"><div class="data-label">Nama Ayah</div><div class="data-value" id="mdl_ayah">-</div></div>
+                                    <div class="col-sm-6 col-md-3"><div class="data-label">Nama Ibu</div><div class="data-value" id="mdl_ibu">-</div></div>
+                                    <div class="col-sm-6 col-md-3"><div class="data-label">Status Pernikahan</div><div class="data-value fw-bold text-primary" id="mdl_status_nikah">-</div></div>
+                                    <div class="col-sm-6 col-md-3"><div class="data-label">Jenis BPJS</div><div class="data-value" id="mdl_bpjs">-</div></div>
                                 </div>
-                                <div class="row mt-2">
-                                    <div class="col-md-3"><div class="data-label">Jumlah Istri</div><div class="data-value" id="mdl_jml_istri">-</div></div>
-                                    <div class="col-md-3"><div class="data-label">Jumlah Anak (Total)</div><div class="data-value" id="mdl_jml_anak">-</div></div>
+                                <div class="row mt-2 pt-3 border-top">
+                                    <div class="col-6 col-md-3"><div class="data-label text-success">Total Istri</div><div class="data-value fs-5 fw-bold" id="mdl_jml_istri">-</div></div>
+                                    <div class="col-6 col-md-3"><div class="data-label text-success">Total Anak</div><div class="data-value fs-5 fw-bold" id="mdl_jml_anak">-</div></div>
                                 </div>
                             </div>
                             
-                            <div id="container-istri">
-                                <!-- Data Istri disuntikkan via JS agar dinamis -->
-                            </div>
+                            <!-- Container Istri Dinamis -->
+                            <div id="container-istri" class="row g-3"></div>
                         </div>
 
                         <!-- TAB LAINNYA -->
                         <div class="tab-pane fade" id="tab-lainnya">
-                            <div class="row">
+                            <div class="row g-3">
                                 <div class="col-md-6">
-                                    <div class="detail-card">
-                                        <h6 class="section-title">Struktur Organisasi</h6>
-                                        <div class="data-label">Marhalah</div><div class="data-value" id="mdl_marhalah">-</div>
+                                    <div class="detail-card h-100 mb-0">
+                                        <h6 class="section-title"><i class="bi bi-diagram-3-fill"></i> Struktur Tarbiyah & Organisasi</h6>
+                                        <div class="data-label">Marhalah</div><div class="data-value fw-bold" id="mdl_marhalah">-</div>
+                                        <hr class="text-muted opacity-25">
                                         <div class="data-label">Nama Murabbi</div><div class="data-value" id="mdl_murabbi">-</div>
-                                        <div class="data-label">Nama Pimpinan</div><div class="data-value" id="mdl_pimpinan">-</div>
+                                        <div class="data-label">No. WA Murabbi</div><div class="data-value font-monospace" id="mdl_wa_murabbi">-</div>
+                                        <hr class="text-muted opacity-25">
+                                        <div class="data-label">Nama Pimpinan / Ketua</div><div class="data-value" id="mdl_pimpinan">-</div>
                                         <div class="data-label">Jabatan Pimpinan</div><div class="data-value" id="mdl_jab_pimpinan">-</div>
+                                        <div class="data-label">No. WA Pimpinan</div><div class="data-value font-monospace mb-0" id="mdl_wa_pimpinan">-</div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="detail-card">
-                                        <h6 class="section-title">Data Rekening</h6>
-                                        <div class="data-label">Rekening Berkah Mobile</div><div class="data-value" id="mdl_rek_berkah">-</div>
-                                        <div class="data-label">Nama Bank</div><div class="data-value" id="mdl_bank">-</div>
-                                        <div class="data-label">Nomor Rekening</div><div class="data-value" id="mdl_norek">-</div>
-                                        <div class="data-label">Atas Nama</div><div class="data-value" id="mdl_atas_nama">-</div>
+                                    <div class="detail-card h-100 mb-0">
+                                        <h6 class="section-title"><i class="bi bi-credit-card-fill"></i> Data Rekening</h6>
+                                        <div class="p-3 bg-primary bg-opacity-10 rounded-3 border border-primary border-opacity-25 mb-4">
+                                            <div class="data-label text-primary">Rekening Berkah Mobile</div>
+                                            <div class="data-value fs-6 fw-bold text-primary mb-0 font-monospace" id="mdl_rek_berkah">-</div>
+                                        </div>
+                                        
+                                        <div class="data-label">Nama Bank</div><div class="data-value fw-bold" id="mdl_bank">-</div>
+                                        <div class="data-label">Nomor Rekening</div><div class="data-value fs-5 font-monospace tracking-wide" id="mdl_norek">-</div>
+                                        <div class="data-label">Atas Nama Pemilik</div><div class="data-value mb-0 text-uppercase" id="mdl_atas_nama">-</div>
                                     </div>
                                 </div>
                             </div>
@@ -415,32 +456,55 @@
     </div>
 
     <div id="globalLoader" class="loader-overlay d-none">
-        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
-        <h5 class="mt-3 fw-bold text-primary">Memuat Database...</h5>
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem; border-width: 0.25rem;" role="status"></div>
+        <h5 class="mt-3 fw-bold text-primary" style="letter-spacing: 1px;">Memuat Database...</h5>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // URL WebApp Anda
+        // MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI SINI
         const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxSQZybABNpy0bAK67ieOM2pFyYec3bLMFBQ4yhH1H1ihxce1gRIXKo5F8tHeBgbgf6/exec";
         
         let globalData = [];
         let detailModal;
         let currentViewMode = 'list';
 
-        // Format Tanggal: "2 Januari 2026"
+        // Format Tanggal Indo (Cth: 2 Januari 2026)
         function formatTanggalIndo(dateStr) {
             if (!dateStr) return '-';
             const bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-            const d = new Date(dateStr);
-            if(isNaN(d.getTime())) return dateStr;
+            let d = new Date(dateStr);
+            if(isNaN(d.getTime())) {
+                // Mencoba parsing string ISO manual jika Date gagal
+                const parts = String(dateStr).split(/[-T/]/);
+                if(parts.length >= 3) d = new Date(parts[0], parts[1]-1, parts[2]);
+                if(isNaN(d.getTime())) return dateStr;
+            }
             return `${d.getDate()} ${bulan[d.getMonth()]} ${d.getFullYear()}`;
         }
 
+        // Parsing link Drive ke LH3 (agar load lebih cepat & direct image)
+        function getDirectDriveLink(url) {
+            if (!url) return '';
+            let fileId = '';
+            const matchId = url.match(/id=([a-zA-Z0-9_-]+)/);
+            if (matchId && matchId[1]) {
+                fileId = matchId[1];
+            } else {
+                const matchPath = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                if (matchPath && matchPath[1]) fileId = matchPath[1];
+            }
+            if (fileId) return 'https://lh3.googleusercontent.com/d/' + fileId;
+            return url; // fallback
+        }
+
+        // Membuat inisial nama (Max 2 huruf)
         function getInitials(name) {
-            if (!name) return "D";
-            const words = name.replace(/[^a-zA-Z\s]/g, '').trim().split(" ");
+            if (!name || name.trim() === '') return "D";
+            const cleanName = name.replace(/^(Ustadz|Ust\.|Dr\.|H\.|Lc\.|S\.Pd\.|M\.Pd\.)\s+/ig, '').trim();
+            const words = cleanName.replace(/[^a-zA-Z\s]/g, '').trim().split(/\s+/);
+            
             let initials = words[0].charAt(0);
             if (words.length > 1) initials += words[words.length - 1].charAt(0);
             return initials.toUpperCase();
@@ -449,6 +513,7 @@
         document.addEventListener("DOMContentLoaded", () => {
             detailModal = new bootstrap.Modal(document.getElementById('detailModal'));
             
+            // Cek Sesi (Agar tidak perlu login ulang jika terefresh)
             if (sessionStorage.getItem("dai_auth") === "true") {
                 showDashboard();
                 fetchDirectoryData();
@@ -463,92 +528,68 @@
                 filterData(e.target.value);
             });
             
-            // Set default toggle button state
+            // Set default tombol tampilan
             document.getElementById("btnViewList").classList.add("bg-primary", "text-white");
         });
 
         async function processAuth() {
-            const user = document.getElementById("loginUser").value.trim();
             const pass = document.getElementById("loginPass").value.trim();
             const btn = document.getElementById("btnSubmit");
-            if(!user || !pass) return;
+            if(!pass) return;
 
-            btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Verifikasi...`;
+            btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Memverifikasi...`;
             btn.disabled = true;
 
-            const isSimulation = (GAS_WEBAPP_URL === "");
-            const loginType = user.includes('@') ? 'email' : 'wa';
+            try {
+                const payload = { action: 'processLogin', args: [pass] };
+                const response = await fetch(GAS_WEBAPP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
 
-            if (isSimulation) {
-                setTimeout(() => {
+                if (result.success) {
                     sessionStorage.setItem("dai_auth", "true");
                     showDashboard();
-                    fetchDirectoryData(true);
-                    resetBtn(btn);
-                }, 800);
-            } else {
-                try {
-                    const payload = { action: 'processLogin', args: [loginType, user, pass] };
-                    const response = await fetch(GAS_WEBAPP_URL, {
-                        method: 'POST',
-                        body: JSON.stringify(payload)
+                    fetchDirectoryData();
+                } else {
+                    Swal.fire({ 
+                        icon: 'error', 
+                        title: 'Akses Ditolak', 
+                        text: result.message || 'Kode Akses Salah',
+                        confirmButtonColor: '#4A90E2'
                     });
-                    const result = await response.json();
-
-                    if (result.success) {
-                        sessionStorage.setItem("dai_auth", "true");
-                        showDashboard();
-                        fetchDirectoryData();
-                    } else {
-                        Swal.fire({ icon: 'error', title: 'Ditolak', text: result.message });
-                    }
-                } catch (error) {
-                    Swal.fire({ icon: 'error', title: 'Gagal', text: 'Koneksi ke server putus.' });
-                } finally {
-                    resetBtn(btn);
                 }
+            } catch (error) {
+                Swal.fire({ icon: 'error', title: 'Gagal', text: 'Koneksi ke server terputus. Pastikan link WebApp Google Script benar.' });
+            } finally {
+                resetBtn(btn);
             }
         }
 
         function resetBtn(btn) {
-            btn.innerHTML = `<i class="bi bi-box-arrow-in-right me-2"></i> Masuk`;
+            btn.innerHTML = `<i class="bi bi-box-arrow-in-right me-2"></i> Akses Direktori`;
             btn.disabled = false;
         }
 
-        async function fetchDirectoryData(isSim = false) {
+        async function fetchDirectoryData() {
             showLoader(true);
             
-            // Dummy Data untuk Simulasi (sesuai header)
-            if (isSim) {
-                globalData = [
-                    { 
-                        timestamp: "2026-08-09T00:47:46.000Z", dai_id: "SDI140420260117", nama_lengkap_beserta_gelar: "ACHMAD NUR FAUSAN HASTONO, S.Pd.", 
-                        tanggal_lahir: "2003-05-16", domisili_kabkota: "Kab. Donggala", domisili_prov: "Sulawesi Tengah"
-                    },
-                    { 
-                        timestamp: "", dai_id: "SDI140420260118", nama_lengkap_beserta_gelar: "AHMAD AL-SYADAD AMRIN. D, S.Pd.", 
-                        tanggal_lahir: "", domisili_kabkota: "", domisili_prov: ""
-                    }
-                ];
-                renderData(globalData);
-                showLoader(false);
-                return;
-            }
-
             try {
                 const response = await fetch(GAS_WEBAPP_URL, {
                     method: 'POST',
                     body: JSON.stringify({ action: 'getAllProfiles' })
                 });
                 const result = await response.json();
+                
                 if (result.success) {
                     globalData = result.data;
                     renderData(globalData);
                 } else {
-                    Swal.fire('Error', result.message, 'error');
+                    Swal.fire('Error Database', result.message, 'error');
                 }
             } catch(e) {
-                Swal.fire('Error', 'Gagal memuat data dari Spreadsheet.', 'error');
+                Swal.fire('Error Jaringan', 'Gagal memuat data dari Google Spreadsheet.', 'error');
             } finally {
                 showLoader(false);
             }
@@ -558,7 +599,7 @@
             document.getElementById("login-view").classList.add("fade-out", "d-none");
             const dbView = document.getElementById("dashboard-view");
             dbView.classList.remove("d-none");
-            void dbView.offsetWidth;
+            void dbView.offsetWidth; // trigger reflow
             dbView.classList.add("fade-in");
         }
         
@@ -585,9 +626,10 @@
         function filterData(keyword) {
             keyword = keyword.toLowerCase();
             const filtered = globalData.filter(d => {
-                const nama = (d.nama_lengkap_beserta_gelar || d.nama_lengkap_tanpa_gelar || "").toLowerCase();
-                const domisili = (d.domisili_kabkota || d.domisili_prov || "").toLowerCase();
-                return nama.includes(keyword) || domisili.includes(keyword);
+                const nama = String(d.nama_lengkap_beserta_gelar || d.nama_lengkap_tanpa_gelar || "").toLowerCase();
+                const domisili = String(d.domisili_kabkota || d.domisili_prov || "").toLowerCase();
+                const id = String(d.dai_id || "").toLowerCase();
+                return nama.includes(keyword) || domisili.includes(keyword) || id.includes(keyword);
             });
             renderData(filtered);
         }
@@ -597,7 +639,11 @@
             const container = document.getElementById("dataContainer");
             
             if (data.length === 0) {
-                container.innerHTML = `<div class="text-center py-5"><i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i><p class="text-muted mt-3">Tidak ada data ditemukan.</p></div>`;
+                container.innerHTML = `
+                <div class="text-center py-5 bg-white rounded-4 border">
+                    <i class="bi bi-inbox text-muted opacity-50" style="font-size: 4rem;"></i>
+                    <p class="text-muted mt-3 fw-medium">Tidak ada data ditemukan.</p>
+                </div>`;
                 return;
             }
 
@@ -608,14 +654,14 @@
         function renderList(data, container) {
             let html = `
             <div class="table-responsive">
-                <table class="table table-custom border-0">
+                <table class="table table-custom mb-0">
                     <thead>
                         <tr>
-                            <th>Nama Dai</th>
-                            <th>Domisili Tugas</th>
-                            <th>Tahun Diutus</th>
-                            <th>Status Profil</th>
-                            <th class="text-center">Aksi</th>
+                            <th style="min-width: 250px;">Informasi Dai</th>
+                            <th style="min-width: 180px;">Domisili Tugas</th>
+                            <th style="min-width: 120px;">Tahun Diutus</th>
+                            <th style="min-width: 150px;">Status Profil</th>
+                            <th class="text-center" style="min-width: 100px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -624,25 +670,33 @@
             data.forEach(item => {
                 const nama = item.nama_lengkap_beserta_gelar || item.nama_lengkap_tanpa_gelar || "Tanpa Nama";
                 const domisili = item.domisili_kabkota ? `${item.domisili_kabkota}, ${item.domisili_prov}` : '-';
-                const isKosong = !item.timestamp;
-                const statusHtml = isKosong ? `<span class="badge-status kosong">Belum Update Data</span>` : `<span class="badge-status lengkap">Terupdate</span>`;
+                
+                // Cek Timestamp kosong
+                const isKosong = !item.timestamp || String(item.timestamp).trim() === '';
+                const statusHtml = isKosong 
+                    ? `<span class="badge-status kosong"><i class="bi bi-exclamation-circle me-1"></i>Belum Update</span>` 
+                    : `<span class="badge-status lengkap"><i class="bi bi-check-circle me-1"></i>Terupdate</span>`;
                 
                 html += `
                 <tr>
                     <td>
                         <div class="d-flex align-items-center gap-3">
-                            <div class="avatar-initial">${getInitials(nama)}</div>
-                            <div>
-                                <div class="fw-bold text-dark">${nama}</div>
-                                <div class="small text-muted">${item.dai_id || '-'}</div>
+                            <div class="avatar-initial shadow-sm">${getInitials(nama)}</div>
+                            <div style="min-width:0; overflow:hidden;">
+                                <div class="fw-bold text-dark text-truncate" title="${nama}">${nama}</div>
+                                <div class="small text-muted font-monospace">${item.dai_id || '-'}</div>
                             </div>
                         </div>
                     </td>
-                    <td>${domisili}</td>
-                    <td>${item.tahun_diutus || '-'}</td>
+                    <td>
+                        <div class="text-truncate" style="max-width:200px;" title="${domisili}">
+                            <i class="bi bi-geo-alt-fill text-muted me-1"></i> ${domisili}
+                        </div>
+                    </td>
+                    <td class="fw-medium">${item.tahun_diutus || '-'}</td>
                     <td>${statusHtml}</td>
                     <td class="text-center">
-                        <button class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold" onclick="openDetail('${item.dai_id}')">Detail</button>
+                        <button class="btn btn-sm btn-outline-primary rounded-pill px-4 fw-bold" onclick="openDetail('${item.dai_id}')">Detail</button>
                     </td>
                 </tr>`;
             });
@@ -656,22 +710,28 @@
             data.forEach(item => {
                 const nama = item.nama_lengkap_beserta_gelar || item.nama_lengkap_tanpa_gelar || "Tanpa Nama";
                 const domisili = item.domisili_kabkota || '-';
-                const isKosong = !item.timestamp;
-                const statusHtml = isKosong ? `<span class="badge-status kosong mb-2 d-inline-block">Belum Update Data</span>` : `<span class="badge-status lengkap mb-2 d-inline-block">Terupdate</span>`;
+                
+                const isKosong = !item.timestamp || String(item.timestamp).trim() === '';
+                const statusHtml = isKosong 
+                    ? `<span class="badge-status kosong mb-2 d-inline-block"><i class="bi bi-exclamation-circle me-1"></i>Belum Update</span>` 
+                    : `<span class="badge-status lengkap mb-2 d-inline-block"><i class="bi bi-check-circle me-1"></i>Terupdate</span>`;
 
                 html += `
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4 col-xl-3">
                     <div class="dai-card glass-card">
                         <div class="d-flex justify-content-between align-items-start mb-3">
-                            <div class="avatar-initial">${getInitials(nama)}</div>
+                            <div class="avatar-initial shadow-sm">${getInitials(nama)}</div>
                             ${statusHtml}
                         </div>
                         <h6 class="fw-bold mb-1 text-truncate" title="${nama}">${nama}</h6>
-                        <div class="text-muted small mb-3"><i class="bi bi-geo-alt-fill text-gold me-1"></i> ${domisili}</div>
+                        <div class="text-muted small mb-1 font-monospace">${item.dai_id || '-'}</div>
+                        <div class="text-muted small mb-3 text-truncate" title="${domisili}">
+                            <i class="bi bi-geo-alt-fill text-gold me-1"></i> ${domisili}
+                        </div>
                         
                         <div class="mt-auto pt-3 border-top">
-                            <button class="btn btn-outline-primary btn-sm w-100 fw-bold rounded-pill" onclick="openDetail('${item.dai_id}')">
-                                Lihat Profil
+                            <button class="btn btn-primary btn-sm w-100 fw-bold rounded-pill shadow-sm" onclick="openDetail('${item.dai_id}')">
+                                Lihat Rincian Profil
                             </button>
                         </div>
                     </div>
@@ -686,65 +746,75 @@
             if(!item) return;
 
             const nama = item.nama_lengkap_beserta_gelar || item.nama_lengkap_tanpa_gelar || "Tanpa Nama";
-            const isKosong = !item.timestamp;
+            const isKosong = !item.timestamp || String(item.timestamp).trim() === '';
 
+            // Header Modal
             document.getElementById("modalAvatar").innerText = getInitials(nama);
             document.getElementById("modalNama").innerText = nama;
-            document.getElementById("modalStatusUpdate").innerHTML = isKosong 
-                ? `<span class="text-danger"><i class="bi bi-exclamation-circle"></i> Profil Belum Diperbarui</span>` 
-                : `<span class="text-success"><i class="bi bi-check-circle"></i> Update: ${formatTanggalIndo(item.timestamp)}</span>`;
+            document.getElementById("modalNama").title = nama;
             
-            // Render Gambar
+            document.getElementById("modalStatusUpdate").innerHTML = isKosong 
+                ? `<span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-2 py-1"><i class="bi bi-exclamation-circle"></i> Belum Pernah Update</span>` 
+                : `<span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2 py-1"><i class="bi bi-check-circle"></i> Terakhir Update: ${formatTanggalIndo(item.timestamp)}</span>`;
+            
+            // Gambar (KTP dan Wajah)
             const defaultPic = `https://placehold.co/300x400/e8f0fe/4a90e2?text=${encodeURIComponent(getInitials(nama))}`;
-            document.getElementById("imgFotoWajah").src = item.foto_wajah_url || defaultPic;
-            document.getElementById("linkFotoWajah").href = item.foto_wajah_url || "#";
-            document.getElementById("imgFotoKTP").src = item.foto_ktp_url || defaultPic;
-            document.getElementById("linkFotoKTP").href = item.foto_ktp_url || "#";
+            
+            const linkWajah = getDirectDriveLink(item.foto_wajah_url);
+            document.getElementById("imgFotoWajah").src = linkWajah || defaultPic;
+            document.getElementById("linkFotoWajah").href = linkWajah || "#";
+            
+            const linkKTP = getDirectDriveLink(item.foto_ktp_url);
+            document.getElementById("imgFotoKTP").src = linkKTP || defaultPic;
+            document.getElementById("linkFotoKTP").href = linkKTP || "#";
 
             // Tab 1: Profil
             document.getElementById("mdl_nama_lengkap").innerText = nama;
-            document.getElementById("mdl_nama_ktp").innerText = item.nama_sesuai_ktp || "-";
-            document.getElementById("mdl_id").innerText = item.dai_id || "-";
-            document.getElementById("mdl_nik").innerText = item.nik || "-";
-            document.getElementById("mdl_email").innerText = item.email || "-";
+            document.getElementById("mdl_nama_ktp").innerText = cleanString(item.nama_sesuai_ktp);
+            document.getElementById("mdl_id").innerText = cleanString(item.dai_id);
+            document.getElementById("mdl_nik").innerText = cleanString(item.nik);
+            document.getElementById("mdl_email").innerText = cleanString(item.email);
             
-            const ttl = (item.tempat_lahir || item.tanggal_lahir) ? `${item.tempat_lahir || '-'}, ${formatTanggalIndo(item.tanggal_lahir)}` : "-";
+            const ttl = (item.tempat_lahir || item.tanggal_lahir) ? `${cleanString(item.tempat_lahir)}, ${formatTanggalIndo(item.tanggal_lahir)}` : "-";
             document.getElementById("mdl_ttl").innerText = ttl;
-            document.getElementById("mdl_pendidikan").innerText = item.pendidikan_terakhir || "-";
-            document.getElementById("mdl_alumni").innerText = item.alumni || "-";
-            document.getElementById("mdl_diutus").innerText = item.tahun_diutus || "-";
+            document.getElementById("mdl_pendidikan").innerText = cleanString(item.pendidikan_terakhir);
+            document.getElementById("mdl_alumni").innerText = cleanString(item.alumni);
+            document.getElementById("mdl_diutus").innerText = cleanString(item.tahun_diutus);
 
             // Tab 2: Wilayah
-            document.getElementById("mdl_dom_prov").innerText = item.domisili_prov || "-";
-            document.getElementById("mdl_dom_kab").innerText = item.domisili_kabkota || "-";
-            document.getElementById("mdl_dom_kec").innerText = item.domisili_kec || "-";
-            document.getElementById("mdl_dom_kel").innerText = item.domisili_desakel || "-";
+            document.getElementById("mdl_dom_prov").innerText = cleanString(item.domisili_prov);
+            document.getElementById("mdl_dom_kab").innerText = cleanString(item.domisili_kabkota);
+            document.getElementById("mdl_dom_kec").innerText = cleanString(item.domisili_kec);
+            document.getElementById("mdl_dom_kel").innerText = cleanString(item.domisili_desakel);
             
-            document.getElementById("mdl_asal_prov").innerText = item.asal_prov || "-";
-            document.getElementById("mdl_asal_kab").innerText = item.asal_kabkota || "-";
-            document.getElementById("mdl_asal_kec").innerText = item.asal_kec || "-";
-            document.getElementById("mdl_asal_kel").innerText = item.asal_desakel || "-";
+            document.getElementById("mdl_asal_prov").innerText = cleanString(item.asal_prov);
+            document.getElementById("mdl_asal_kab").innerText = cleanString(item.asal_kabkota);
+            document.getElementById("mdl_asal_kec").innerText = cleanString(item.asal_kec);
+            document.getElementById("mdl_asal_kel").innerText = cleanString(item.asal_desakel);
 
             // Tab 3: Keluarga
-            document.getElementById("mdl_ayah").innerText = item.nama_ayah_kandung || "-";
-            document.getElementById("mdl_ibu").innerText = item.nama_ibu_kandung || "-";
-            document.getElementById("mdl_status_nikah").innerText = item.status_pernikahan || "-";
-            document.getElementById("mdl_bpjs").innerText = item.jenis_bpjs || "-";
-            document.getElementById("mdl_jml_istri").innerText = item.jumlah_istri || "-";
-            document.getElementById("mdl_jml_anak").innerText = item.jumlah_anak || "-";
+            document.getElementById("mdl_ayah").innerText = cleanString(item.nama_ayah_kandung);
+            document.getElementById("mdl_ibu").innerText = cleanString(item.nama_ibu_kandung);
+            document.getElementById("mdl_status_nikah").innerText = cleanString(item.status_pernikahan);
+            document.getElementById("mdl_bpjs").innerText = cleanString(item.jenis_bpjs);
+            document.getElementById("mdl_jml_istri").innerText = cleanString(item.jumlah_istri, "0");
+            document.getElementById("mdl_jml_anak").innerText = cleanString(item.jumlah_anak, "0");
 
-            // Render Dinamis Istri (Hanya tampilkan jika data ada)
+            // Render Dinamis Istri
             let htmlIstri = '';
             for(let i=1; i<=4; i++) {
-                if(item[`istri_${i}_nama`]) {
+                if(item[`istri_${i}_nama`] && String(item[`istri_${i}_nama`]).trim() !== "") {
                     htmlIstri += `
-                    <div class="detail-card mt-3">
-                        <h6 class="section-title">Data Istri Ke-${i}</h6>
-                        <div class="row">
-                            <div class="col-md-3"><div class="data-label">Nama</div><div class="data-value">${item[`istri_${i}_nama`]}</div></div>
-                            <div class="col-md-3"><div class="data-label">No. WA</div><div class="data-value">${item[`istri_${i}_wa`] || '-'}</div></div>
-                            <div class="col-md-3"><div class="data-label">Tgl Lahir</div><div class="data-value">${formatTanggalIndo(item[`istri_${i}_tgl_lahir`])}</div></div>
-                            <div class="col-md-3"><div class="data-label">Jml Anak</div><div class="data-value">${item[`istri_${i}_anak`] || '-'}</div></div>
+                    <div class="col-md-6">
+                        <div class="detail-card mb-0 bg-white border border-info border-opacity-25 h-100">
+                            <h6 class="section-title text-info mb-3"><i class="bi bi-person-heart"></i> Data Istri Ke-${i}</h6>
+                            <div class="row g-2">
+                                <div class="col-12"><div class="data-label">Nama Lengkap</div><div class="data-value fw-bold">${cleanString(item[`istri_${i}_nama`])}</div></div>
+                                <div class="col-6"><div class="data-label">No. WhatsApp</div><div class="data-value font-monospace">${cleanString(item[`istri_${i}_wa`])}</div></div>
+                                <div class="col-6"><div class="data-label">NIK</div><div class="data-value font-monospace">${cleanString(item[`istri_${i}_nik`])}</div></div>
+                                <div class="col-6"><div class="data-label">Tanggal Lahir</div><div class="data-value">${formatTanggalIndo(item[`istri_${i}_tgl_lahir`])}</div></div>
+                                <div class="col-6"><div class="data-label">Jumlah Anak</div><div class="data-value fs-5 fw-bold text-success">${cleanString(item[`istri_${i}_anak`], '0')}</div></div>
+                            </div>
                         </div>
                     </div>`;
                 }
@@ -752,21 +822,31 @@
             document.getElementById("container-istri").innerHTML = htmlIstri;
 
             // Tab 4: Organisasi & Bank
-            document.getElementById("mdl_marhalah").innerText = item.marhalah || "-";
-            document.getElementById("mdl_murabbi").innerText = item.nama_murabbi || "-";
-            document.getElementById("mdl_pimpinan").innerText = item.nama_pimpinan || "-";
-            document.getElementById("mdl_jab_pimpinan").innerText = item.jabatan_pimpinan || "-";
+            document.getElementById("mdl_marhalah").innerText = cleanString(item.marhalah);
+            document.getElementById("mdl_murabbi").innerText = cleanString(item.nama_murabbi);
+            document.getElementById("mdl_wa_murabbi").innerText = cleanString(item.wa_murabbi);
+            document.getElementById("mdl_pimpinan").innerText = cleanString(item.nama_pimpinan);
+            document.getElementById("mdl_jab_pimpinan").innerText = cleanString(item.jabatan_pimpinan);
+            document.getElementById("mdl_wa_pimpinan").innerText = cleanString(item.wa_pimpinan);
             
-            document.getElementById("mdl_rek_berkah").innerText = item.rekening_berkah_mobile || "-";
-            document.getElementById("mdl_bank").innerText = item.nama_bank !== 'Lainnya' ? item.nama_bank : item.nama_bank_lainnya || "-";
-            document.getElementById("mdl_norek").innerText = item.nomor_rekening || "-";
-            document.getElementById("mdl_atas_nama").innerText = item.nama_pemilik || "-";
+            document.getElementById("mdl_rek_berkah").innerText = cleanString(item.rekening_berkah_mobile);
+            
+            const realBank = String(item.nama_bank || '').toUpperCase().includes('LAINNYA') ? item.nama_bank_lainnya : item.nama_bank;
+            document.getElementById("mdl_bank").innerText = cleanString(realBank);
+            document.getElementById("mdl_norek").innerText = cleanString(item.nomor_rekening);
+            document.getElementById("mdl_atas_nama").innerText = cleanString(item.nama_pemilik);
 
-            // Reset Tab to first
+            // Reset Tab ke Profil Pertama
             const triggerFirstTabEl = document.querySelector('#pills-tab li:first-child button');
             bootstrap.Tab.getInstance(triggerFirstTabEl)?.show() || new bootstrap.Tab(triggerFirstTabEl).show();
 
             detailModal.show();
+        }
+        
+        // Helper untuk mencegah undedfined / kutip satu dari spreadsheet
+        function cleanString(str, fallback = "-") {
+            if (str === null || str === undefined || String(str).trim() === '') return fallback;
+            return String(str).replace(/^'/, '').trim();
         }
 
         window.logout = function() {
@@ -782,10 +862,10 @@
             setTimeout(() => {
                 dbView.classList.add("d-none");
                 loginView.classList.remove("d-none");
-                void loginView.offsetWidth;
+                void loginView.offsetWidth; // trigger reflow
                 loginView.classList.remove("fade-out");
                 document.getElementById("loginPass").value = "";
-            }, 500);
+            }, 400);
         }
     </script>
 </body>
