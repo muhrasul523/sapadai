@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Verifikasi Laporan Kinerja Dai</title>
+    
+    <!-- Favicon & OpenGraph (Adopsi UI Input) -->
+    <link rel="icon" type="image/png" href="https://muhrasul523.github.io/sapadai/logo_sapadai_1.png">
+    <meta property="og:title" content="Portal Verifikasi Dai Utusan">
+    <meta property="og:description" content="Aplikasi verifikasi laporan kinerja bulanan Dai Utusan Wahdah Islamiyah.">
+    <meta property="og:image" itemprop="image" content="https://muhrasul523.github.io/sapadai/logo_sapadai_2.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:type" content="website">
+
+    <!-- Library CSS & JS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #1f2937; }
+        .wahdah-bg { background-color: #0f766e; } 
+        .wahdah-text { color: #0f766e; }
+        #loading-overlay { display: none; background: rgba(255, 255, 255, 0.95); z-index: 9999; }
+        .spinner { border: 4px solid rgba(15, 118, 110, 0.1); width: 50px; height: 50px; border-radius: 50%; border-left-color: #0f766e; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .tab-btn.active { background-color: #0f766e; color: white; border-color: #0f766e; }
+        .tab-btn { background-color: white; color: #374151; border: 1px solid #d1d5db; }
+        
+        /* Custom Scrollbar Modal */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="fixed inset-0 flex flex-col justify-center items-center">
+        <div class="spinner mb-4"></div>
+        <h2 class="text-xl font-semibold wahdah-text" id="loading-text">Memuat Data...</h2>
+    </div>
+
+    <!-- Halaman Login -->
+    <div id="login-page" class="min-h-screen flex items-center justify-center p-4 bg-gray-50">
+        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
+            <div class="text-center mb-8">
+                <img src="https://muhrasul523.github.io/sapadai/logo_sapadai_1.png" alt="Logo" class="h-20 mx-auto mb-4 object-contain">
+                <h1 class="text-xl font-bold text-gray-800 uppercase tracking-wide">PORTAL VERIFIKASI</h1>
+                <p class="text-sm text-gray-500 font-semibold tracking-wide">LAPORAN KINERJA DAI UTUSAN</p>
+            </div>
+            
+            <form onsubmit="event.preventDefault(); submitLogin();" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Kode Akses Laporan</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-key text-gray-400"></i></div>
+                        <input type="password" id="akses-kode" required class="w-full pl-10 p-3 rounded-lg border focus:ring-2 focus:ring-teal-500" placeholder="Masukkan kode akses">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Anda Bertugas Sebagai</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-user-shield text-gray-400"></i></div>
+                        <select id="select-verifikator" required class="w-full pl-10 p-3 rounded-lg border focus:ring-2 focus:ring-teal-500 bg-white">
+                            <option value="">-- Memuat Data Verifikator --</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="w-full wahdah-bg text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-800 transition shadow-lg mt-4">
+                    <i class="fas fa-sign-in-alt mr-2"></i> Masuk Sistem
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Aplikasi Utama -->
+    <div id="main-app" class="hidden min-h-screen pb-20">
+        <nav class="wahdah-bg text-white p-4 sticky top-0 z-40 shadow-lg">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <div class="font-bold text-lg flex items-center gap-3">
+                    <img src="https://muhrasul523.github.io/sapadai/logo_sapadai_1.png" alt="Logo" class="h-8 bg-white p-1 rounded-full">
+                    <span class="hidden sm:inline">Verifikasi Laporan Dai</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-sm text-right hidden md:block">
+                        <p class="font-semibold leading-none" id="user-info-name">Nama Verifikator</p>
+                        <span class="text-xs text-teal-200">Hak Akses Terbatas</span>
+                    </div>
+                    <button onclick="location.reload()" class="text-sm border border-white hover:bg-white hover:text-teal-700 font-medium px-4 py-1.5 rounded transition shadow">
+                        <i class="fas fa-power-off"></i><span class="hidden sm:inline ml-2">Keluar</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="max-w-7xl mx-auto mt-6 px-4">
+            
+            <!-- Filter & Navigasi -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+                <div class="flex items-center gap-3 w-full md:w-auto bg-gray-50 p-2 rounded-lg border">
+                    <label class="font-semibold text-gray-700 whitespace-nowrap text-sm"><i class="far fa-calendar-alt mr-2 text-teal-600"></i>Bulan Laporan:</label>
+                    <select id="filter-bulan" class="p-1.5 border-0 bg-transparent font-bold text-teal-700 focus:ring-0 cursor-pointer text-center" onchange="renderUI()"></select>
+                </div>
+                <div class="flex gap-2 w-full md:w-auto">
+                    <button onclick="switchTab('dashboard')" id="btn-tab-dashboard" class="flex-1 md:flex-none px-5 py-2 tab-btn active rounded-lg text-sm font-bold transition shadow-sm"><i class="fas fa-chart-pie mr-2"></i>Dashboard</button>
+                    <button onclick="switchTab('verifikasi')" id="btn-tab-verifikasi" class="flex-1 md:flex-none px-5 py-2 tab-btn rounded-lg text-sm font-bold transition shadow-sm"><i class="fas fa-tasks mr-2"></i>Data Verifikasi</button>
+                </div>
+            </div>
+
+            <!-- Tab Dashboard -->
+            <div id="tab-dashboard" class="space-y-6">
+                <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-blue-500">
+                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Total Dai Anda</p>
+                        <h3 class="text-3xl font-bold text-gray-800" id="stat-total">0</h3>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-gray-400">
+                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Belum Input</p>
+                        <h3 class="text-3xl font-bold text-gray-800" id="stat-belum">0</h3>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-yellow-500">
+                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Menunggu</p>
+                        <h3 class="text-3xl font-bold text-gray-800" id="stat-wait">0</h3>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-green-500">
+                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Diterima</p>
+                        <h3 class="text-3xl font-bold text-gray-800" id="stat-acc">0</h3>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-red-500">
+                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Ditolak</p>
+                        <h3 class="text-3xl font-bold text-gray-800" id="stat-rej">0</h3>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h3 class="font-bold text-gray-700 mb-4"><i class="fas fa-chart-bar mr-2 text-teal-600"></i>Grafik Status Laporan (Bulan Ini)</h3>
+                    <div class="relative h-64 w-full">
+                        <canvas id="chart-status"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Verifikasi -->
+            <div id="tab-verifikasi" class="hidden">
+                <div class="bg-white p-4 rounded-t-xl border border-b-0 border-gray-200 flex flex-wrap gap-4 items-center justify-between">
+                    <div class="relative flex-1 max-w-xs">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-search text-gray-400"></i></div>
+                        <input type="text" id="search-dai" onkeyup="filterTable()" class="w-full pl-10 p-2.5 border rounded-lg text-sm bg-gray-50 focus:ring-teal-500 focus:bg-white" placeholder="Cari nama atau provinsi...">
+                    </div>
+                    <div class="flex gap-2 text-sm overflow-x-auto pb-1">
+                        <span class="px-3 py-1 bg-gray-100 rounded-full text-gray-600 font-medium cursor-pointer hover:bg-gray-200 whitespace-nowrap border" onclick="filterStatus('')">Semua Status</span>
+                        <span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full font-medium cursor-pointer hover:bg-yellow-200 whitespace-nowrap border border-yellow-200" onclick="filterStatus('Menunggu')">Menunggu</span>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-b-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse" id="main-table">
+                            <thead class="bg-gray-50 text-gray-600 border-b">
+                                <tr>
+                                    <th class="p-4 font-bold text-sm">No</th>
+                                    <th class="p-4 font-bold text-sm">Identitas Dai</th>
+                                    <th class="p-4 font-bold text-sm">Penempatan</th>
+                                    <th class="p-4 font-bold text-sm text-center">Status</th>
+                                    <th class="p-4 font-bold text-sm text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body" class="divide-y divide-gray-100 text-sm">
+                                <!-- Data diinjeksi via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Verifikasi -->
+    <div id="modal-verifikasi" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-2 md:p-4 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-5xl rounded-2xl shadow-2xl flex flex-col max-h-[98vh] md:max-h-[95vh] overflow-hidden transform transition-all">
+            
+            <div class="px-6 py-4 border-b flex justify-between items-center bg-gradient-to-r from-teal-700 to-teal-600 text-white">
+                <div>
+                    <h3 class="font-bold text-lg" id="modal-title">Periksa Laporan</h3>
+                    <p class="text-xs text-teal-100" id="modal-subtitle">Bulan: -</p>
+                </div>
+                <button onclick="closeModal()" class="text-white hover:text-red-300 text-2xl transition"><i class="fas fa-times-circle"></i></button>
+            </div>
+            
+            <div class="p-0 overflow-y-auto flex-1 bg-gray-50 flex flex-col md:flex-row">
+                <!-- Kolom Kiri: Detail Laporan Dai -->
+                <div class="w-full md:w-2/3 p-4 md:p-6 bg-white border-r">
+                    <h4 class="font-bold text-teal-800 mb-4 pb-2 border-b"><i class="fas fa-file-alt mr-2"></i>Rincian Data yang Diinput</h4>
+                    <div id="detail-laporan-content" class="space-y-6 text-sm text-gray-700">
+                        <!-- Konten akan diinjeksi JS -->
+                    </div>
+                </div>
+                
+                <!-- Kolom Kanan: Bukti Foto & Form Keputusan -->
+                <div class="w-full md:w-1/3 p-4 md:p-6 flex flex-col gap-6">
+                    <div>
+                        <h4 class="font-bold text-teal-800 mb-3 pb-2 border-b"><i class="fas fa-image mr-2"></i>Bukti Persetujuan</h4>
+                        <div id="bukti-foto" class="grid grid-cols-2 gap-2"></div>
+                    </div>
+                    
+                    <div class="bg-white p-5 rounded-xl border border-teal-200 shadow-sm sticky top-6">
+                        <h4 class="font-bold text-teal-800 mb-4"><i class="fas fa-gavel mr-2"></i>Form Keputusan</h4>
+                        <input type="hidden" id="v-id-dai">
+                        
+                        <label class="block text-sm font-semibold mb-2 text-gray-700">Status Laporan <span class="text-red-500">*</span></label>
+                        <div class="flex flex-col gap-3 mb-5">
+                            <label class="flex items-center gap-3 cursor-pointer p-3 border rounded-lg bg-gray-50 hover:bg-green-50 transition border-gray-200" id="label-terima">
+                                <input type="radio" name="v_status" value="Diterima" class="w-5 h-5 text-green-600 focus:ring-green-500" onclick="toggleCatatanRequired()"> 
+                                <span class="font-semibold text-green-700">DITERIMA</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer p-3 border rounded-lg bg-gray-50 hover:bg-red-50 transition border-gray-200" id="label-tolak">
+                                <input type="radio" name="v_status" value="Ditolak" class="w-5 h-5 text-red-600 focus:ring-red-500" onclick="toggleCatatanRequired()"> 
+                                <span class="font-semibold text-red-700">DITOLAK / REVISI</span>
+                            </label>
+                        </div>
+                        
+                        <label class="block text-sm font-semibold mb-2 text-gray-700">Catatan Verifikator <span id="req-catatan" class="text-red-500 hidden">* (Wajib)</span></label>
+                        <textarea id="v-catatan" class="w-full p-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 bg-gray-50" rows="4" placeholder="Masukkan alasan penolakan atau masukan positif..."></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="px-6 py-4 border-t flex justify-end gap-3 bg-white">
+                <button onclick="closeModal()" class="px-5 py-2.5 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg font-bold transition">Batal</button>
+                <button onclick="submitVerifikasi()" class="px-5 py-2.5 bg-teal-600 text-white rounded-lg font-bold hover:bg-teal-700 transition shadow-lg flex items-center gap-2">
+                    <i class="fas fa-save"></i> Simpan Verifikasi
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // WEBAPP URL SESUAI PERMINTAAN
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwVEnstZxh1aiTsB_XnEwzUEYIWECmI2wQ07frMNJhX3fBzTICaG1pZkkFan87KRgkW/exec';
+
+        let db = { config: {}, verifikator: [], users: [], laporan: [], riwayat: [], bulans: [] };
+        let activeVerifikator = null;
+        let chartInstance = null;
+        let currentFilterStatus = '';
+
+        function showLoading(text) { document.getElementById('loading-text').innerText = text || 'Memuat...'; document.getElementById('loading-overlay').style.display = 'flex'; }
+        function hideLoading() { document.getElementById('loading-overlay').style.display = 'none'; }
+        
+        function formatVal(val) { return val && val !== '-' && val !== '0' ? val : '<span class="text-gray-400 italic">Kosong</span>'; }
+        function formatRincian(val) { return val ? val.replace(/\n/g, '<br>') : '-'; }
+
+        window.onload = () => {
+            showLoading('Sinkronisasi Database...');
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'getAllData' })
+            })
+            .then(res => res.json())
+            .then(res => {
+                if(res.success) {
+                    db = res.data;
+                    initLogin();
+                    hideLoading();
+                } else {
+                    hideLoading(); Swal.fire('Error', res.message, 'error');
+                }
+            })
+            .catch(err => {
+                hideLoading(); Swal.fire('Error', 'Kesalahan koneksi saat memuat data.', 'error');
+            });
+        };
+
+        function initLogin() {
+            let sel = document.getElementById('select-verifikator');
+            sel.innerHTML = '<option value="">-- Pilih Nama Anda --</option>';
+            db.verifikator.forEach(v => sel.add(new Option(v.nama_verifikator, v.id_verifikator)));
+        }
+
+        function submitLogin() {
+            let kode = document.getElementById('akses-kode').value;
+            let vId = document.getElementById('select-verifikator').value;
+            
+            if (kode !== db.config.akses_kode) {
+                Swal.fire('Akses Ditolak', 'Kode Akses yang Anda masukkan salah!', 'error'); return;
+            }
+            
+            activeVerifikator = db.verifikator.find(v => v.id_verifikator === vId);
+            document.getElementById('user-info-name').innerText = activeVerifikator.nama_verifikator;
+            
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            
+            initFilterBulan();
+            renderUI();
+        }
+
+        function initFilterBulan() {
+            let sel = document.getElementById('filter-bulan');
+            let bulans = db.bulans || [];
+            sel.innerHTML = '';
+            if(bulans.length === 0) {
+                sel.add(new Option("Belum ada data", ""));
+                return;
+            }
+            // Sort Descending sederhana berdasarkan abjad (Kustomisasi sort lebih lanjut jika perlu)
+            bulans.sort((a,b) => b.localeCompare(a)).forEach(b => sel.add(new Option(b, b)));
+        }
+
+        function switchTab(tab) {
+            document.getElementById('tab-dashboard').style.display = tab === 'dashboard' ? 'block' : 'none';
+            document.getElementById('tab-verifikasi').style.display = tab === 'verifikasi' ? 'block' : 'none';
+            
+            document.getElementById('btn-tab-dashboard').className = tab === 'dashboard' ? 'flex-1 md:flex-none px-5 py-2 tab-btn active rounded-lg text-sm font-bold transition shadow-sm' : 'flex-1 md:flex-none px-5 py-2 tab-btn rounded-lg text-sm font-bold transition shadow-sm';
+            document.getElementById('btn-tab-verifikasi').className = tab === 'verifikasi' ? 'flex-1 md:flex-none px-5 py-2 tab-btn active rounded-lg text-sm font-bold transition shadow-sm' : 'flex-1 md:flex-none px-5 py-2 tab-btn rounded-lg text-sm font-bold transition shadow-sm';
+        }
+
+        function getStatus(idDai, bulan) {
+            let riwayatDai = db.riwayat.filter(r => r.id_dai === idDai && r.bulan_laporan === bulan);
+            if (riwayatDai.length === 0) {
+                let adaLaporan = db.laporan.some(l => l.id_pengguna === idDai && l.bulan_laporan === bulan);
+                return adaLaporan ? "Menunggu" : "Belum Input";
+            }
+            return riwayatDai[riwayatDai.length - 1].status; // status terbaru
+        }
+
+        function filterStatus(status) {
+            currentFilterStatus = status;
+            renderUI();
+        }
+        function filterTable() {
+            let keyword = document.getElementById('search-dai').value.toLowerCase();
+            let rows = document.querySelectorAll('.tr-data');
+            rows.forEach(row => {
+                let text = row.innerText.toLowerCase();
+                row.style.display = text.includes(keyword) ? '' : 'none';
+            });
+        }
+
+        function renderUI() {
+            let bulan = document.getElementById('filter-bulan').value;
+            let myDaiIds = activeVerifikator.daftar_id_dai.split(',').map(id => id.trim());
+            let myUsers = db.users.filter(u => myDaiIds.includes(u.dai_id));
+            
+            let html = '';
+            let stats = { total: myUsers.length, wait: 0, acc: 0, rej: 0, belum: 0 };
+            let no = 1;
+
+            myUsers.forEach(u => {
+                let status = getStatus(u.dai_id, bulan);
+                
+                // Kalkulasi Stats
+                if(status === 'Menunggu') stats.wait++;
+                else if(status === 'Diterima') stats.acc++;
+                else if(status === 'Ditolak') stats.rej++;
+                else stats.belum++;
+
+                // Lewati render ke tabel jika terfilter
+                if (currentFilterStatus && status !== currentFilterStatus) return;
+
+                let badgeClass = 'bg-gray-100 text-gray-600 border border-gray-200';
+                let iconStatus = 'fa-clock';
+                if(status === 'Menunggu') { badgeClass = 'bg-yellow-100 text-yellow-700 border-yellow-200'; iconStatus='fa-hourglass-half'; }
+                else if(status === 'Diterima') { badgeClass = 'bg-green-100 text-green-700 border-green-200'; iconStatus='fa-check-circle'; }
+                else if(status === 'Ditolak') { badgeClass = 'bg-red-100 text-red-700 border-red-200'; iconStatus='fa-times-circle'; }
+
+                let btnDisabled = status === 'Belum Input' ? 'disabled class="opacity-50 cursor-not-allowed px-3 py-1.5 bg-gray-200 text-gray-500 rounded text-xs font-bold"' : 'onclick="openModal(\''+u.dai_id+'\')" class="px-3 py-1.5 bg-teal-600 text-white rounded hover:bg-teal-700 text-xs font-bold transition shadow-sm"';
+                
+                html += `<tr class="tr-data hover:bg-teal-50 transition border-b">
+                    <td class="p-4 font-medium text-gray-500">${no++}</td>
+                    <td class="p-4">
+                        <p class="font-bold text-gray-800">${u.nama_dai}</p>
+                        <p class="text-xs text-gray-500">${u.dai_id}</p>
+                    </td>
+                    <td class="p-4">
+                        <p class="font-medium text-gray-700">${u.penempatan}</p>
+                        <p class="text-xs text-gray-500">${u.provinsi}</p>
+                    </td>
+                    <td class="p-4 text-center"><span class="px-3 py-1 rounded-full text-xs font-bold ${badgeClass} inline-flex items-center gap-1"><i class="fas ${iconStatus}"></i> ${status}</span></td>
+                    <td class="p-4 text-center"><button ${btnDisabled}><i class="fas fa-search"></i> Periksa</button></td>
+                </tr>`;
+            });
+
+            if(html === '') html = '<tr><td colspan="5" class="text-center p-8 text-gray-500">Tidak ada data ditemukan.</td></tr>';
+            document.getElementById('table-body').innerHTML = html;
+            filterTable(); // Re-apply search text
+            
+            // Update Stats UI
+            document.getElementById('stat-total').innerText = stats.total;
+            document.getElementById('stat-belum').innerText = stats.belum;
+            document.getElementById('stat-wait').innerText = stats.wait;
+            document.getElementById('stat-acc').innerText = stats.acc;
+            document.getElementById('stat-rej').innerText = stats.rej;
+            
+            updateChart(stats);
+        }
+
+        function updateChart(stats) {
+            let ctx = document.getElementById('chart-status').getContext('2d');
+            if(chartInstance) chartInstance.destroy();
+            chartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Belum Input', 'Menunggu', 'Diterima', 'Ditolak'],
+                    datasets: [{
+                        data: [stats.belum, stats.wait, stats.acc, stats.rej],
+                        backgroundColor: ['#9ca3af', '#eab308', '#22c55e', '#ef4444'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { 
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { position: 'right' } },
+                    cutout: '65%'
+                }
+            });
+        }
+
+        function openModal(idDai) {
+            let bulan = document.getElementById('filter-bulan').value;
+            let lap = db.laporan.find(l => l.id_pengguna === idDai && l.bulan_laporan === bulan);
+            let usr = db.users.find(u => u.dai_id === idDai);
+            
+            if(!lap) return;
+
+            document.getElementById('modal-title').innerText = `Verifikasi: ${usr.nama_dai}`;
+            document.getElementById('modal-subtitle').innerText = `Bulan Laporan: ${bulan} | Waktu Input: ${lap.timestamp}`;
+            document.getElementById('v-id-dai').value = idDai;
+            
+            // Generate HTML Detail
+            let rincianHTML = `
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-teal-50 p-3 rounded-lg border border-teal-100"><p class="text-xs text-teal-600 uppercase font-bold">Amanah Struktural</p><p class="font-bold text-teal-900">${formatVal(lap.amanah)}</p></div>
+                    <div class="bg-teal-50 p-3 rounded-lg border border-teal-100"><p class="text-xs text-teal-600 uppercase font-bold">Waktu Berkantor</p><p class="font-bold text-teal-900">${formatVal(lap.waktu_berkantor_jam)} Jam</p></div>
+                </div>
+
+                <div class="mt-4">
+                    <h5 class="font-bold text-teal-800 bg-teal-100/50 p-2.5 rounded-t-lg border-b border-teal-200">Karya Unggulan</h5>
+                    <table class="w-full text-xs border rounded-b-lg overflow-hidden border-t-0">
+                        <tr class="bg-gray-50 border-b"><td class="p-2 font-bold w-2/3">Kategori</td><td class="p-2 font-bold text-center">Jumlah</td></tr>
+                        <tr class="border-b"><td class="p-2">Pengajar Al-Quran</td><td class="p-2 text-center font-bold text-teal-600">${lap.a1_jml||0}</td></tr>
+                        <tr class="border-b"><td class="p-2">Murabbi / Pra Murabbi</td><td class="p-2 text-center font-bold text-teal-600">${lap.a2_jml||0}</td></tr>
+                        <tr class="border-b"><td class="p-2">Pengurus / Pra Pengurus</td><td class="p-2 text-center font-bold text-teal-600">${lap.a3_jml||0}</td></tr>
+                        <tr class="border-b"><td class="p-2">Camaba STIBA</td><td class="p-2 text-center font-bold text-teal-600">${lap.a4_jml||0}</td></tr>
+                        <tr><td class="p-2">Camaba Sekolah Dai</td><td class="p-2 text-center font-bold text-teal-600">${lap.a5_jml||0}</td></tr>
+                    </table>
+                </div>
+
+                <div class="mt-4">
+                    <h5 class="font-bold text-teal-800 bg-teal-100/50 p-2.5 rounded-t-lg border-b border-teal-200">Data Halaqah</h5>
+                    <table class="w-full text-xs border rounded-b-lg overflow-hidden border-t-0 text-center">
+                        <tr class="bg-gray-50 border-b">
+                            <td class="p-2 font-bold text-left">Jenis Halaqah</td><td class="p-2 font-bold">Jml Halaqah</td><td class="p-2 font-bold">Peserta</td><td class="p-2 font-bold">Aktif</td>
+                        </tr>
+                        <tr class="border-b"><td class="p-2 text-left font-medium">Tarbiyah</td><td class="p-2">${lap.c1_halaqah||0}</td><td class="p-2">${lap.c1_peserta||0}</td><td class="p-2">${lap.c1_aktif||0}</td></tr>
+                        <tr class="border-b"><td class="p-2 text-left font-medium">Dirosa</td><td class="p-2">${lap.c2_dirosa_halaqah||0}</td><td class="p-2">${lap.c2_dirosa_peserta||0}</td><td class="p-2">${lap.c2_dirosa_aktif||0}</td></tr>
+                        <tr><td class="p-2 text-left font-medium">Tahsin</td><td class="p-2">${lap.c2_tahsin_halaqah||0}</td><td class="p-2">${lap.c2_tahsin_peserta||0}</td><td class="p-2">${lap.c2_tahsin_aktif||0}</td></tr>
+                    </table>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mt-4">
+                    <div class="border border-gray-200 rounded-lg p-3 bg-gray-50"><p class="text-xs text-gray-500 font-bold mb-1 uppercase">Khotbah Jumat</p><p class="text-lg font-bold text-gray-800">${lap.khotbah_jumat||0} <span class="text-xs font-normal">Kali</span></p></div>
+                    <div class="border border-gray-200 rounded-lg p-3 bg-gray-50"><p class="text-xs text-gray-500 font-bold mb-1 uppercase">Taklim/Tablig</p><p class="text-lg font-bold text-gray-800">${lap.taklim_tablig||0} <span class="text-xs font-normal">Kali</span></p></div>
+                    <div class="border border-gray-200 rounded-lg p-3 bg-gray-50"><p class="text-xs text-gray-500 font-bold mb-1 uppercase">Silaturahmi Internal</p><p class="text-lg font-bold text-gray-800">${lap.silaturahmi_internal_jml||0}</p></div>
+                    <div class="border border-gray-200 rounded-lg p-3 bg-gray-50"><p class="text-xs text-gray-500 font-bold mb-1 uppercase">Silaturahmi Eksternal</p><p class="text-lg font-bold text-gray-800">${lap.silaturahmi_eksternal_jml||0}</p></div>
+                </div>
+            `;
+            document.getElementById('detail-laporan-content').innerHTML = rincianHTML;
+
+            // Foto Preview
+            let fotoHtml = '';
+            if(lap.upload_persetujuan && lap.upload_persetujuan !== '-') {
+                let urls = lap.upload_persetujuan.split(' \n');
+                urls.forEach(url => {
+                    fotoHtml += `<a href="${url.trim()}" target="_blank" class="block w-full aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-300 hover:border-teal-500 transition relative group">
+                        <img src="${url.trim()}" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><i class="fas fa-external-link-alt text-white text-xl"></i></div>
+                    </a>`;
+                });
+            } else { fotoHtml = '<div class="col-span-2 text-center p-6 bg-gray-50 border border-dashed border-gray-300 rounded-lg text-gray-400 text-sm"><i class="fas fa-image text-3xl mb-2 block"></i>Tidak ada foto persetujuan yang diunggah.</div>'; }
+            document.getElementById('bukti-foto').innerHTML = fotoHtml;
+
+            // Reset Form Verifikasi
+            document.querySelectorAll('input[name="v_status"]').forEach(r => {
+                r.checked = false;
+                r.parentElement.classList.remove('ring-2', 'ring-offset-1', 'ring-green-500', 'ring-red-500', 'bg-green-50', 'bg-red-50');
+            });
+            document.getElementById('v-catatan').value = '';
+            toggleCatatanRequired();
+
+            document.getElementById('modal-verifikasi').style.display = 'flex';
+        }
+
+        function toggleCatatanRequired() {
+            let val = document.querySelector('input[name="v_status"]:checked')?.value;
+            let reqLabel = document.getElementById('req-catatan');
+            
+            let labelT = document.getElementById('label-terima');
+            let labelR = document.getElementById('label-tolak');
+            
+            labelT.classList.remove('ring-2', 'ring-offset-1', 'ring-green-500', 'bg-green-50');
+            labelR.classList.remove('ring-2', 'ring-offset-1', 'ring-red-500', 'bg-red-50');
+
+            if(val === 'Diterima') labelT.classList.add('ring-2', 'ring-offset-1', 'ring-green-500', 'bg-green-50');
+            if(val === 'Ditolak') labelR.classList.add('ring-2', 'ring-offset-1', 'ring-red-500', 'bg-red-50');
+
+            if (val === 'Ditolak') reqLabel.classList.remove('hidden');
+            else reqLabel.classList.add('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('modal-verifikasi').style.display = 'none';
+        }
+
+        function submitVerifikasi() {
+            let idDai = document.getElementById('v-id-dai').value;
+            let bulan = document.getElementById('filter-bulan').value;
+            let statusEl = document.querySelector('input[name="v_status"]:checked');
+            let catatan = document.getElementById('v-catatan').value;
+
+            if(!statusEl) { Swal.fire('Perhatian', 'Harap pilih status DITERIMA atau DITOLAK.', 'warning'); return; }
+            let status = statusEl.value;
+
+            if(status === 'Ditolak' && catatan.trim() === '') {
+                Swal.fire('Perhatian', 'Catatan wajib diisi sebagai alasan penolakan/revisi agar Dai dapat memperbaikinya.', 'warning'); 
+                document.getElementById('v-catatan').focus();
+                return; 
+            }
+
+            let payload = {
+                id_verifikator: activeVerifikator.id_verifikator,
+                nama_verifikator: activeVerifikator.nama_verifikator,
+                id_dai: idDai,
+                bulan_laporan: bulan,
+                status: status,
+                catatan: catatan
+            };
+
+            showLoading("Menyimpan & Mengirim Notifikasi...");
+            
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'saveVerification', data: payload })
+            })
+            .then(res => res.json())
+            .then(res => {
+                hideLoading();
+                if(res.success) {
+                    // Update ke memori lokal & Render ulang agar instan
+                    db.riwayat.push({ ...payload, timestamp: "Baru saja" });
+                    renderUI();
+                    closeModal();
+                    Swal.fire('Tersimpan!', 'Hasil verifikasi berhasil dikirim & notifikasi telah disebar.', 'success');
+                } else {
+                    Swal.fire('Gagal', res.message, 'error');
+                }
+            })
+            .catch(err => {
+                hideLoading(); Swal.fire('Error', 'Terjadi kesalahan sistem/jaringan.', 'error');
+            });
+        }
+    </script>
+</body>
+</html>
