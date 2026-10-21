@@ -23,9 +23,12 @@
         body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #1f2937; }
         .wahdah-bg { background-color: #0f766e; } 
         .wahdah-text { color: #0f766e; }
-        #loading-overlay { display: none; background: rgba(255, 255, 255, 0.95); z-index: 9999; }
+        
+        /* Blur Loading Overlay */
+        #loading-overlay { display: none; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(5px); z-index: 9999; }
         .spinner { border: 4px solid rgba(15, 118, 110, 0.1); width: 50px; height: 50px; border-radius: 50%; border-left-color: #0f766e; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
         .tab-btn.active { background-color: #0f766e; color: white; border-color: #0f766e; }
         .tab-btn { background-color: white; color: #374151; border: 1px solid #d1d5db; }
         
@@ -36,7 +39,21 @@
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
         th.sortable:hover { cursor: pointer; background-color: #e5e7eb; }
-        .swal2-html-container { font-size: 0.9em !important; text-align: left !important; }
+        .swal2-html-container { font-size: 0.9em !important; }
+        
+        /* Custom Grid Layout untuk Modal yang Padat */
+        .modal-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+        .grid-data { grid-area: data; }
+        .grid-form { grid-area: form; }
+        .grid-foto { grid-area: foto; }
+        @media (min-width: 768px) {
+            .modal-grid {
+                grid-template-columns: 1.8fr 1fr; /* Bagian Kiri lebih lebar */
+                grid-template-areas: 
+                    "data foto"
+                    "form foto";
+            }
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -44,7 +61,7 @@
     <!-- Loading Overlay -->
     <div id="loading-overlay" class="fixed inset-0 flex flex-col justify-center items-center">
         <div class="spinner mb-4"></div>
-        <h2 class="text-xl font-semibold wahdah-text" id="loading-text">Memuat data...</h2>
+        <h2 class="text-xl font-semibold wahdah-text" id="loading-text">Memuat...</h2>
     </div>
 
     <!-- Halaman Login -->
@@ -119,7 +136,7 @@
 
             <!-- Tab Dashboard -->
             <div id="tab-dashboard" class="space-y-6">
-                <!-- Top Stats (Disesuaikan dengan Persentase) -->
+                <!-- Top Stats -->
                 <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
                     <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-blue-500 relative">
                         <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Total Dai</p>
@@ -127,7 +144,7 @@
                         <span class="absolute top-4 right-4 text-xs font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded">100%</span>
                     </div>
                     <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-gray-400 relative">
-                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Belum Mengisi</p>
+                        <p class="text-[11px] text-gray-500 font-bold uppercase tracking-wider mb-1 leading-tight">Belum Mengisi</p>
                         <h3 class="text-3xl font-bold text-gray-800" id="stat-belum">0</h3>
                         <span class="absolute top-4 right-4 text-xs font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded" id="pct-belum">0%</span>
                     </div>
@@ -215,109 +232,123 @@
                 <button onclick="closeModal()" class="text-white hover:text-red-300 text-2xl transition"><i class="fas fa-times-circle"></i></button>
             </div>
             
-            <div class="p-0 overflow-y-auto flex-1 bg-gray-50 flex flex-col md:flex-row">
-                <!-- Kolom Kiri: Detail Laporan (Disesuaikan agar sangat padat dan hemat tempat) -->
-                <div class="w-full md:w-3/5 p-4 bg-white border-r text-sm">
+            <!-- Grid Layout Kustom untuk Modal -->
+            <div class="p-4 md:p-5 overflow-y-auto flex-1 bg-gray-100 modal-grid">
+                
+                <!-- BAGIAN DATA (KIRI ATAS) -->
+                <div class="grid-data bg-white rounded-xl shadow-sm border p-4 flex flex-col md:flex-row gap-5">
                     
-                    <!-- Top Info Grid: Penempatan | Waktu Berkantor | Amanah -->
-                    <div class="grid grid-cols-3 gap-2 mb-4">
-                        <div class="bg-gray-50 p-2 rounded border border-gray-200">
-                            <p class="text-[9px] text-gray-500 uppercase font-bold tracking-wider mb-0.5">Penempatan</p>
-                            <p class="font-bold text-gray-800 text-xs truncate" id="mdl-penempatan">-</p>
+                    <!-- Kiri Dalam: KARYA UNGGULAN -->
+                    <div class="w-full md:w-1/2 flex flex-col h-full">
+                        <div class="bg-gray-50 p-2.5 rounded border border-gray-200 mb-4">
+                            <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-0.5">Penempatan</p>
+                            <p class="font-bold text-gray-800 text-sm truncate" id="mdl-penempatan">-</p>
                         </div>
-                        <div class="bg-blue-50 p-2 rounded border border-blue-200 text-center">
-                            <p class="text-[9px] text-blue-600 uppercase font-bold tracking-wider mb-0.5"><i class="far fa-clock"></i> Waktu Berkantor</p>
-                            <p class="font-bold text-blue-900 text-sm leading-none" id="mdl-waktu-berkantor">0 Jam</p>
+                        
+                        <h5 class="font-bold text-teal-800 text-xs uppercase mb-2 pb-1 border-b"><i class="fas fa-star text-yellow-500 mr-1"></i> Karya Unggulan</h5>
+                        <div class="flex flex-col gap-2 flex-1" id="mdl-karya-unggulan">
+                            <!-- Diinjeksi JS -->
                         </div>
-                        <div class="bg-teal-50 p-2 rounded border border-teal-200">
-                            <p class="text-[9px] text-teal-600 uppercase font-bold tracking-wider mb-0.5">Amanah Struktural</p>
-                            <p class="font-bold text-teal-900 text-xs truncate" id="mdl-amanah">-</p>
-                        </div>
+                        
+                        <!-- Spasi agar kotak terbawah sejajar -->
+                        <div class="mt-auto"></div>
                     </div>
                     
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                        <!-- Karya Unggulan (Compact Buttons) -->
-                        <div>
-                            <h5 class="font-bold text-gray-700 text-[11px] uppercase mb-1.5 pb-1 border-b"><i class="fas fa-star text-yellow-500 mr-1"></i> Karya Unggulan</h5>
-                            <div class="flex flex-col gap-1.5" id="mdl-karya-unggulan">
-                                <!-- Diinjeksi JS -->
+                    <!-- Kanan Dalam: KINERJA -->
+                    <div class="w-full md:w-1/2 flex flex-col h-full">
+                        <h5 class="font-bold text-teal-800 text-xs uppercase mb-2 pb-1 border-b"><i class="fas fa-chart-line text-blue-500 mr-1"></i> Kinerja Laporan</h5>
+                        
+                        <!-- Baris: Waktu Berkantor & Amanah -->
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                            <div class="bg-blue-50 p-2 rounded border border-blue-100 text-center flex flex-col justify-center">
+                                <p class="text-[9px] text-blue-600 uppercase font-bold tracking-wider mb-0.5"><i class="far fa-clock"></i> Waktu Berkantor</p>
+                                <p class="font-bold text-blue-900 text-sm" id="mdl-waktu-berkantor">0 <span class="text-[10px] font-normal">Jam</span></p>
+                            </div>
+                            <div class="bg-teal-50 p-2 rounded border border-teal-100 text-center flex flex-col justify-center">
+                                <p class="text-[9px] text-teal-600 uppercase font-bold tracking-wider mb-0.5">Amanah Struktural</p>
+                                <p class="font-bold text-teal-900 text-xs truncate" id="mdl-amanah">-</p>
                             </div>
                         </div>
 
-                        <!-- Data Eksternal (Halaqah, Dakwah, Silaturahmi) -->
-                        <div class="flex flex-col gap-3">
-                            <div>
-                                <h5 class="font-bold text-gray-700 text-[11px] uppercase mb-1.5 pb-1 border-b"><i class="fas fa-users text-teal-500 mr-1"></i> Data Halaqah</h5>
-                                <table class="w-full text-[10px] border rounded overflow-hidden border-collapse text-center">
-                                    <tr class="bg-gray-100 border-b">
-                                        <td class="p-1 font-bold text-left border-r">Jenis</td><td class="p-1 font-bold border-r">Jml</td><td class="p-1 font-bold border-r">Peserta</td><td class="p-1 font-bold">Aktif</td>
-                                    </tr>
-                                    <tr class="border-b"><td class="p-1 text-left font-medium border-r">Tarbiyah</td><td class="p-1 border-r font-bold text-teal-700" id="mdl-h-tarbiyah">0</td><td class="p-1 border-r" id="mdl-p-tarbiyah">0</td><td class="p-1" id="mdl-a-tarbiyah">0</td></tr>
-                                    <tr><td class="p-1 text-left font-medium border-r">Al-Quran</td><td class="p-1 border-r font-bold text-teal-700" id="mdl-h-quran">0</td><td class="p-1 border-r" id="mdl-p-quran">0</td><td class="p-1" id="mdl-a-quran">0</td></tr>
-                                </table>
-                            </div>
+                        <!-- Data Halaqah -->
+                        <div class="mb-3">
+                            <table class="w-full text-[10px] border rounded overflow-hidden border-collapse text-center">
+                                <tr class="bg-gray-100 border-b">
+                                    <td class="p-1 font-bold text-left border-r">Jenis</td>
+                                    <td class="p-1 font-bold border-r">Jml</td>
+                                    <td class="p-1 font-bold border-r">Peserta</td>
+                                    <td class="p-1 font-bold">Aktif</td>
+                                </tr>
+                                <tr class="border-b"><td class="p-1 text-left font-medium border-r">Tarbiyah</td><td class="p-1 border-r font-bold text-teal-700" id="mdl-h-tarbiyah">0</td><td class="p-1 border-r" id="mdl-p-tarbiyah">0</td><td class="p-1" id="mdl-a-tarbiyah">0</td></tr>
+                                <tr><td class="p-1 text-left font-medium border-r">Al-Quran</td><td class="p-1 border-r font-bold text-teal-700" id="mdl-h-quran">0</td><td class="p-1 border-r" id="mdl-p-quran">0</td><td class="p-1" id="mdl-a-quran">0</td></tr>
+                            </table>
+                        </div>
 
-                            <div class="grid grid-cols-3 gap-2">
-                                <div class="border rounded p-1.5 text-center bg-gray-50"><p class="text-[9px] font-bold text-gray-500 uppercase leading-tight">Khotbah<br>Jumat</p><p class="font-bold text-sm text-gray-800" id="mdl-khotbah">0</p></div>
-                                <div class="border rounded p-1.5 text-center bg-gray-50"><p class="text-[9px] font-bold text-gray-500 uppercase leading-tight">Taklim/<br>Tablig</p><p class="font-bold text-sm text-gray-800" id="mdl-taklim">0</p></div>
-                                <div class="border rounded p-1.5 text-center bg-teal-50 cursor-pointer hover:bg-teal-100 transition border-teal-200" onclick="showRincianSilaturahmi()"><p class="text-[9px] font-bold text-teal-700 uppercase leading-tight">Sila.<br>Eksternal</p><p class="font-bold text-sm text-teal-700 underline" id="mdl-sila-eks">0</p></div>
-                            </div>
-                            
-                            <div class="bg-gray-50 p-2 rounded border border-gray-200">
-                                <p class="text-[9px] text-gray-500 uppercase font-bold tracking-wider mb-0.5">Pimpinan Tempat Tugas</p>
-                                <p class="font-bold text-gray-800 text-xs truncate" id="mdl-pimpinan">-</p>
-                            </div>
+                        <!-- Khotbah dll -->
+                        <div class="grid grid-cols-3 gap-2 mb-3">
+                            <div class="border rounded p-1.5 text-center bg-gray-50"><p class="text-[9px] font-bold text-gray-500 uppercase leading-tight">Khotbah<br>Jumat</p><p class="font-bold text-sm text-gray-800" id="mdl-khotbah">0</p></div>
+                            <div class="border rounded p-1.5 text-center bg-gray-50"><p class="text-[9px] font-bold text-gray-500 uppercase leading-tight">Taklim/<br>Tablig</p><p class="font-bold text-sm text-gray-800" id="mdl-taklim">0</p></div>
+                            <div class="border rounded p-1.5 text-center bg-gray-50 cursor-pointer hover:bg-teal-50 transition" onclick="showRincianSilaturahmi()"><p class="text-[9px] font-bold text-gray-500 uppercase leading-tight">Sila.<br>Eksternal</p><p class="font-bold text-sm text-teal-600 underline" id="mdl-sila-eks">0</p></div>
+                        </div>
+                        
+                        <!-- Pimpinan Tempat Tugas (didorong ke bawah agar sejajar dgn Camaba Sek.Dai) -->
+                        <div class="mt-auto pt-2 border-t">
+                            <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-0.5">Pimpinan Tempat Tugas</p>
+                            <p class="font-bold text-gray-800 text-xs truncate" id="mdl-pimpinan">-</p>
                         </div>
                     </div>
+                </div>
 
+                <!-- FORM KEPUTUSAN (KIRI BAWAH) -->
+                <div class="grid-form bg-white p-4 rounded-xl border border-teal-200 shadow-sm flex flex-col">
+                    <h4 class="font-bold text-teal-800 text-sm mb-3"><i class="fas fa-gavel mr-1"></i> Form Keputusan</h4>
+                    <input type="hidden" id="v-id-dai">
+                    <input type="hidden" id="v-id-laporan">
+                    
+                    <div class="flex flex-col md:flex-row gap-2 mb-3">
+                        <label class="flex-1 flex items-center gap-3 cursor-pointer p-2.5 border rounded-lg bg-gray-50 hover:bg-green-50 transition border-gray-200" id="label-terima">
+                            <input type="radio" name="v_status" value="Diterima" class="w-4 h-4 text-green-600 focus:ring-green-500" onclick="toggleCatatanRequired()"> 
+                            <span class="font-bold text-sm text-green-700">TERIMA LAPORAN</span>
+                        </label>
+                        <label class="flex-1 flex items-center gap-3 cursor-pointer p-2.5 border rounded-lg bg-gray-50 hover:bg-red-50 transition border-gray-200" id="label-tolak">
+                            <input type="radio" name="v_status" value="Ditolak" class="w-4 h-4 text-red-600 focus:ring-red-500" onclick="toggleCatatanRequired()"> 
+                            <span class="font-bold text-sm text-red-700">TOLAK / REVISI</span>
+                        </label>
+                    </div>
+                    
+                    <div class="flex-1 flex flex-col">
+                        <label class="block text-xs font-bold mb-1 text-gray-700">Catatan <span id="req-catatan" class="text-red-500 hidden">* Wajib jika ditolak</span></label>
+                        <textarea id="v-catatan" class="w-full flex-1 p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 bg-gray-50 resize-none min-h-[60px]" placeholder="Alasan penolakan / masukan positif..."></textarea>
+                    </div>
+                </div>
+
+                <!-- BUKTI FOTO CAROUSEL (KANAN) -->
+                <div class="grid-foto bg-white p-3 rounded-xl border shadow-sm flex flex-col">
+                    <h4 class="font-bold text-teal-800 text-sm mb-2"><i class="fas fa-image mr-1"></i> Bukti Persetujuan</h4>
+                    <!-- Aspect ratio portrait 9:16 untuk screenshot HP -->
+                    <div class="relative w-full aspect-[9/16] bg-gray-900 rounded-lg overflow-hidden flex items-center justify-center border group">
+                        <img id="carousel-img" src="" class="max-w-full max-h-full object-contain" alt="Tidak ada foto">
+                        
+                        <!-- Overlay Buttons (Zoom & Tab) -->
+                        <div id="carousel-actions" class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition z-10">
+                            <button onclick="zoomImg()" class="bg-black/70 text-white w-8 h-8 rounded flex items-center justify-center hover:bg-black" title="Perbesar Gambar"><i class="fas fa-search-plus"></i></button>
+                            <button onclick="openTabImg()" class="bg-black/70 text-white w-8 h-8 rounded flex items-center justify-center hover:bg-black" title="Buka di Tab Baru"><i class="fas fa-external-link-alt"></i></button>
+                        </div>
+
+                        <!-- Navigasi Kiri Kanan -->
+                        <button onclick="prevImg()" id="btn-prev-img" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-black transition opacity-0 group-hover:opacity-100 z-10"><i class="fas fa-chevron-left"></i></button>
+                        <button onclick="nextImg()" id="btn-next-img" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-black transition opacity-0 group-hover:opacity-100 z-10"><i class="fas fa-chevron-right"></i></button>
+                        
+                        <div id="carousel-counter" class="absolute bottom-2 bg-black/70 text-white text-[10px] px-3 py-1 rounded-full font-bold tracking-widest z-10">1/1</div>
+                    </div>
                 </div>
                 
-                <!-- Kolom Kanan: Bukti Foto (Carousel) & Form Keputusan -->
-                <div class="w-full md:w-2/5 p-4 flex flex-col gap-3 bg-gray-100">
-                    
-                    <!-- Carousel Bukti -->
-                    <div class="bg-white p-3 rounded-xl border shadow-sm flex-none">
-                        <h4 class="font-bold text-teal-800 text-sm mb-2"><i class="fas fa-image mr-1"></i> Bukti Persetujuan</h4>
-                        <div class="relative w-full h-52 bg-gray-200 rounded-lg overflow-hidden flex items-center justify-center border border-gray-300 group">
-                            <img id="carousel-img" src="" class="max-w-full max-h-full object-contain cursor-zoom-in" onclick="window.open(this.src, '_blank')" alt="Tidak ada foto">
-                            
-                            <!-- Navigasi -->
-                            <button onclick="prevImg()" id="btn-prev-img" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-black transition opacity-0 group-hover:opacity-100"><i class="fas fa-chevron-left"></i></button>
-                            <button onclick="nextImg()" id="btn-next-img" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-black transition opacity-0 group-hover:opacity-100"><i class="fas fa-chevron-right"></i></button>
-                            
-                            <div id="carousel-counter" class="absolute bottom-2 bg-black/60 text-white text-[10px] px-2.5 py-0.5 rounded-full font-bold tracking-widest">1/1</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Form Keputusan -->
-                    <div class="bg-white p-3 rounded-xl border border-teal-200 shadow-sm flex-1 flex flex-col">
-                        <h4 class="font-bold text-teal-800 text-sm mb-2"><i class="fas fa-gavel mr-1"></i> Form Keputusan</h4>
-                        <input type="hidden" id="v-id-dai">
-                        <input type="hidden" id="v-id-laporan">
-                        
-                        <div class="flex flex-col gap-2 mb-3">
-                            <label class="flex items-center gap-3 cursor-pointer p-2 border rounded-lg bg-gray-50 hover:bg-green-50 transition border-gray-200" id="label-terima">
-                                <input type="radio" name="v_status" value="Diterima" class="w-4 h-4 text-green-600 focus:ring-green-500" onclick="toggleCatatanRequired()"> 
-                                <span class="font-bold text-sm text-green-700">TERIMA LAPORAN</span>
-                            </label>
-                            <label class="flex items-center gap-3 cursor-pointer p-2 border rounded-lg bg-gray-50 hover:bg-red-50 transition border-gray-200" id="label-tolak">
-                                <input type="radio" name="v_status" value="Ditolak" class="w-4 h-4 text-red-600 focus:ring-red-500" onclick="toggleCatatanRequired()"> 
-                                <span class="font-bold text-sm text-red-700">TOLAK / REVISI</span>
-                            </label>
-                        </div>
-                        
-                        <div class="flex-1 flex flex-col">
-                            <label class="block text-xs font-bold mb-1 text-gray-700">Catatan <span id="req-catatan" class="text-red-500 hidden">* Wajib jika ditolak</span></label>
-                            <textarea id="v-catatan" class="w-full flex-1 p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 bg-gray-50 resize-none min-h-[60px]" placeholder="Alasan penolakan / masukan positif..."></textarea>
-                        </div>
-                    </div>
-                </div>
             </div>
             
             <!-- Footer Modal -->
             <div class="px-5 py-3 border-t flex justify-end gap-3 bg-white">
                 <button onclick="closeModal()" class="px-5 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg font-bold text-sm transition">Batal</button>
-                <button onclick="submitVerifikasi()" class="px-5 py-2 bg-teal-600 text-white rounded-lg font-bold text-sm hover:bg-teal-700 transition shadow-lg flex items-center gap-2">
+                <button onclick="submitVerifikasi()" class="px-6 py-2 bg-teal-600 text-white rounded-lg font-bold text-sm hover:bg-teal-700 transition shadow-lg flex items-center gap-2">
                     <i class="fas fa-save"></i> Simpan Verifikasi
                 </button>
             </div>
@@ -332,16 +363,16 @@
         let activeVerifikator = null;
         let chartInstance = null;
         
-        let currentSort = { col: 'waktu', dir: 'desc' }; // Default dari terbaru ke terlama
+        let currentSort = { col: 'waktu', dir: 'desc' }; // Urutkan default dari terbaru ke terlama
         let cachedTableData = []; 
-        let tempRincianEksternal = ""; // Menyimpan rincian silaturahmi untuk modal alert
+        let tempRincianEksternal = ""; 
         let carouselImages = [];
         let carouselIndex = 0;
 
-        function showLoading(text) { document.getElementById('loading-text').innerText = text || 'Memuat data...'; document.getElementById('loading-overlay').style.display = 'flex'; }
+        function showLoading(text) { document.getElementById('loading-text').innerText = text || 'Memuat...'; document.getElementById('loading-overlay').style.display = 'flex'; }
         function hideLoading() { document.getElementById('loading-overlay').style.display = 'none'; }
         
-        // Formatter Waktu Indo: 5/10/2026 16:24:37 -> 5 Oktober 2026 pukul 16:24:37
+        // Formatter Waktu Indo
         function formatTanggalIndo(dateStr) {
             if(!dateStr || dateStr === '-') return '-';
             try {
@@ -354,7 +385,7 @@
             } catch(e) { return dateStr; }
         }
 
-        // Parsing Waktu Untuk Sorting & Bobot Bulan
+        // Parsing Waktu Untuk Sorting & Default Bulan
         function parseWaktuSort(dateStr) {
             if(!dateStr || dateStr === '-') return 0;
             try {
@@ -369,11 +400,18 @@
             let p = b.split(' ');
             let idx = m.indexOf(p[0]);
             let yr = parseInt(p[1]) || 0;
-            return yr * 100 + idx;
+            return yr * 100 + idx; // Contoh: 202607
+        }
+
+        // URL Image Parser untuk Google Drive Bypass Preview
+        function getHighResImgUrl(url) {
+            let match = url.match(/id=([^&]+)/);
+            if(match) return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000`;
+            return url;
         }
 
         window.onload = () => {
-            showLoading('Sinkronisasi Database...');
+            showLoading('Memuat...');
             fetch(SCRIPT_URL, {
                 method: 'POST', body: JSON.stringify({ action: 'getAllData' })
             })
@@ -413,17 +451,15 @@
         }
 
         function initFilters() {
-            // Setup Bulan: Urutkan dari yang paling terbaru lalu jadikan default (paling atas)
             let sel = document.getElementById('filter-bulan');
             sel.innerHTML = '';
             if(db.bulans.length === 0) { sel.add(new Option("Belum ada data", "")); }
             else { 
-                let sortedBulans = db.bulans.sort((a,b) => getBulanWeight(b) - getBulanWeight(a));
+                let sortedBulans = db.bulans.sort((a,b) => getBulanWeight(b) - getBulanWeight(a)); // Terbaru paling atas
                 sortedBulans.forEach(b => sel.add(new Option(b, b))); 
                 sel.value = sortedBulans[0]; // Set default ke bulan terbaru
             }
 
-            // Setup Provinsi
             let myDaiIds = activeVerifikator.daftar_id_dai.split(',').map(id => id.trim());
             let myUsers = db.users.filter(u => myDaiIds.includes(u.dai_id));
             let provs = [...new Set(myUsers.map(u => u.provinsi))].filter(p => p);
@@ -454,7 +490,7 @@
                 status = "Menunggu"; 
             }
             if (riwayats.length > 0) {
-                status = riwayats[riwayats.length - 1].status; // Status ditindih riwayat terbaru
+                status = riwayats[riwayats.length - 1].status;
             }
             return { status, waktu, idLap, lapObj: lap };
         }
@@ -482,7 +518,6 @@
                 });
             });
 
-            // Update Header Stats & Percentages
             document.getElementById('stat-total').innerText = stats.total;
             document.getElementById('stat-belum').innerText = stats.belum;
             document.getElementById('stat-wait').innerText = stats.wait;
@@ -496,7 +531,7 @@
             document.getElementById('pct-rej').innerText = calcPct(stats.rej, stats.total);
             
             updateChart(myUsers);
-            renderTable(); // Saat load data, pastikan sort tabel ikut tereksekusi
+            renderTable();
         }
 
         function setSort(col) {
@@ -505,7 +540,6 @@
             } else {
                 currentSort.col = col; currentSort.dir = 'asc';
             }
-            // Update UI sort icon
             document.querySelectorAll('th.sortable i').forEach(icon => icon.className = 'fas fa-sort ml-1 text-gray-400');
             let th = document.querySelector(`th.sortable[onclick="setSort('${col}')"] i`);
             if(th) th.className = currentSort.dir === 'asc' ? 'fas fa-sort-up ml-1 text-teal-600' : 'fas fa-sort-down ml-1 text-teal-600';
@@ -518,7 +552,6 @@
             let pFilter = document.getElementById('filter-prov').value;
             let sFilter = document.getElementById('filter-status').value;
 
-            // Filter
             let filtered = cachedTableData.filter(d => {
                 let matchText = d.nama.toLowerCase().includes(kw) || d.tempat.toLowerCase().includes(kw) || d.prov.toLowerCase().includes(kw);
                 let matchProv = pFilter === '' || d.prov === pFilter;
@@ -526,7 +559,6 @@
                 return matchText && matchProv && matchStat;
             });
 
-            // Sort
             filtered.sort((a, b) => {
                 let valA, valB;
                 if(currentSort.col === 'waktu') { valA = a.timeVal; valB = b.timeVal; }
@@ -539,7 +571,6 @@
                 return 0;
             });
 
-            // Render
             let html = '';
             filtered.forEach((d, idx) => {
                 let badgeClass = 'bg-gray-100 text-gray-600'; let iconStatus = 'fa-clock';
@@ -554,8 +585,7 @@
                 
                 let rowBg = d.status === 'Menunggu' ? 'bg-yellow-50/30' : (d.status === 'Ditolak' ? 'bg-red-50/30' : '');
 
-                // Teks Waktu di Tabel (Lebih ringkas, ambil tanggal dan bulannya)
-                let printWaktu = '-'; let printJam = '';
+                let printWaktu = '-'; 
                 if(d.waktu !== '-') {
                     let pw = formatTanggalIndo(d.waktu).replace(' pukul ', ' <br><span class="text-[10px] text-gray-500">');
                     printWaktu = pw + '</span>';
@@ -563,9 +593,7 @@
 
                 html += `<tr class="${rowBg} hover:bg-teal-50 transition border-b">
                     <td class="p-4 font-medium text-gray-500">${idx+1}</td>
-                    <td class="p-4 leading-tight">
-                        <span class="block text-xs font-semibold text-gray-700">${printWaktu}</span>
-                    </td>
+                    <td class="p-4 leading-tight"><span class="block text-xs font-semibold text-gray-700">${printWaktu}</span></td>
                     <td class="p-4">
                         <p class="font-bold text-gray-800">${d.nama}</p>
                         <p class="text-xs text-gray-500">${d.dai_id}</p>
@@ -575,16 +603,15 @@
                         <p class="text-xs text-gray-500">${d.prov}</p>
                     </td>
                     <td class="p-4 text-center"><span class="px-2.5 py-1 rounded-full text-[11px] font-bold ${badgeClass} inline-flex items-center gap-1 uppercase tracking-wider"><i class="fas ${iconStatus}"></i> ${d.status}</span></td>
-                    <td class="p-4 text-center"><button ${btnAttr} class="px-3 py-1.5 rounded text-xs font-bold transition ${btnClass}"><i class="fas fa-check-circle"></i> Verifikasi</button></td>
+                    <td class="p-4 text-center"><button ${btnAttr} class="px-4 py-1.5 rounded text-xs font-bold transition ${btnClass}"><i class="fas fa-check-circle"></i> Verifikasi</button></td>
                 </tr>`;
             });
             if(html === '') html = '<tr><td colspan="6" class="text-center p-8 text-gray-500">Tidak ada data sesuai filter.</td></tr>';
             document.getElementById('table-body').innerHTML = html;
         }
 
-        // GRAFIK BAR ALL MONTHS
         function updateChart(myUsers) {
-            let labels = [...db.bulans].sort((a,b) => getBulanWeight(a) - getBulanWeight(b)); // Sort urut dari terlama ke terbaru
+            let labels = [...db.bulans].sort((a,b) => getBulanWeight(a) - getBulanWeight(b)); 
             let dataMasuk = [], dataAcc = [], dataRej = [];
 
             labels.forEach(b => {
@@ -607,7 +634,7 @@
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: 'Total Masuk', data: dataMasuk, backgroundColor: '#9ca3af', borderRadius: 4 },
+                        { label: 'Total Laporan', data: dataMasuk, backgroundColor: '#9ca3af', borderRadius: 4 },
                         { label: 'Diterima', data: dataAcc, backgroundColor: '#22c55e', borderRadius: 4 },
                         { label: 'Ditolak/Revisi', data: dataRej, backgroundColor: '#ef4444', borderRadius: 4 }
                     ]
@@ -625,9 +652,10 @@
         // ==========================================
         function createRincianButton(label, count, rincianText) {
             let c = parseInt(count) || 0;
-            if(c === 0) return `<div class="bg-gray-100 border border-gray-200 text-gray-400 px-3 py-1.5 rounded text-[10px] font-bold flex items-center justify-between shadow-sm"><span class="flex items-center gap-1.5"><i class="fas fa-minus-circle opacity-50"></i> ${label}</span> <span class="bg-gray-200 px-1.5 rounded text-gray-500">${c}</span></div>`;
+            if(c === 0) return `<div class="bg-gray-50 border border-gray-200 text-gray-400 px-3 py-2 rounded text-[11px] font-bold flex items-center justify-between shadow-sm"><span class="flex items-center gap-1.5"><i class="fas fa-minus-circle opacity-50"></i> ${label}</span> <span>${c}</span></div>`;
+            
             let safeText = encodeURIComponent(rincianText || '-');
-            return `<button onclick="showRincianAlert('${label}', '${safeText}')" class="bg-teal-50 border border-teal-200 text-teal-700 hover:bg-teal-100 hover:border-teal-300 px-3 py-1.5 rounded text-[10px] font-bold transition flex items-center justify-between shadow-sm"><span class="flex items-center gap-1.5"><i class="fas fa-list-ul opacity-70"></i> ${label}</span> <span class="bg-teal-600 text-white px-1.5 rounded">${c}</span></button>`;
+            return `<button onclick="showRincianAlert('${label}', '${safeText}')" class="bg-teal-50 border border-teal-200 text-teal-700 hover:bg-teal-100 hover:border-teal-300 px-3 py-2 rounded text-[11px] font-bold transition flex items-center justify-between shadow-sm"><span class="flex items-center gap-1.5"><i class="fas fa-list-ul opacity-70"></i> ${label}</span> <span class="bg-teal-600 text-white px-2 rounded-full">${c}</span></button>`;
         }
 
         function showRincianAlert(label, encodedText) {
@@ -659,13 +687,11 @@
             document.getElementById('v-id-dai').value = idDai;
             document.getElementById('v-id-laporan').value = lap.id_laporan;
 
-            // Injeksi Data Teks
             document.getElementById('mdl-penempatan').innerText = `${usr.penempatan} (${usr.provinsi})`;
             document.getElementById('mdl-amanah').innerText = lap.amanah || '-';
-            document.getElementById('mdl-waktu-berkantor').innerText = `${lap.waktu_berkantor_jam||0} Jam`;
+            document.getElementById('mdl-waktu-berkantor').innerHTML = `${lap.waktu_berkantor_jam||0} <span class="text-[10px] font-normal">Jam</span>`;
             document.getElementById('mdl-pimpinan').innerText = `${lap.nama_pimpinan || '-'} (${lap.jabatan_pimpinan || '-'})`;
             
-            // Karya Unggulan (Buttons)
             let kuHtml = '';
             kuHtml += createRincianButton('Pengajar Al-Quran', lap.a1_jml, lap.a1_rincian);
             kuHtml += createRincianButton('Murabbi/Pra-Murabbi', lap.a2_jml, lap.a2_rincian);
@@ -674,7 +700,7 @@
             kuHtml += createRincianButton('Camaba Sek.Dai', lap.a5_jml, lap.a5_rincian);
             document.getElementById('mdl-karya-unggulan').innerHTML = kuHtml;
 
-            // Halaqah (Quran digabung Dirosa + Tahsin)
+            // Gabung Dirosa & Tahsin
             let hQ = (parseInt(lap.c2_dirosa_halaqah)||0) + (parseInt(lap.c2_tahsin_halaqah)||0);
             let pQ = (parseInt(lap.c2_dirosa_peserta)||0) + (parseInt(lap.c2_tahsin_peserta)||0);
             let aQ = (parseInt(lap.c2_dirosa_aktif)||0) + (parseInt(lap.c2_tahsin_aktif)||0);
@@ -682,13 +708,11 @@
             document.getElementById('mdl-h-tarbiyah').innerText = lap.c1_halaqah||0; document.getElementById('mdl-p-tarbiyah').innerText = lap.c1_peserta||0; document.getElementById('mdl-a-tarbiyah').innerText = lap.c1_aktif||0;
             document.getElementById('mdl-h-quran').innerText = hQ; document.getElementById('mdl-p-quran').innerText = pQ; document.getElementById('mdl-a-quran').innerText = aQ;
 
-            // Dakwah & Silaturahmi
             document.getElementById('mdl-khotbah').innerText = lap.khotbah_jumat||0;
             document.getElementById('mdl-taklim').innerText = lap.taklim_tablig||0;
             document.getElementById('mdl-sila-eks').innerText = lap.silaturahmi_eksternal_jml||0;
             tempRincianEksternal = lap.silaturahmi_eksternal_rincian || '-';
 
-            // Setup Carousel Foto
             carouselImages = [];
             carouselIndex = 0;
             if(lap.upload_persetujuan && lap.upload_persetujuan !== '-') {
@@ -696,11 +720,11 @@
             }
             updateCarouselUI();
 
-            // Reset Form Verifikasi (dan Pre-fill jika sudah pernah dinilai)
+            // Cek Riwayat & Pre-fill
             let existingRiwayat = db.riwayat.filter(r => r.id_dai === idDai && r.bulan_laporan === bulan).pop();
             document.querySelectorAll('input[name="v_status"]').forEach(r => { r.checked = false; });
-            document.getElementById('label-terima').className = 'flex items-center gap-3 cursor-pointer p-2 border rounded-lg bg-gray-50 hover:bg-green-50 transition border-gray-200';
-            document.getElementById('label-tolak').className = 'flex items-center gap-3 cursor-pointer p-2 border rounded-lg bg-gray-50 hover:bg-red-50 transition border-gray-200';
+            document.getElementById('label-terima').className = 'flex-1 flex items-center gap-3 cursor-pointer p-2.5 border rounded-lg bg-gray-50 hover:bg-green-50 transition border-gray-200';
+            document.getElementById('label-tolak').className = 'flex-1 flex items-center gap-3 cursor-pointer p-2.5 border rounded-lg bg-gray-50 hover:bg-red-50 transition border-gray-200';
             document.getElementById('v-catatan').value = '';
             document.getElementById('req-catatan').classList.add('hidden');
 
@@ -720,14 +744,18 @@
             let countEl = document.getElementById('carousel-counter');
             let btnP = document.getElementById('btn-prev-img');
             let btnN = document.getElementById('btn-next-img');
+            let actions = document.getElementById('carousel-actions');
 
             if(carouselImages.length === 0) {
-                imgEl.src = 'https://placehold.co/600x400/f3f4f6/9ca3af?text=Tidak+Ada+Foto';
+                imgEl.src = 'https://placehold.co/600x1000/f3f4f6/9ca3af?text=Tidak+Ada+Foto';
                 countEl.style.display = 'none';
+                actions.style.display = 'none';
                 btnP.style.display = 'none'; btnN.style.display = 'none';
             } else {
-                imgEl.src = carouselImages[carouselIndex];
+                let rawUrl = carouselImages[carouselIndex];
+                imgEl.src = getHighResImgUrl(rawUrl);
                 countEl.style.display = 'block';
+                actions.style.display = 'flex';
                 countEl.innerText = `${carouselIndex + 1} / ${carouselImages.length}`;
                 btnP.style.display = carouselImages.length > 1 ? 'flex' : 'none';
                 btnN.style.display = carouselImages.length > 1 ? 'flex' : 'none';
@@ -735,7 +763,8 @@
         }
         function prevImg() { if(carouselImages.length>0) { carouselIndex = (carouselIndex - 1 + carouselImages.length) % carouselImages.length; updateCarouselUI(); } }
         function nextImg() { if(carouselImages.length>0) { carouselIndex = (carouselIndex + 1) % carouselImages.length; updateCarouselUI(); } }
-
+        function zoomImg() { if(carouselImages.length>0) Swal.fire({imageUrl: getHighResImgUrl(carouselImages[carouselIndex]), imageAlt: 'Bukti', width: 'auto', showConfirmButton: false}); }
+        function openTabImg() { if(carouselImages.length>0) window.open(carouselImages[carouselIndex], '_blank'); }
 
         function toggleCatatanRequired() {
             let val = document.querySelector('input[name="v_status"]:checked')?.value;
@@ -743,8 +772,8 @@
             let labelT = document.getElementById('label-terima');
             let labelR = document.getElementById('label-tolak');
             
-            labelT.className = 'flex items-center gap-3 cursor-pointer p-2 border rounded-lg bg-gray-50 hover:bg-green-50 transition border-gray-200';
-            labelR.className = 'flex items-center gap-3 cursor-pointer p-2 border rounded-lg bg-gray-50 hover:bg-red-50 transition border-gray-200';
+            labelT.className = 'flex-1 flex items-center gap-3 cursor-pointer p-2.5 border rounded-lg bg-gray-50 hover:bg-green-50 transition border-gray-200';
+            labelR.className = 'flex-1 flex items-center gap-3 cursor-pointer p-2.5 border rounded-lg bg-gray-50 hover:bg-red-50 transition border-gray-200';
 
             if(val === 'Diterima') labelT.classList.add('ring-2', 'ring-offset-1', 'ring-green-500', 'bg-green-50');
             if(val === 'Ditolak') labelR.classList.add('ring-2', 'ring-offset-1', 'ring-red-500', 'bg-red-50');
@@ -778,23 +807,23 @@
                 catatan: catatan
             };
 
-            showLoading("Menyimpan data...");
+            // Pembaruan Optimis (Langsung Tutup Modal & Render)
+            db.riwayat.push({ ...payload, timestamp: "Baru saja" });
+            renderUI();
+            closeModal();
             
+            Swal.fire({
+                title: 'Tersimpan!', 
+                html: '<div class="text-center font-medium">Hasil verifikasi berhasil direkam.</div>', 
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            });
+            
+            // Proses server berjalan di balik layar (tanpa memblokir user)
             fetch(SCRIPT_URL, {
                 method: 'POST', body: JSON.stringify({ action: 'saveVerification', data: payload })
-            })
-            .then(res => res.json())
-            .then(res => {
-                hideLoading();
-                if(res.success) {
-                    // Update cache memory agar tampil langsung di UI
-                    db.riwayat.push({ ...payload, timestamp: "Baru saja" });
-                    renderUI();
-                    closeModal();
-                    Swal.fire('Tersimpan!', 'Hasil verifikasi berhasil direkam.', 'success');
-                } else { Swal.fire('Gagal', res.message, 'error'); }
-            })
-            .catch(err => { hideLoading(); Swal.fire('Error', 'Terjadi kesalahan jaringan.', 'error'); });
+            }).catch(e => console.error("Gagal simpan ke server:", e));
         }
     </script>
 </body>
