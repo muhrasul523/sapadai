@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verifikasi Laporan Dai</title>
     
-    <!-- Favicon & OpenGraph (Mengadopsi Sapadai) -->
+    <!-- Favicon & OpenGraph -->
     <link rel="icon" type="image/png" href="https://muhrasul523.github.io/sapadai/logo_sapadai_1.png">
     <meta property="og:title" content="Portal Verifikasi Dai Utusan">
     <meta property="og:description" content="Aplikasi verifikasi laporan kinerja bulanan Dai Utusan Wahdah Islamiyah.">
@@ -48,7 +48,7 @@
         .grid-foto { grid-area: foto; }
         @media (min-width: 768px) {
             .modal-grid {
-                grid-template-columns: 1.8fr 1fr; /* Bagian Kiri lebih lebar */
+                grid-template-columns: 1.2fr 1fr; /* Bagian Kiri lebih lebar */
                 grid-template-areas: 
                     "data foto"
                     "form foto";
@@ -68,7 +68,8 @@
     <div id="login-page" class="min-h-screen flex items-center justify-center p-4 bg-gray-50">
         <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
             <div class="text-center mb-8">
-                <img src="https://muhrasul523.github.io/sapadai/logo_sapadai_1.png" alt="Logo" class="h-20 mx-auto mb-4 object-contain">
+                <!-- LOGO DENGAN ONCLICK UNTUK BUKA MODAL REKAP GLOBAL -->
+                <img src="https://muhrasul523.github.io/sapadai/logo_sapadai_1.png" alt="Logo" class="h-24 w-24 mx-auto mb-4 object-contain bg-white rounded-full p-2 shadow-sm cursor-pointer hover:scale-105 transition transform" onclick="openModalRekapGlobal()" title="Klik untuk melihat rekapitulasi data">
                 <h1 class="text-xl font-bold text-gray-800 uppercase tracking-wide">PORTAL VERIFIKASI</h1>
                 <p class="text-sm text-gray-500 font-semibold tracking-wide">LAPORAN KINERJA DAI UTUSAN</p>
             </div>
@@ -220,7 +221,65 @@
         </div>
     </div>
 
-    <!-- Modal Verifikasi -->
+    <!-- Modal Rekap Global (Muncul jika klik Logo) -->
+    <div id="modal-rekap-global" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-2 md:p-4 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-4xl rounded-2xl shadow-2xl flex flex-col max-h-[95vh] overflow-hidden transform transition-all">
+            
+            <div class="px-5 py-3 border-b flex justify-between items-center bg-teal-700 text-white">
+                <div>
+                    <h3 class="font-bold text-lg leading-tight">Rekapitulasi Global Sistem</h3>
+                    <p class="text-xs text-teal-100">Berdasarkan data seluruh Dai dan Verifikator</p>
+                </div>
+                <button onclick="document.getElementById('modal-rekap-global').style.display='none'" class="text-white hover:text-red-300 text-2xl transition"><i class="fas fa-times-circle"></i></button>
+            </div>
+            
+            <div class="p-5 overflow-y-auto flex-1 bg-gray-50 space-y-6">
+                
+                <!-- Filter Bulan Rekap -->
+                <div class="flex items-center gap-3 bg-white p-3 rounded-xl border shadow-sm">
+                    <label class="font-bold text-sm text-gray-700"><i class="far fa-calendar-alt text-teal-600 mr-1"></i> Pilih Bulan:</label>
+                    <select id="rekap-bulan" onchange="renderRekapGlobal()" class="p-2 border rounded-lg text-sm bg-gray-50 focus:ring-teal-500 font-bold text-gray-800 flex-1 md:flex-none md:w-64"></select>
+                </div>
+
+                <!-- Bagian 1: Rekap Keseluruhan -->
+                <div class="bg-white p-4 rounded-xl border shadow-sm">
+                    <h4 class="font-bold text-teal-800 text-sm mb-3 uppercase border-b pb-1"><i class="fas fa-globe mr-1"></i> Rekap Keseluruhan (Nasional)</h4>
+                    <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 text-center">
+                        <div class="bg-gray-50 border p-3 rounded-lg"><p class="text-[10px] text-gray-500 font-bold uppercase">Total Dai</p><p class="text-2xl font-bold text-gray-800" id="rg-total">0</p><p class="text-[10px] text-gray-500">100%</p></div>
+                        <div class="bg-gray-50 border p-3 rounded-lg"><p class="text-[10px] text-gray-500 font-bold uppercase">Belum Mengisi</p><p class="text-2xl font-bold text-gray-800" id="rg-belum">0</p><p class="text-[10px] font-bold text-gray-600" id="rg-pct-belum">0%</p></div>
+                        <div class="bg-gray-50 border p-3 rounded-lg"><p class="text-[10px] text-gray-500 font-bold uppercase">Menunggu</p><p class="text-2xl font-bold text-yellow-600" id="rg-wait">0</p><p class="text-[10px] font-bold text-yellow-600" id="rg-pct-wait">0%</p></div>
+                        <div class="bg-gray-50 border p-3 rounded-lg"><p class="text-[10px] text-gray-500 font-bold uppercase">Diterima</p><p class="text-2xl font-bold text-green-600" id="rg-acc">0</p><p class="text-[10px] font-bold text-green-600" id="rg-pct-acc">0%</p></div>
+                        <div class="bg-gray-50 border p-3 rounded-lg"><p class="text-[10px] text-gray-500 font-bold uppercase">Ditolak</p><p class="text-2xl font-bold text-red-600" id="rg-rej">0</p><p class="text-[10px] font-bold text-red-600" id="rg-pct-rej">0%</p></div>
+                    </div>
+                </div>
+
+                <!-- Bagian 2: Rekap Per Verifikator -->
+                <div class="bg-white rounded-xl border shadow-sm overflow-hidden">
+                    <h4 class="font-bold text-teal-800 text-sm p-4 bg-gray-50 border-b uppercase"><i class="fas fa-users-cog mr-1"></i> Rincian Per Verifikator</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse whitespace-nowrap text-sm">
+                            <thead class="bg-gray-100 text-gray-600 border-b text-xs uppercase">
+                                <tr>
+                                    <th class="p-3 font-bold">Nama Verifikator</th>
+                                    <th class="p-3 font-bold text-center">Total Dai</th>
+                                    <th class="p-3 font-bold text-center text-blue-600">Laporan Masuk</th>
+                                    <th class="p-3 font-bold text-center text-green-600">Selesai Diverifikasi</th>
+                                    <th class="p-3 font-bold text-center">Pencapaian</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rg-table-verifikator" class="divide-y divide-gray-100">
+                                <!-- Diinjeksi -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal Verifikasi Laporan -->
     <div id="modal-verifikasi" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-2 md:p-4 backdrop-blur-sm">
         <div class="bg-white w-full max-w-6xl rounded-2xl shadow-2xl flex flex-col max-h-[98vh] md:max-h-[95vh] overflow-hidden transform transition-all">
             
@@ -232,69 +291,69 @@
                 <button onclick="closeModal()" class="text-white hover:text-red-300 text-2xl transition"><i class="fas fa-times-circle"></i></button>
             </div>
             
-            <!-- Grid Layout Kustom untuk Modal -->
+            <!-- Grid Layout Kustom untuk Modal (Kiri Data & Form, Kanan Foto Full) -->
             <div class="p-4 md:p-5 overflow-y-auto flex-1 bg-gray-100 modal-grid">
                 
                 <!-- BAGIAN DATA (KIRI ATAS) -->
-                <div class="grid-data bg-white rounded-xl shadow-sm border p-4 flex flex-col md:flex-row gap-5">
+                <div class="grid-data bg-white rounded-xl shadow-sm border p-4 flex flex-col">
                     
-                    <!-- Kiri Dalam: KARYA UNGGULAN -->
-                    <div class="w-full md:w-1/2 flex flex-col h-full">
-                        <div class="bg-gray-50 p-2.5 rounded border border-gray-200 mb-4">
-                            <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-0.5">Penempatan</p>
-                            <p class="font-bold text-gray-800 text-sm truncate" id="mdl-penempatan">-</p>
-                        </div>
-                        
-                        <h5 class="font-bold text-teal-800 text-xs uppercase mb-2 pb-1 border-b"><i class="fas fa-star text-yellow-500 mr-1"></i> Karya Unggulan</h5>
-                        <div class="flex flex-col gap-2 flex-1" id="mdl-karya-unggulan">
-                            <!-- Diinjeksi JS -->
-                        </div>
-                        
-                        <!-- Spasi agar kotak terbawah sejajar -->
-                        <div class="mt-auto"></div>
-                    </div>
-                    
-                    <!-- Kanan Dalam: KINERJA -->
-                    <div class="w-full md:w-1/2 flex flex-col h-full">
-                        <h5 class="font-bold text-teal-800 text-xs uppercase mb-2 pb-1 border-b"><i class="fas fa-chart-line text-blue-500 mr-1"></i> Kinerja Laporan</h5>
-                        
-                        <!-- Baris: Waktu Berkantor & Amanah -->
-                        <div class="grid grid-cols-2 gap-2 mb-3">
-                            <div class="bg-blue-50 p-2 rounded border border-blue-100 text-center flex flex-col justify-center">
-                                <p class="text-[9px] text-blue-600 uppercase font-bold tracking-wider mb-0.5"><i class="far fa-clock"></i> Waktu Berkantor</p>
-                                <p class="font-bold text-blue-900 text-sm" id="mdl-waktu-berkantor">0 <span class="text-[10px] font-normal">Jam</span></p>
+                    <!-- Kiri Dalam: KARYA UNGGULAN & KINERJA BERSAMAAN -->
+                    <div class="flex flex-col md:flex-row gap-5">
+                        <!-- Kolom Karya Unggulan (Kiri) -->
+                        <div class="w-full md:w-1/2 flex flex-col">
+                            <div class="bg-gray-50 p-2.5 rounded border border-gray-200 mb-4">
+                                <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-0.5">Penempatan</p>
+                                <p class="font-bold text-gray-800 text-sm truncate" id="mdl-penempatan">-</p>
                             </div>
-                            <div class="bg-teal-50 p-2 rounded border border-teal-100 text-center flex flex-col justify-center">
-                                <p class="text-[9px] text-teal-600 uppercase font-bold tracking-wider mb-0.5">Amanah Struktural</p>
-                                <p class="font-bold text-teal-900 text-xs truncate" id="mdl-amanah">-</p>
+                            
+                            <h5 class="font-bold text-teal-800 text-xs uppercase mb-2 pb-1 border-b"><i class="fas fa-star text-yellow-500 mr-1"></i> Karya Unggulan</h5>
+                            <div class="flex flex-col gap-2 flex-1" id="mdl-karya-unggulan">
+                                <!-- Diinjeksi JS -->
                             </div>
                         </div>
-
-                        <!-- Data Halaqah -->
-                        <div class="mb-3">
-                            <table class="w-full text-[10px] border rounded overflow-hidden border-collapse text-center">
-                                <tr class="bg-gray-100 border-b">
-                                    <td class="p-1 font-bold text-left border-r">Jenis</td>
-                                    <td class="p-1 font-bold border-r">Jml</td>
-                                    <td class="p-1 font-bold border-r">Peserta</td>
-                                    <td class="p-1 font-bold">Aktif</td>
-                                </tr>
-                                <tr class="border-b"><td class="p-1 text-left font-medium border-r">Tarbiyah</td><td class="p-1 border-r font-bold text-teal-700" id="mdl-h-tarbiyah">0</td><td class="p-1 border-r" id="mdl-p-tarbiyah">0</td><td class="p-1" id="mdl-a-tarbiyah">0</td></tr>
-                                <tr><td class="p-1 text-left font-medium border-r">Al-Quran</td><td class="p-1 border-r font-bold text-teal-700" id="mdl-h-quran">0</td><td class="p-1 border-r" id="mdl-p-quran">0</td><td class="p-1" id="mdl-a-quran">0</td></tr>
-                            </table>
-                        </div>
-
-                        <!-- Khotbah dll -->
-                        <div class="grid grid-cols-3 gap-2 mb-3">
-                            <div class="border rounded p-1.5 text-center bg-gray-50"><p class="text-[9px] font-bold text-gray-500 uppercase leading-tight">Khotbah<br>Jumat</p><p class="font-bold text-sm text-gray-800" id="mdl-khotbah">0</p></div>
-                            <div class="border rounded p-1.5 text-center bg-gray-50"><p class="text-[9px] font-bold text-gray-500 uppercase leading-tight">Taklim/<br>Tablig</p><p class="font-bold text-sm text-gray-800" id="mdl-taklim">0</p></div>
-                            <div class="border rounded p-1.5 text-center bg-gray-50 cursor-pointer hover:bg-teal-50 transition" onclick="showRincianSilaturahmi()"><p class="text-[9px] font-bold text-gray-500 uppercase leading-tight">Sila.<br>Eksternal</p><p class="font-bold text-sm text-teal-600 underline" id="mdl-sila-eks">0</p></div>
-                        </div>
                         
-                        <!-- Pimpinan Tempat Tugas (didorong ke bawah agar sejajar dgn Camaba Sek.Dai) -->
-                        <div class="mt-auto pt-2 border-t">
-                            <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-0.5">Pimpinan Tempat Tugas</p>
-                            <p class="font-bold text-gray-800 text-xs truncate" id="mdl-pimpinan">-</p>
+                        <!-- Kolom Kinerja (Kanan) -->
+                        <div class="w-full md:w-1/2 flex flex-col">
+                            <h5 class="font-bold text-teal-800 text-xs uppercase mb-2 pb-1 border-b"><i class="fas fa-chart-line text-blue-500 mr-1"></i> Kinerja Laporan</h5>
+                            
+                            <!-- Baris: Amanah (Kiri) & Waktu Berkantor (Kanan) -->
+                            <div class="grid grid-cols-2 gap-2 mb-3">
+                                <div class="bg-teal-50 p-2 rounded border border-teal-100 text-center flex flex-col justify-center">
+                                    <p class="text-[9px] text-teal-600 uppercase font-bold tracking-wider mb-0.5">Amanah Struktural</p>
+                                    <p class="font-bold text-teal-900 text-xs truncate" id="mdl-amanah">-</p>
+                                </div>
+                                <div class="bg-blue-50 p-2 rounded border border-blue-100 text-center flex flex-col justify-center">
+                                    <p class="text-[9px] text-blue-600 uppercase font-bold tracking-wider mb-0.5"><i class="far fa-clock"></i> Waktu Berkantor</p>
+                                    <p class="font-bold text-blue-900 text-sm" id="mdl-waktu-berkantor">0 <span class="text-[10px] font-normal">Jam</span></p>
+                                </div>
+                            </div>
+
+                            <!-- Data Halaqah -->
+                            <div class="mb-3">
+                                <table class="w-full text-[10px] border rounded overflow-hidden border-collapse text-center">
+                                    <tr class="bg-gray-100 border-b">
+                                        <td class="p-1 font-bold text-left border-r">Jenis</td>
+                                        <td class="p-1 font-bold border-r">Jml</td>
+                                        <td class="p-1 font-bold border-r">Peserta</td>
+                                        <td class="p-1 font-bold">Aktif</td>
+                                    </tr>
+                                    <tr class="border-b"><td class="p-1 text-left font-medium border-r">Tarbiyah</td><td class="p-1 border-r font-bold text-teal-700" id="mdl-h-tarbiyah">0</td><td class="p-1 border-r" id="mdl-p-tarbiyah">0</td><td class="p-1" id="mdl-a-tarbiyah">0</td></tr>
+                                    <tr><td class="p-1 text-left font-medium border-r">Al-Quran</td><td class="p-1 border-r font-bold text-teal-700" id="mdl-h-quran">0</td><td class="p-1 border-r" id="mdl-p-quran">0</td><td class="p-1" id="mdl-a-quran">0</td></tr>
+                                </table>
+                            </div>
+
+                            <!-- Khotbah dll -->
+                            <div class="grid grid-cols-3 gap-2 mb-3">
+                                <div class="border rounded p-1.5 text-center bg-gray-50"><p class="text-[9px] font-bold text-gray-500 uppercase leading-tight">Khotbah<br>Jumat</p><p class="font-bold text-sm text-gray-800" id="mdl-khotbah">0</p></div>
+                                <div class="border rounded p-1.5 text-center bg-gray-50"><p class="text-[9px] font-bold text-gray-500 uppercase leading-tight">Taklim/<br>Tablig</p><p class="font-bold text-sm text-gray-800" id="mdl-taklim">0</p></div>
+                                <div class="border rounded p-1.5 text-center bg-gray-50 cursor-pointer hover:bg-teal-50 transition" onclick="showRincianSilaturahmi()"><p class="text-[9px] font-bold text-gray-500 uppercase leading-tight">Sila.<br>Eksternal</p><p class="font-bold text-sm text-teal-600 underline" id="mdl-sila-eks">0</p></div>
+                            </div>
+                            
+                            <!-- Pimpinan Tempat Tugas -->
+                            <div class="mt-auto pt-2 border-t">
+                                <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-0.5">Pimpinan Tempat Tugas</p>
+                                <p class="font-bold text-gray-800 text-xs truncate" id="mdl-pimpinan">-</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -322,24 +381,31 @@
                     </div>
                 </div>
 
-                <!-- BUKTI FOTO CAROUSEL (KANAN) -->
+                <!-- BUKTI FOTO CAROUSEL PORTRAIT (KANAN) -->
                 <div class="grid-foto bg-white p-3 rounded-xl border shadow-sm flex flex-col">
                     <h4 class="font-bold text-teal-800 text-sm mb-2"><i class="fas fa-image mr-1"></i> Bukti Persetujuan</h4>
                     <!-- Aspect ratio portrait 9:16 untuk screenshot HP -->
                     <div class="relative w-full aspect-[9/16] bg-gray-900 rounded-lg overflow-hidden flex items-center justify-center border group">
-                        <img id="carousel-img" src="" class="max-w-full max-h-full object-contain" alt="Tidak ada foto">
+                        
+                        <!-- Animasi Loading Spinner khusus Gambar -->
+                        <div id="carousel-loader" class="absolute inset-0 flex items-center justify-center bg-gray-900 z-0">
+                            <div class="spinner"></div>
+                        </div>
+
+                        <!-- Gambar aslinya (Onload menyembunyikan loader) -->
+                        <img id="carousel-img" src="" class="max-w-full max-h-full object-contain relative z-10 opacity-0 transition-opacity duration-300" onload="this.classList.remove('opacity-0'); document.getElementById('carousel-loader').style.display='none';" alt="Tidak ada foto">
                         
                         <!-- Overlay Buttons (Zoom & Tab) -->
-                        <div id="carousel-actions" class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition z-10">
+                        <div id="carousel-actions" class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition z-20">
                             <button onclick="zoomImg()" class="bg-black/70 text-white w-8 h-8 rounded flex items-center justify-center hover:bg-black" title="Perbesar Gambar"><i class="fas fa-search-plus"></i></button>
                             <button onclick="openTabImg()" class="bg-black/70 text-white w-8 h-8 rounded flex items-center justify-center hover:bg-black" title="Buka di Tab Baru"><i class="fas fa-external-link-alt"></i></button>
                         </div>
 
                         <!-- Navigasi Kiri Kanan -->
-                        <button onclick="prevImg()" id="btn-prev-img" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-black transition opacity-0 group-hover:opacity-100 z-10"><i class="fas fa-chevron-left"></i></button>
-                        <button onclick="nextImg()" id="btn-next-img" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-black transition opacity-0 group-hover:opacity-100 z-10"><i class="fas fa-chevron-right"></i></button>
+                        <button onclick="prevImg()" id="btn-prev-img" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-black transition opacity-0 group-hover:opacity-100 z-20"><i class="fas fa-chevron-left"></i></button>
+                        <button onclick="nextImg()" id="btn-next-img" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-black transition opacity-0 group-hover:opacity-100 z-20"><i class="fas fa-chevron-right"></i></button>
                         
-                        <div id="carousel-counter" class="absolute bottom-2 bg-black/70 text-white text-[10px] px-3 py-1 rounded-full font-bold tracking-widest z-10">1/1</div>
+                        <div id="carousel-counter" class="absolute bottom-2 bg-black/70 text-white text-[10px] px-3 py-1 rounded-full font-bold tracking-widest z-20">1/1</div>
                     </div>
                 </div>
                 
@@ -363,7 +429,7 @@
         let activeVerifikator = null;
         let chartInstance = null;
         
-        let currentSort = { col: 'waktu', dir: 'desc' }; // Urutkan default dari terbaru ke terlama
+        let currentSort = { col: 'waktu', dir: 'desc' }; // Default terlama-terbaru
         let cachedTableData = []; 
         let tempRincianEksternal = ""; 
         let carouselImages = [];
@@ -403,15 +469,15 @@
             return yr * 100 + idx; // Contoh: 202607
         }
 
-        // URL Image Parser untuk Google Drive Bypass Preview
+        // URL Image Parser untuk Google Drive Bypass Preview (Resolusi Tinggi & Fast Load)
         function getHighResImgUrl(url) {
             let match = url.match(/id=([^&]+)/);
-            if(match) return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000`;
+            if(match) return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000`; // sz=w1000 memaksa ukuran asli max 1000px tanpa memuat UI preview drive
             return url;
         }
 
         window.onload = () => {
-            showLoading('Memuat...');
+            showLoading('Sinkronisasi Database...');
             fetch(SCRIPT_URL, {
                 method: 'POST', body: JSON.stringify({ action: 'getAllData' })
             })
@@ -610,19 +676,23 @@
             document.getElementById('table-body').innerHTML = html;
         }
 
+        // GRAFIK BAR ALL MONTHS, MENYESUAIKAN 5 METRICS SEPERTI CARD
         function updateChart(myUsers) {
             let labels = [...db.bulans].sort((a,b) => getBulanWeight(a) - getBulanWeight(b)); 
-            let dataMasuk = [], dataAcc = [], dataRej = [];
+            let dataTotal = [], dataBelum = [], dataWait = [], dataAcc = [], dataRej = [];
 
             labels.forEach(b => {
-                let m = 0, a = 0, r = 0;
+                let t = myUsers.length, bl = 0, m = 0, a = 0, r = 0;
                 myUsers.forEach(u => {
                     let info = getLaporanInfo(u.dai_id, b);
-                    if(info.status === 'Menunggu') m++;
+                    if(info.status === 'Belum Input') bl++;
+                    else if(info.status === 'Menunggu') m++;
                     else if(info.status === 'Diterima') a++;
                     else if(info.status === 'Ditolak') r++;
                 });
-                dataMasuk.push(m + a + r);
+                dataTotal.push(t);
+                dataBelum.push(bl);
+                dataWait.push(m);
                 dataAcc.push(a);
                 dataRej.push(r);
             });
@@ -634,21 +704,91 @@
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: 'Total Laporan', data: dataMasuk, backgroundColor: '#9ca3af', borderRadius: 4 },
+                        { label: 'Total Dai', data: dataTotal, backgroundColor: '#3b82f6', borderRadius: 4 },
+                        { label: 'Belum Mengisi', data: dataBelum, backgroundColor: '#9ca3af', borderRadius: 4 },
+                        { label: 'Menunggu', data: dataWait, backgroundColor: '#eab308', borderRadius: 4 },
                         { label: 'Diterima', data: dataAcc, backgroundColor: '#22c55e', borderRadius: 4 },
-                        { label: 'Ditolak/Revisi', data: dataRej, backgroundColor: '#ef4444', borderRadius: 4 }
+                        { label: 'Ditolak', data: dataRej, backgroundColor: '#ef4444', borderRadius: 4 }
                     ]
                 },
                 options: { 
                     responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { position: 'top' } },
+                    plugins: { legend: { position: 'top', labels: { boxWidth: 12 } } },
                     scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
                 }
             });
         }
 
         // ==========================================
-        // MODAL LOGIC
+        // REKAP GLOBAL LOGIC
+        // ==========================================
+        function openModalRekapGlobal() {
+            let sel = document.getElementById('rekap-bulan');
+            sel.innerHTML = '';
+            if(db.bulans.length === 0) { sel.add(new Option("Belum ada data", "")); }
+            else { 
+                let sortedBulans = db.bulans.sort((a,b) => getBulanWeight(b) - getBulanWeight(a));
+                sortedBulans.forEach(b => sel.add(new Option(b, b))); 
+            }
+            renderRekapGlobal();
+            document.getElementById('modal-rekap-global').style.display = 'flex';
+        }
+
+        function renderRekapGlobal() {
+            let b = document.getElementById('rekap-bulan').value;
+            if(!b) return;
+
+            // 1. Rekap Keseluruhan (Nasional)
+            let gTotal = db.users.length, gBelum=0, gWait=0, gAcc=0, gRej=0;
+            db.users.forEach(u => {
+                let info = getLaporanInfo(u.dai_id, b);
+                if(info.status === 'Belum Input') gBelum++;
+                else if(info.status === 'Menunggu') gWait++;
+                else if(info.status === 'Diterima') gAcc++;
+                else if(info.status === 'Ditolak') gRej++;
+            });
+
+            document.getElementById('rg-total').innerText = gTotal;
+            document.getElementById('rg-belum').innerText = gBelum; document.getElementById('rg-pct-belum').innerText = gTotal>0 ? (gBelum/gTotal*100).toFixed(1)+'%' : '0%';
+            document.getElementById('rg-wait').innerText = gWait; document.getElementById('rg-pct-wait').innerText = gTotal>0 ? (gWait/gTotal*100).toFixed(1)+'%' : '0%';
+            document.getElementById('rg-acc').innerText = gAcc; document.getElementById('rg-pct-acc').innerText = gTotal>0 ? (gAcc/gTotal*100).toFixed(1)+'%' : '0%';
+            document.getElementById('rg-rej').innerText = gRej; document.getElementById('rg-pct-rej').innerText = gTotal>0 ? (gRej/gTotal*100).toFixed(1)+'%' : '0%';
+
+            // 2. Rekap Per Verifikator
+            let htmlVerif = '';
+            db.verifikator.forEach(v => {
+                let dIds = v.daftar_id_dai.split(',').map(id => id.trim());
+                let vUsers = db.users.filter(u => dIds.includes(u.dai_id));
+                let vTotal = vUsers.length;
+                let vMasuk = 0, vSelesai = 0;
+
+                vUsers.forEach(u => {
+                    let info = getLaporanInfo(u.dai_id, b);
+                    if(info.status !== 'Belum Input') vMasuk++;
+                    if(info.status === 'Diterima' || info.status === 'Ditolak') vSelesai++;
+                });
+
+                let pct = vMasuk > 0 ? (vSelesai / vMasuk * 100).toFixed(1) : 0;
+                let barColor = pct == 100 ? 'bg-green-500' : (pct > 50 ? 'bg-blue-500' : 'bg-red-500');
+
+                htmlVerif += `<tr>
+                    <td class="p-3 border-r"><p class="font-bold text-gray-800">${v.nama_verifikator}</p><p class="text-[10px] text-gray-500">${v.id_verifikator}</p></td>
+                    <td class="p-3 text-center border-r font-bold text-gray-600">${vTotal}</td>
+                    <td class="p-3 text-center border-r font-bold text-blue-700 bg-blue-50/50">${vMasuk}</td>
+                    <td class="p-3 text-center border-r font-bold text-green-700 bg-green-50/50">${vSelesai}</td>
+                    <td class="p-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold w-10 text-right">${pct}%</span>
+                            <div class="w-24 bg-gray-200 rounded-full h-2 overflow-hidden"><div class="${barColor} h-2 rounded-full" style="width: ${pct}%"></div></div>
+                        </div>
+                    </td>
+                </tr>`;
+            });
+            document.getElementById('rg-table-verifikator').innerHTML = htmlVerif;
+        }
+
+        // ==========================================
+        // MODAL VERIFIKASI LOGIC
         // ==========================================
         function createRincianButton(label, count, rincianText) {
             let c = parseInt(count) || 0;
@@ -713,10 +853,15 @@
             document.getElementById('mdl-sila-eks').innerText = lap.silaturahmi_eksternal_jml||0;
             tempRincianEksternal = lap.silaturahmi_eksternal_rincian || '-';
 
+            // Reset Carousel & Preload Gambar
             carouselImages = [];
             carouselIndex = 0;
             if(lap.upload_persetujuan && lap.upload_persetujuan !== '-') {
-                carouselImages = lap.upload_persetujuan.split(' \n').map(u => u.trim()).filter(u => u);
+                let rawLinks = lap.upload_persetujuan.split(' \n').map(u => u.trim()).filter(u => u);
+                carouselImages = rawLinks.map(url => getHighResImgUrl(url));
+                
+                // Preload sembunyi di background untuk mempercepat next/prev
+                carouselImages.forEach(url => { const img = new Image(); img.src = url; });
             }
             updateCarouselUI();
 
@@ -738,22 +883,27 @@
             document.getElementById('modal-verifikasi').style.display = 'flex';
         }
 
-        // CAROUSEL LOGIC
+        // CAROUSEL LOGIC WITH LOADER
         function updateCarouselUI() {
             let imgEl = document.getElementById('carousel-img');
+            let loaderEl = document.getElementById('carousel-loader');
             let countEl = document.getElementById('carousel-counter');
             let btnP = document.getElementById('btn-prev-img');
             let btnN = document.getElementById('btn-next-img');
             let actions = document.getElementById('carousel-actions');
 
             if(carouselImages.length === 0) {
+                loaderEl.style.display = 'none';
                 imgEl.src = 'https://placehold.co/600x1000/f3f4f6/9ca3af?text=Tidak+Ada+Foto';
+                imgEl.classList.remove('opacity-0');
                 countEl.style.display = 'none';
                 actions.style.display = 'none';
                 btnP.style.display = 'none'; btnN.style.display = 'none';
             } else {
-                let rawUrl = carouselImages[carouselIndex];
-                imgEl.src = getHighResImgUrl(rawUrl);
+                imgEl.classList.add('opacity-0');
+                loaderEl.style.display = 'flex'; // Munculkan loader saat gambar ditukar
+                imgEl.src = carouselImages[carouselIndex];
+                
                 countEl.style.display = 'block';
                 actions.style.display = 'flex';
                 countEl.innerText = `${carouselIndex + 1} / ${carouselImages.length}`;
@@ -763,7 +913,7 @@
         }
         function prevImg() { if(carouselImages.length>0) { carouselIndex = (carouselIndex - 1 + carouselImages.length) % carouselImages.length; updateCarouselUI(); } }
         function nextImg() { if(carouselImages.length>0) { carouselIndex = (carouselIndex + 1) % carouselImages.length; updateCarouselUI(); } }
-        function zoomImg() { if(carouselImages.length>0) Swal.fire({imageUrl: getHighResImgUrl(carouselImages[carouselIndex]), imageAlt: 'Bukti', width: 'auto', showConfirmButton: false}); }
+        function zoomImg() { if(carouselImages.length>0) Swal.fire({imageUrl: carouselImages[carouselIndex], imageAlt: 'Bukti', width: 'auto', showConfirmButton: false}); }
         function openTabImg() { if(carouselImages.length>0) window.open(carouselImages[carouselIndex], '_blank'); }
 
         function toggleCatatanRequired() {
@@ -807,7 +957,7 @@
                 catatan: catatan
             };
 
-            // Pembaruan Optimis (Langsung Tutup Modal & Render)
+            // Pembaruan Optimis (Optimistic UI Update) - Tutup Modal & Render seketika agar cepat
             db.riwayat.push({ ...payload, timestamp: "Baru saja" });
             renderUI();
             closeModal();
@@ -820,7 +970,7 @@
                 showConfirmButton: false
             });
             
-            // Proses server berjalan di balik layar (tanpa memblokir user)
+            // Lakukan ping ke server di latar belakang (tanpa loader nge-block layar)
             fetch(SCRIPT_URL, {
                 method: 'POST', body: JSON.stringify({ action: 'saveVerification', data: payload })
             }).catch(e => console.error("Gagal simpan ke server:", e));
