@@ -3,8 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cek Status Laporan Dai</title>
+    <title>STATUS LAPORAN KINERJA</title>
     
+    <!-- Favicon & OpenGraph menggunakan absolute URL ke root folder -->
+    <link rel="icon" type="image/png" href="https://sapadai.wadahdigital.my.id/logo_sapadai_1.png">
+    <meta property="og:title" content="STATUS LAPORAN KINERJA">
+    <meta property="og:description" content="Aplikasi pengecekan status laporan kinerja Dai Utusan Wahdah Islamiyah.">
+    <meta property="og:image" itemprop="image" content="https://sapadai.wadahdigital.my.id/logo_sapadai_1.png">
+    <meta property="og:type" content="website">
+
     <!-- Library CSS & JS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -23,11 +30,12 @@
         .tab-btn.active { background-color: #0f766e; color: white; border-color: #0f766e; }
         .tab-btn { background-color: white; color: #374151; border: 1px solid #d1d5db; }
         
-        /* Adopsi Login UI Baru */
+        /* UI Login */
         .login-tab.active { border-bottom: 2px solid #0f766e; color: #0f766e; font-weight: 600; background-color: #f0fdfa; }
         .login-tab { border-bottom: 2px solid transparent; color: #6b7280; font-weight: 500; cursor: pointer; transition: all 0.2s; }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         
+        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
@@ -41,12 +49,13 @@
         <h2 class="text-xl font-semibold wahdah-text" id="loading-text">Memuat...</h2>
     </div>
 
-    <!-- Halaman Login (Adopsi UI Baru) -->
+    <!-- Halaman Login -->
     <div id="login-page" class="min-h-screen flex items-center justify-center p-4 bg-gray-50">
         <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
             <div class="text-center mb-6">
-                <img src="https://muhrasul523.github.io/sapadai/logo_sapadai_1.png" alt="Logo" class="h-20 mx-auto mb-4 object-contain">
-                <h1 class="text-xl font-bold text-gray-800 uppercase tracking-wide">STATUS LAPORAN</h1>
+                <!-- Logo Root Absolute -->
+                <img src="https://sapadai.wadahdigital.my.id/logo_sapadai_1.png" alt="Logo" class="h-20 mx-auto mb-4 object-contain">
+                <h1 class="text-xl font-bold text-gray-800 uppercase tracking-wide">STATUS LAPORAN KINERJA</h1>
                 <p class="text-sm text-gray-500 font-semibold tracking-wide">DAI UTUSAN WAHDAH ISLAMIYAH</p>
             </div>
             
@@ -59,7 +68,7 @@
                 <input type="hidden" id="login-type" value="wa">
                 <div id="div-login-wa">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Nomor WhatsApp</label>
-                    <input type="text" inputmode="numeric" id="login-wa" class="w-full p-3 rounded-lg border focus:ring-2 focus:ring-teal-500 numeric-only" placeholder="Contoh: 628123456789" required>
+                    <input type="text" inputmode="numeric" id="login-wa" class="w-full p-3 rounded-lg border focus:ring-2 focus:ring-teal-500 wa-validate numeric-only" placeholder="Contoh: 628123456789" required>
                 </div>
                 <div id="div-login-email" class="hidden">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Alamat Email</label>
@@ -83,8 +92,8 @@
         <nav class="wahdah-bg text-white p-4 sticky top-0 z-40 shadow-md">
             <div class="max-w-5xl mx-auto flex justify-between items-center">
                 <div class="font-bold text-lg flex items-center gap-3">
-                    <img src="https://muhrasul523.github.io/sapadai/logo_sapadai_1.png" alt="Logo" class="h-8 w-8 bg-white p-1 rounded-full object-contain">
-                    <span class="hidden sm:inline">Status Laporan Dai</span>
+                    <img src="https://sapadai.wadahdigital.my.id/logo_sapadai_1.png" alt="Logo" class="h-8 w-8 bg-white p-1 rounded-full object-contain">
+                    <span class="hidden sm:inline">Status Laporan Kinerja</span>
                 </div>
                 <div class="flex items-center gap-4">
                     <div class="text-sm text-right">
@@ -98,12 +107,16 @@
 
         <div class="max-w-5xl mx-auto mt-6 px-4">
             
-            <!-- Widget Deadline Pengingat (Ditampilkan via JS jika tgl 1-5) -->
-            <div id="deadline-widget" class="hidden bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-xl shadow-sm mb-6 flex items-start">
-                <i class="fas fa-exclamation-triangle text-yellow-600 mt-1 mr-3 text-lg"></i>
+            <!-- Widget Deadline Pengingat (Ditampilkan otomatis oleh JS) -->
+            <div id="deadline-widget" class="hidden bg-red-50 border-l-4 border-red-500 p-4 rounded-xl shadow-sm mb-6 flex items-start">
+                <i class="fas fa-exclamation-circle text-red-600 mt-1 mr-3 text-lg"></i>
                 <div class="flex-1">
-                    <h4 class="font-bold text-yellow-800">Peringatan Batas Waktu</h4>
-                    <p class="text-sm text-yellow-700 mt-1">Laporan bulan <strong id="dl-bulan"></strong> akan ditutup dalam <strong id="dl-hari" class="text-red-600 text-lg">0</strong> hari lagi. Segera periksa status laporan Anda, pastikan sudah <strong>DITERIMA</strong> sebelum tanggal 5.</p>
+                    <h4 class="font-bold text-red-800">Peringatan Batas Waktu</h4>
+                    <p class="text-sm text-red-700 mt-1">
+                        Sistem mencatat Anda belum menyetorkan laporan (atau status Ditolak) untuk bulan <strong id="dl-bulan"></strong>.<br>
+                        Akses penginputan akan ditutup dalam <strong id="dl-hari" class="text-red-900 text-lg font-black bg-red-200 px-2 rounded">0</strong> hari lagi. 
+                        Segera perbaiki dan pastikan laporan Anda <strong>DITERIMA</strong> sebelum tanggal 5.
+                    </p>
                 </div>
             </div>
 
@@ -151,7 +164,8 @@
         // ==========================================
         // KONFIGURASI APLIKASI
         // ==========================================
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwVEnstZxh1aiTsB_XnEwzUEYIWECmI2wQ07frMNJhX3fBzTICaG1pZkkFan87KRgkW/exec'; // GANTI DENGAN URL WEBAPP STATUS LAPORAN
+        // GANTI DENGAN URL WEBAPP STATUS LAPORAN ANDA
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwVEnstZxh1aiTsB_XnEwzUEYIWECmI2wQ07frMNJhX3fBzTICaG1pZkkFan87KRgkW/exec';
 
         let currentLoginType = 'wa';
         let currentUser = null;
@@ -159,9 +173,17 @@
         let availableMonths = [];
         let serverTime = null;
 
-        // UI HELPERS (LOGIN)
+        // UI HELPERS (Memfilter Input WA agar 08 menjadi 628)
         document.addEventListener('input', e => {
-            if(e.target.classList.contains('numeric-only')) e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            if(e.target.classList.contains('numeric-only')) {
+                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            }
+            if(e.target.classList.contains('wa-validate')) {
+                let v = e.target.value.replace(/[^0-9]/g, ''); 
+                if(v.startsWith('08')) v = '628' + v.substring(2); 
+                if(v.startsWith('8')) v = '628' + v.substring(1); 
+                e.target.value = v;
+            }
         });
 
         function showLoading(text) { document.getElementById('loading-text').innerText = text || 'Memuat...'; document.getElementById('loading-overlay').style.display = 'flex'; }
@@ -193,45 +215,56 @@
             document.getElementById('btn-tab-rekap').className = tab === 'rekap' ? 'flex-1 px-4 py-3 tab-btn active rounded-lg text-sm font-bold transition shadow-sm flex justify-center items-center gap-2' : 'flex-1 px-4 py-3 tab-btn rounded-lg text-sm font-bold transition shadow-sm flex justify-center items-center gap-2';
         }
 
-        // FORMATTER TANGGAL WITA
+        // FORMATTER TANGGAL WITA TERBARU (Tampilan Bagus)
+        // Output: "23 Oktober 2026 pukul 12.34 WITA"
         function formatTanggalWITA(dateStr) {
             if(!dateStr || dateStr === '-') return '-';
             try {
-                let p1 = dateStr.trim().split(' ');
-                let d = p1[0].split('/');
+                let parts = dateStr.trim().split(' ');
+                let d = parts[0].split('/'); // asumsikan format d/m/yyyy
                 if(d.length < 3) return dateStr;
-                let t = p1[1] || '';
-                if(t.length > 5) t = t.substring(0, 5); // Hanya ambil HH:mm
-                if(t) t = t.replace(':', '.'); // Ganti titik dua jadi titik utk format jam indo
+                let timeParts = parts[1] ? parts[1].split(':') : ['00', '00'];
+                let t = `${timeParts[0]}.${timeParts[1]}`; // Gunakan titik untuk jam indo
+                
                 const bln = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
                 let m = parseInt(d[1]) - 1;
-                return `${d[0]} ${bln[m]} ${d[2]} pukul ${t} WITA`;
+                
+                return `${parseInt(d[0])} ${bln[m]} ${d[2]} pukul ${t} WITA`;
             } catch(e) { return dateStr; }
         }
 
-        // LOGIC & DATA PROCESSING
+        // LOGIC & DATA PROCESSING DENGAN FETCH AMAN CORS
         function submitLogin() {
             let u = currentLoginType === 'wa' ? document.getElementById('login-wa').value : document.getElementById('login-email').value;
             let p = document.getElementById('login-password').value;
 
             showLoading('Otentikasi...');
+            
+            // MENGGUNAKAN text/plain UNTUK MENCEGAH BLOKIR CORS DARI GITHUB PAGES
             fetch(SCRIPT_URL, {
-                method: 'POST', body: JSON.stringify({ action: 'login', data: { type: currentLoginType, username: u, password: p } })
+                method: 'POST', 
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'login', data: { type: currentLoginType, username: u, password: p } })
             })
-            .then(res => res.json())
-            .then(data => {
-                if(data.success) { processLoginSuccess(data); } 
-                else { hideLoading(); Swal.fire('Gagal Login', data.message, 'error'); }
+            .then(res => res.text())
+            .then(text => {
+                try {
+                    let data = JSON.parse(text);
+                    if(data.success) { processLoginSuccess(data); } 
+                    else { hideLoading(); Swal.fire('Gagal Login', data.message, 'error'); }
+                } catch(e) {
+                    hideLoading(); Swal.fire('Error Parsing', 'Sistem menerima data tidak valid dari server.', 'error');
+                }
             })
             .catch(err => {
-                hideLoading(); Swal.fire('Error Koneksi', 'Tidak dapat terhubung ke server.', 'error');
+                hideLoading(); Swal.fire('Error Koneksi', 'Tidak dapat terhubung ke server database.', 'error');
             });
         }
 
         function processLoginSuccess(data) {
             currentUser = data.user;
             riwayatData = data.riwayat || [];
-            serverTime = data.serverTime ? new Date(data.serverTime) : new Date(); // Dapatkan waktu WITA server
+            serverTime = data.serverTime ? new Date(data.serverTime) : new Date(); 
             
             document.getElementById('user-info-name').innerText = currentUser.nama_dai;
             document.getElementById('user-info-id').innerText = `ID: ${currentUser.dai_id}`;
@@ -239,6 +272,7 @@
             const bulanSet = new Set();
             riwayatData.forEach(r => { if(r.bulan_laporan) bulanSet.add(r.bulan_laporan); });
             availableMonths = Array.from(bulanSet);
+            // Susun berdasarkan yang terbaru dengan logika sederhana (diasumsikan sudah terurut dari spreadsheet)
             availableMonths.reverse(); 
 
             const selBulan = document.getElementById('filter-bulan');
@@ -259,21 +293,30 @@
             renderRekapKeseluruhan();
         }
 
+        // LOGIC WIDGET DEADLINE
         function checkDeadlineReminder() {
             let tgl = serverTime.getDate();
-            if (tgl >= 1 && tgl <= 5) {
-                // Tentukan bulan laporan target (bulan sebelumnya)
-                const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-                let prevMonthIdx = serverTime.getMonth() - 1;
-                let year = serverTime.getFullYear();
-                if (prevMonthIdx < 0) { prevMonthIdx = 11; year--; }
-                
-                let targetBulan = `${monthNames[prevMonthIdx]} ${year}`;
+            
+            // Hitung bulan target (bulan sebelumnya)
+            const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            let prevMonthIdx = serverTime.getMonth() - 1;
+            let year = serverTime.getFullYear();
+            if (prevMonthIdx < 0) { prevMonthIdx = 11; year--; }
+            let targetBulan = `${monthNames[prevMonthIdx]} ${year}`;
+
+            // Cek apakah di bulan target ini Dai sudah DITERIMA
+            let riwayatTarget = riwayatData.filter(r => r.bulan_laporan === targetBulan);
+            let statusAkhirTarget = riwayatTarget.length > 0 ? riwayatTarget[riwayatTarget.length - 1].status : "Belum Input";
+
+            // Munculkan widget jika hari ini tanggal 1-5 DAN laporan bulan lalu belum 'Diterima' atau 'Menunggu' (berarti 'Ditolak' atau 'Belum Input')
+            if (tgl >= 1 && tgl <= 5 && (statusAkhirTarget === "Ditolak" || statusAkhirTarget === "Belum Input")) {
                 let sisaHari = 5 - tgl;
                 
                 document.getElementById('dl-bulan').innerText = targetBulan;
                 document.getElementById('dl-hari').innerText = sisaHari;
                 document.getElementById('deadline-widget').classList.remove('hidden');
+            } else {
+                document.getElementById('deadline-widget').classList.add('hidden');
             }
         }
 
@@ -343,13 +386,13 @@
                 
                 for(let i = riwayatBulan.length - 2; i >= 0; i--) {
                     let old = riwayatBulan[i];
-                    // Anonymize Verifikator
+                    // Anonimisasi Nama Verifikator (Verifikator 1, Verifikator 2, dst)
                     let verifName = `Verifikator ${i + 1}`; 
                     cardHtml += `
                         <div class="flex items-start gap-3 p-3 bg-gray-50 rounded border text-sm">
                             <div class="mt-0.5">${getBadge(old.status)}</div>
                             <div class="flex-1">
-                                <p class="text-xs text-gray-500 mb-1">Oleh ${verifName} pada <span class="font-semibold text-gray-600">${formatTanggalWITA(old.timestamp)}</span></p>
+                                <p class="text-xs text-gray-500 mb-1">Oleh <span class="font-bold text-gray-700">${verifName}</span> pada <span class="font-semibold text-gray-600">${formatTanggalWITA(old.timestamp)}</span></p>
                                 <p class="text-gray-700 font-medium">"${old.catatan || '-'}"</p>
                             </div>
                         </div>`;
