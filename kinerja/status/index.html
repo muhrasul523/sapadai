@@ -46,7 +46,7 @@
     <!-- Loading Overlay -->
     <div id="loading-overlay" class="fixed inset-0 flex flex-col justify-center items-center">
         <div class="spinner mb-4"></div>
-        <h2 class="text-xl font-semibold wahdah-text" id="loading-text">Memuat...</h2>
+        <h2 class="text-xl font-semibold wahdah-text" id="loading-text">Memproses...</h2>
     </div>
 
     <!-- Halaman Login -->
@@ -107,7 +107,7 @@
 
         <div class="max-w-5xl mx-auto mt-6 px-4">
             
-            <!-- Widget Deadline Pengingat (Ditampilkan otomatis oleh JS) -->
+            <!-- Widget Deadline Pengingat -->
             <div id="deadline-widget" class="hidden bg-red-50 border-l-4 border-red-500 p-4 rounded-xl shadow-sm mb-6 flex items-start">
                 <i class="fas fa-exclamation-circle text-red-600 mt-1 mr-3 text-lg"></i>
                 <div class="flex-1">
@@ -164,7 +164,7 @@
         // ==========================================
         // KONFIGURASI APLIKASI
         // ==========================================
-        // GANTI DENGAN URL WEBAPP STATUS LAPORAN ANDA
+        // WAJIB DIGANTI DENGAN URL WEBAPP STATUS LAPORAN YANG BARU DIDEPLOY
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwVEnstZxh1aiTsB_XnEwzUEYIWECmI2wQ07frMNJhX3fBzTICaG1pZkkFan87KRgkW/exec';
 
         let currentLoginType = 'wa';
@@ -186,7 +186,7 @@
             }
         });
 
-        function showLoading(text) { document.getElementById('loading-text').innerText = text || 'Memuat...'; document.getElementById('loading-overlay').style.display = 'flex'; }
+        function showLoading(text) { document.getElementById('loading-text').innerText = text || 'Memproses...'; document.getElementById('loading-overlay').style.display = 'flex'; }
         function hideLoading() { document.getElementById('loading-overlay').style.display = 'none'; }
         
         function switchLoginTab(type) {
@@ -233,14 +233,13 @@
             } catch(e) { return dateStr; }
         }
 
-        // LOGIC & DATA PROCESSING DENGAN FETCH AMAN CORS
+        // LOGIC & DATA PROCESSING
         function submitLogin() {
             let u = currentLoginType === 'wa' ? document.getElementById('login-wa').value : document.getElementById('login-email').value;
             let p = document.getElementById('login-password').value;
 
-            showLoading('Otentikasi...');
+            showLoading('Memproses...');
             
-            // MENGGUNAKAN text/plain UNTUK MENCEGAH BLOKIR CORS DARI GITHUB PAGES
             fetch(SCRIPT_URL, {
                 method: 'POST', 
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -253,11 +252,11 @@
                     if(data.success) { processLoginSuccess(data); } 
                     else { hideLoading(); Swal.fire('Gagal Login', data.message, 'error'); }
                 } catch(e) {
-                    hideLoading(); Swal.fire('Error Parsing', 'Sistem menerima data tidak valid dari server.', 'error');
+                    hideLoading(); Swal.fire('Error Parsing', 'Sistem menerima data tidak valid. Pastikan WebApp terbaru sudah di-deploy.', 'error');
                 }
             })
             .catch(err => {
-                hideLoading(); Swal.fire('Error Koneksi', 'Tidak dapat terhubung ke server database.', 'error');
+                hideLoading(); Swal.fire('Error Koneksi', 'Tidak dapat terhubung ke server.', 'error');
             });
         }
 
@@ -272,7 +271,6 @@
             const bulanSet = new Set();
             riwayatData.forEach(r => { if(r.bulan_laporan) bulanSet.add(r.bulan_laporan); });
             availableMonths = Array.from(bulanSet);
-            // Susun berdasarkan yang terbaru dengan logika sederhana (diasumsikan sudah terurut dari spreadsheet)
             availableMonths.reverse(); 
 
             const selBulan = document.getElementById('filter-bulan');
@@ -293,22 +291,18 @@
             renderRekapKeseluruhan();
         }
 
-        // LOGIC WIDGET DEADLINE
         function checkDeadlineReminder() {
             let tgl = serverTime.getDate();
             
-            // Hitung bulan target (bulan sebelumnya)
             const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
             let prevMonthIdx = serverTime.getMonth() - 1;
             let year = serverTime.getFullYear();
             if (prevMonthIdx < 0) { prevMonthIdx = 11; year--; }
             let targetBulan = `${monthNames[prevMonthIdx]} ${year}`;
 
-            // Cek apakah di bulan target ini Dai sudah DITERIMA
             let riwayatTarget = riwayatData.filter(r => r.bulan_laporan === targetBulan);
             let statusAkhirTarget = riwayatTarget.length > 0 ? riwayatTarget[riwayatTarget.length - 1].status : "Belum Input";
 
-            // Munculkan widget jika hari ini tanggal 1-5 DAN laporan bulan lalu belum 'Diterima' atau 'Menunggu' (berarti 'Ditolak' atau 'Belum Input')
             if (tgl >= 1 && tgl <= 5 && (statusAkhirTarget === "Ditolak" || statusAkhirTarget === "Belum Input")) {
                 let sisaHari = 5 - tgl;
                 
@@ -324,7 +318,6 @@
             location.reload();
         }
 
-        // RENDER TABS
         function getBadge(status) {
             let bg = 'bg-gray-100 text-gray-700', icon = 'fa-clock';
             if(status === 'Diterima') { bg = 'bg-green-100 text-green-700 border-green-200'; icon = 'fa-check-circle'; }
@@ -386,7 +379,6 @@
                 
                 for(let i = riwayatBulan.length - 2; i >= 0; i--) {
                     let old = riwayatBulan[i];
-                    // Anonimisasi Nama Verifikator (Verifikator 1, Verifikator 2, dst)
                     let verifName = `Verifikator ${i + 1}`; 
                     cardHtml += `
                         <div class="flex items-start gap-3 p-3 bg-gray-50 rounded border text-sm">
