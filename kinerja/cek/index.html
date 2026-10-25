@@ -171,10 +171,9 @@
 
     <script>
         // =====================================
-        // KONFIGURASI PENTING UNTUK GITHUB PAGES
+        // URL WEB APP ANDA YANG BARU (BEBAS CORS)
         // =====================================
-        // PASTE URL WEB APP GOOGLE APPS SCRIPT ANDA DI SINI
-        const GITHUB_API_URL = "https://script.google.com/macros/s/AKfycbyGku6EvIXtUTHJ2zMD8KB6AspwE8KJU-uFwnQTXumRZCQdtFCLR59CqBwcuTcE2MGx/exec"; 
+        const GITHUB_API_URL = "https://script.google.com/macros/s/AKfycbyGku6EvIXtUTHJ2zMD8KB6AspwE8KJU-uFwnQTXumRZCQdtFCLR59CqBwcuTcE2MGx/exec";
 
         let db = { user: null, laporan: [], listBulan: [] };
         let laporanDiterima = []; 
@@ -224,7 +223,7 @@
 
         function num(val) { return Number(val) || 0; }
 
-        // Format Tanggal: "3 Okt 2026 12.00 WITA"
+        // Format Tanggal Baru: "3 Okt 2026 12.00 WITA"
         function formatTanggalWITA(dateStr) {
             if(!dateStr || dateStr.trim() === '-' || dateStr.trim() === '') return '-';
             try {
@@ -242,11 +241,11 @@
         function renderList(text) {
             if(!text || text.trim() === '-' || text.trim() === '') return '';
             let items = text.split(/\r?\n/).filter(i => i.trim() !== '');
-            return '<ul class="list-disc pl-5 space-y-1">' + items.map(i => '<li>'+i+'</li>').join('') + '</ul>';
+            return '<ul class="list-disc pl-5 space-y-1 text-gray-700 font-medium">' + items.map(i => '<li>'+i+'</li>').join('') + '</ul>';
         }
 
         // ==========================
-        // PROSES LOGIN
+        // PROSES LOGIN (MEMPERBAIKI CORS)
         // ==========================
         function submitLogin() {
             let u = currentLoginType === 'wa' ? document.getElementById('login-wa').value : document.getElementById('login-email').value;
@@ -255,8 +254,8 @@
 
             showLoading('Memverifikasi & Sinkronisasi...');
             
-            // Cek apakah dieksekusi di dalam Apps Script native
             if (typeof google !== 'undefined' && google.script && google.script.run) {
+                // Berjalan dari mode Google Apps Script asli
                 google.script.run
                     .withSuccessHandler(res => {
                         if(res.success) { processLoginSuccess(res); } 
@@ -267,25 +266,25 @@
                     })
                     .processLogin(credentials);
             } else {
-                // Dieksekusi di luar (contoh: GitHub Pages)
-                if (GITHUB_API_URL === "URL_WEB_APP_ANDA_DISINI") {
-                    hideLoading();
-                    Swal.fire('Konfigurasi Error', 'Anda belum memasukkan GITHUB_API_URL pada kode HTML.', 'error');
-                    return;
-                }
-
+                // Berjalan di GitHub Pages dengan metode POST tipe text/plain menghindari preflight blokade.
                 fetch(GITHUB_API_URL, {
                     method: 'POST',
+                    redirect: 'follow', // Penting untuk mengikuti eksekusi backend
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({ action: 'login', data: credentials })
                 })
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) throw new Error("Terjadi masalah pada network. HTTP Code: " + res.status);
+                    return res.json();
+                })
                 .then(res => {
                     if(res.success) { processLoginSuccess(res); } 
                     else { hideLoading(); Swal.fire('Gagal', res.message, 'error'); }
                 })
                 .catch(err => {
-                    hideLoading(); Swal.fire('Error Koneksi', 'Gagal menghubungi server database.', 'error');
+                    hideLoading(); 
+                    console.error(err);
+                    Swal.fire('Error Koneksi', 'Gagal menghubungi server database. Pastikan Web App diperbarui dengan script backend terbaru.', 'error');
                 });
             }
         }
@@ -300,7 +299,6 @@
             let tidakMasuk = totalBulan - totalMasuk;
             if (tidakMasuk < 0) tidakMasuk = 0;
 
-            // Filter yang Diterima saja
             laporanDiterima = db.laporan.filter(k => (k.status || "").toLowerCase() === 'diterima');
 
             let totalKinerja = 0, totalKafalah = 0;
@@ -325,7 +323,6 @@
                 selBulan.add(new Option("-- Data Bulan Kosong --", ""));
                 document.getElementById('rincian-container').innerHTML = `<div class="text-center p-8 text-gray-400">Hubungi admin untuk setup bulan.</div>`;
             } else {
-                // Reverse agar terbaru di atas dropdown
                 let reversedBulan = [...db.listBulan].reverse();
                 reversedBulan.forEach(b => selBulan.add(new Option(b, b)));
                 renderRincian();
@@ -360,7 +357,7 @@
             }
 
             let containerHtml = `
-            <!-- HEADER INFO -->
+            <!-- HEADER INFO - SESUAI REQUEST (ID Laporan di kiri, Waktu di tengah, Status di kanan) -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
                 <div class="p-5 border-b border-gray-100 bg-teal-50/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-0">
                     <div class="w-full md:w-1/3 text-left">
@@ -384,7 +381,6 @@
                 </div>
             </div>
 
-            <!-- TABS -->
             <div class="flex gap-2 w-full mb-6">
                 <button onclick="switchTabRincian('kinerja')" id="btn-tab-kinerja" class="flex-1 px-4 py-3 tab-btn active rounded-lg text-sm font-bold transition flex justify-center items-center gap-2"><i class="fas fa-tasks"></i> Kinerja Dai</button>
                 <button onclick="switchTabRincian('kafalah')" id="btn-tab-kafalah" class="flex-1 px-4 py-3 tab-btn rounded-lg text-sm font-bold transition flex justify-center items-center gap-2"><i class="fas fa-wallet"></i> Rincian Kafalah</button>
@@ -403,21 +399,21 @@
             if(lvl.includes('mumtaz')) colorLevel = 'text-green-600';
             else if(lvl.includes('jayyid')) colorLevel = 'text-blue-600';
 
-            // KARYA UNGGULAN
+            // KARYA UNGGULAN - Langsung teks, tanpa A1, A2, dll (Sesuai request)
             let karyaHtml = '';
             const listKarya = [
                 { key: 'a1', title: 'Pengajar Al-Quran' },
                 { key: 'a2', title: 'Murabbi / Pra Murabbi' },
                 { key: 'a3', title: 'Pengurus / Pra Pengurus' },
                 { key: 'a4', title: 'Camaba STIBA' },
-                { key: 'a5', title: 'Camaba Sekolah Dai' }
+                { key: 'a5', title: 'Camaba Sekolah Dai' } 
             ];
             listKarya.forEach(k => {
                 let rincian = d[k.key + '_rincian'];
                 if(rincian && rincian.trim() !== '') {
                     karyaHtml += `<div class="mb-4 last:mb-0">
                         <p class="font-bold text-teal-700 text-sm mb-2"><i class="fas fa-check-circle mr-1"></i> ${k.title}</p>
-                        <div class="bg-gray-50 border border-gray-100 p-3 rounded-lg text-sm text-gray-600 shadow-inner">
+                        <div class="bg-gray-50 border border-gray-100 p-3 rounded-lg text-sm shadow-inner">
                             ${renderList(rincian)}
                         </div>
                     </div>`;
@@ -426,7 +422,8 @@
             if(karyaHtml === '') karyaHtml = '<p class="text-sm text-gray-400 italic p-4 text-center">Tidak ada data karya unggulan pada bulan ini.</p>';
 
             return `
-            <div class="flex items-center justify-center p-6 bg-white border border-gray-200 rounded-xl shadow-sm mb-6">
+            <!-- Tata letak nilai kinerja sesuai screenshot -->
+            <div class="flex items-center justify-center p-6 bg-white border border-gray-200 rounded-xl shadow-sm mb-6 max-w-lg mx-auto">
                 <div class="text-right pr-6 md:pr-12 w-1/2">
                     <p class="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Total Nilai Kinerja</p>
                     <p class="text-5xl md:text-6xl font-black text-[#1e293b]">${d.nilai_kinerja || 0}</p>
@@ -543,7 +540,7 @@
         }
 
         // ========================
-        // GRAFIK (Chart.js)
+        // GRAFIK (Chart.js) - Diurutkan dari lama ke baru
         // ========================
         function bukaModalGrafik() {
             if(laporanDiterima.length === 0) {
@@ -553,7 +550,6 @@
             
             document.getElementById('modal-grafik').classList.remove('hidden');
             
-            // Urutkan data berdasarkan urutan listBulan dari sheet (Kronologis dari kiri/lama ke kanan/baru)
             let sortedData = [];
             db.listBulan.forEach(bln => {
                 let found = laporanDiterima.find(k => (k.bulan_laporan || "").trim() === bln || (k.bulan_id_laporan || "").trim() === bln);
