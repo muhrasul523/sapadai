@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEM KINERJA & KAFALAH DAI</title>
+    <title>PORTAL KINERJA & KAFALAH DAI</title>
     
     <link rel="icon" type="image/png" href="https://sapadai.wadahdigital.my.id/logo_sapadai_1.png">
     
-    <!-- Library CSS & JS -->
+    <!-- Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #1f2937; }
@@ -28,13 +28,13 @@
         
         .login-tab.active { border-bottom: 2px solid #0f766e; color: #0f766e; font-weight: 600; background-color: #f0fdfa; }
         .login-tab { border-bottom: 2px solid transparent; color: #6b7280; font-weight: 500; cursor: pointer; transition: all 0.2s; }
-        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         
-        .card-header-custom { background-color: #f0fdfa; border-bottom: 1px solid #ccfbf1; padding: 12px 16px; font-weight: 700; color: #0f766e; border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem; display: flex; align-items: center; gap: 8px; }
+        .card-header-custom { background-color: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 12px 16px; font-weight: 700; color: #0f766e; border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem; display: flex; align-items: center; gap: 8px; }
     </style>
 </head>
 <body class="antialiased selection:bg-teal-200 selection:text-teal-900">
@@ -52,10 +52,6 @@
                 <img src="https://sapadai.wadahdigital.my.id/logo_sapadai_1.png" alt="Logo" class="h-20 mx-auto mb-4 object-contain">
                 <h1 class="text-xl font-bold text-gray-800 uppercase tracking-wide">PORTAL KINERJA DAI</h1>
                 <p class="text-sm text-gray-500 font-semibold tracking-wide">WAHDAH ISLAMIYAH</p>
-                
-                <div id="sim-badge" class="hidden mt-3 text-xs bg-yellow-100 text-yellow-800 py-1 px-2 rounded font-bold border border-yellow-300">
-                    <i class="fas fa-flask mr-1"></i> MODE SIMULASI (Gunakan WA: 08123456789, Pass: 123456)
-                </div>
             </div>
             
             <div class="flex mb-6 border-b rounded-t-lg overflow-hidden">
@@ -108,26 +104,18 @@
             <!-- Dashboard Rekap -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="font-bold text-lg text-gray-800"><i class="fas fa-chart-pie text-teal-600 mr-2"></i> Ringkasan Performa</h2>
-                    <button onclick="bukaModalGrafik()" class="bg-teal-50 text-teal-700 px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-teal-100 transition"><i class="fas fa-chart-bar mr-1"></i> Lihat Grafik</button>
+                    <h2 class="font-bold text-lg text-gray-800"><i class="fas fa-chart-pie text-teal-600 mr-2"></i> Ringkasan Performa (Seluruh Bulan)</h2>
+                    <button onclick="bukaModalGrafik()" class="bg-teal-50 border border-teal-200 text-teal-700 px-4 py-2 rounded-lg text-sm font-bold hover:bg-teal-100 transition shadow-sm"><i class="fas fa-chart-line mr-1"></i> Lihat Grafik</button>
                 </div>
                 
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 text-center">
-                        <p class="text-xs text-blue-600 font-bold uppercase mb-1">Laporan Diterima</p>
-                        <p class="text-2xl font-black text-blue-800" id="stat-diterima">0</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-green-50 p-6 rounded-xl border border-green-100 text-center">
+                        <p class="text-sm text-green-600 font-bold uppercase tracking-wide mb-1">Rata-Rata Kinerja</p>
+                        <p class="text-4xl font-black text-green-800" id="stat-avg-kinerja">0</p>
                     </div>
-                    <div class="bg-red-50 p-4 rounded-lg border border-red-100 text-center">
-                        <p class="text-xs text-red-600 font-bold uppercase mb-1">Laporan Ditolak</p>
-                        <p class="text-2xl font-black text-red-800" id="stat-ditolak">0</p>
-                    </div>
-                    <div class="bg-green-50 p-4 rounded-lg border border-green-100 text-center">
-                        <p class="text-xs text-green-600 font-bold uppercase mb-1">Rata-Rata Kinerja</p>
-                        <p class="text-2xl font-black text-green-800" id="stat-avg-kinerja">0</p>
-                    </div>
-                    <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-100 text-center">
-                        <p class="text-xs text-yellow-600 font-bold uppercase mb-1">Rata-Rata Kafalah</p>
-                        <p class="text-xl font-black text-yellow-800" id="stat-avg-kafalah">Rp 0</p>
+                    <div class="bg-blue-50 p-6 rounded-xl border border-blue-100 text-center">
+                        <p class="text-sm text-blue-600 font-bold uppercase tracking-wide mb-1">Rata-Rata Kafalah</p>
+                        <p class="text-3xl font-black text-blue-800 mt-2" id="stat-avg-kafalah">Rp 0</p>
                     </div>
                 </div>
             </div>
@@ -136,24 +124,25 @@
             <div class="bg-white rounded-xl shadow-sm border border-gray-100">
                 <div class="p-5 border-b border-gray-100 bg-gray-50 rounded-t-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h2 class="font-bold text-lg text-gray-800"><i class="fas fa-calendar-alt text-teal-600 mr-2"></i> Rincian Bulanan</h2>
-                        <p class="text-xs text-gray-500 mt-1">Hanya menampilkan laporan berstatus <b>Diterima</b>.</p>
+                        <h2 class="font-bold text-lg text-gray-800"><i class="fas fa-calendar-alt text-teal-600 mr-2"></i> Rincian Laporan Bulanan</h2>
                     </div>
-                    <div class="w-full md:w-64">
-                        <select id="filter-bulan" class="w-full bg-white border border-teal-500 rounded-lg px-3 py-2 text-gray-800 font-bold focus:outline-none focus:ring-2 focus:ring-teal-500 cursor-pointer" onchange="renderRincian()"></select>
+                    <div class="w-full md:w-64 relative">
+                        <select id="filter-bulan" class="w-full bg-white border border-teal-500 rounded-lg px-4 py-2.5 text-gray-800 font-bold focus:outline-none focus:ring-2 focus:ring-teal-500 cursor-pointer appearance-none shadow-sm" onchange="renderRincian()"></select>
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"><i class="fas fa-chevron-down text-teal-600"></i></div>
                     </div>
                 </div>
 
                 <div class="p-5" id="rincian-container">
-                    <!-- Info Dai Header -->
-                    <div class="bg-teal-50/50 p-4 rounded-lg border border-teal-100 mb-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm" id="info-dai-container">
+                    
+                    <!-- Header Info Banner -->
+                    <div class="bg-[#f2fbf9] border border-teal-200 rounded-xl p-4 mb-6 grid grid-cols-2 md:grid-cols-4 gap-4 items-center shadow-sm" id="info-dai-container">
                         <!-- Rendered via JS -->
                     </div>
 
                     <!-- Navigasi Tab -->
                     <div class="flex gap-2 w-full mb-6">
-                        <button onclick="switchTab('kinerja')" id="btn-tab-kinerja" class="flex-1 px-4 py-2.5 tab-btn active rounded-lg text-sm font-bold transition flex justify-center items-center gap-2"><i class="fas fa-tasks"></i> Kinerja Dai</button>
-                        <button onclick="switchTab('kafalah')" id="btn-tab-kafalah" class="flex-1 px-4 py-2.5 tab-btn rounded-lg text-sm font-bold transition flex justify-center items-center gap-2"><i class="fas fa-wallet"></i> Kafalah</button>
+                        <button onclick="switchTab('kinerja')" id="btn-tab-kinerja" class="flex-1 px-4 py-3 tab-btn active rounded-lg text-sm font-bold transition flex justify-center items-center gap-2"><i class="fas fa-tasks"></i> Kinerja Dai</button>
+                        <button onclick="switchTab('kafalah')" id="btn-tab-kafalah" class="flex-1 px-4 py-3 tab-btn rounded-lg text-sm font-bold transition flex justify-center items-center gap-2"><i class="fas fa-wallet"></i> Rincian Kafalah</button>
                     </div>
 
                     <!-- TAB 1: Kinerja -->
@@ -169,37 +158,33 @@
 
     <!-- Modal Grafik -->
     <div id="modal-grafik" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center p-4 border-b sticky top-0 bg-white z-10">
-                <h3 class="font-bold text-lg text-gray-800"><i class="fas fa-chart-line text-teal-600 mr-2"></i> Grafik Kinerja & Kafalah</h3>
-                <button onclick="tutupModalGrafik()" class="text-gray-400 hover:text-red-500 text-xl"><i class="fas fa-times"></i></button>
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center p-5 border-b sticky top-0 bg-white z-10">
+                <h3 class="font-bold text-xl text-gray-800"><i class="fas fa-chart-line text-teal-600 mr-2"></i> Grafik Kinerja & Kafalah</h3>
+                <button onclick="tutupModalGrafik()" class="text-gray-400 hover:text-red-500 text-2xl transition"><i class="fas fa-times"></i></button>
             </div>
-            <div class="p-5 space-y-8">
+            <div class="p-6 space-y-10">
                 <div>
-                    <h4 class="text-sm font-bold text-center mb-2 text-gray-600">Trend Nilai Kinerja</h4>
-                    <canvas id="chartKinerja" height="100"></canvas>
+                    <h4 class="text-sm font-bold text-center mb-3 text-gray-500 uppercase tracking-widest">Trend Nilai Kinerja (Kronologis)</h4>
+                    <canvas id="chartKinerja" height="80"></canvas>
                 </div>
-                <hr>
+                <hr class="border-gray-200">
                 <div>
-                    <h4 class="text-sm font-bold text-center mb-2 text-gray-600">Trend Total Kafalah</h4>
-                    <canvas id="chartKafalah" height="100"></canvas>
+                    <h4 class="text-sm font-bold text-center mb-3 text-gray-500 uppercase tracking-widest">Trend Total Kafalah (Kronologis)</h4>
+                    <canvas id="chartKafalah" height="80"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        let db = { user: null, kinerja: [] };
+        let db = { user: null, kinerja: [], listBulan: [] };
         let laporanDiterima = []; 
         let currentLoginType = 'wa';
         let chartInstanceKinerja = null;
         let chartInstanceKafalah = null;
 
-        const isSimulation = typeof google === 'undefined';
-        if(isSimulation) {
-            document.getElementById('sim-badge').classList.remove('hidden');
-        }
-
+        // UI Helpers
         document.addEventListener('input', e => {
             if(e.target.classList.contains('numeric-only')) {
                 e.target.value = e.target.value.replace(/[^0-9]/g, '');
@@ -237,8 +222,8 @@
         function switchTab(tab) {
             document.getElementById('tab-kinerja').style.display = tab === 'kinerja' ? 'block' : 'none';
             document.getElementById('tab-kafalah').style.display = tab === 'kafalah' ? 'block' : 'none';
-            document.getElementById('btn-tab-kinerja').className = tab === 'kinerja' ? 'flex-1 px-4 py-2.5 tab-btn active rounded-lg text-sm font-bold transition flex justify-center items-center gap-2' : 'flex-1 px-4 py-2.5 tab-btn rounded-lg text-sm font-bold transition flex justify-center items-center gap-2';
-            document.getElementById('btn-tab-kafalah').className = tab === 'kafalah' ? 'flex-1 px-4 py-2.5 tab-btn active rounded-lg text-sm font-bold transition flex justify-center items-center gap-2' : 'flex-1 px-4 py-2.5 tab-btn rounded-lg text-sm font-bold transition flex justify-center items-center gap-2';
+            document.getElementById('btn-tab-kinerja').className = tab === 'kinerja' ? 'flex-1 px-4 py-3 tab-btn active rounded-lg text-sm font-bold transition flex justify-center items-center gap-2' : 'flex-1 px-4 py-3 tab-btn rounded-lg text-sm font-bold transition flex justify-center items-center gap-2';
+            document.getElementById('btn-tab-kafalah').className = tab === 'kafalah' ? 'flex-1 px-4 py-3 tab-btn active rounded-lg text-sm font-bold transition flex justify-center items-center gap-2' : 'flex-1 px-4 py-3 tab-btn rounded-lg text-sm font-bold transition flex justify-center items-center gap-2';
         }
 
         function formatRupiah(angka) {
@@ -247,6 +232,27 @@
 
         function num(val) { return Number(val) || 0; }
 
+        // Formatter Tanggal: 3 Okt 2026 12.00 WITA
+        function formatTanggalWITA(dateStr) {
+            if(!dateStr || dateStr === '-') return '-';
+            try {
+                let d = new Date(dateStr);
+                if(!isNaN(d.getTime())) {
+                    const bln = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+                    let jam = String(d.getHours()).padStart(2, '0');
+                    let mnt = String(d.getMinutes()).padStart(2, '0');
+                    return `${d.getDate()} ${bln[d.getMonth()]} ${d.getFullYear()} ${jam}.${mnt} WITA`;
+                }
+                return dateStr + ' WITA'; 
+            } catch(e) { return dateStr; }
+        }
+
+        function renderList(text) {
+            if(!text || text.trim() === '-' || text.trim() === '') return '<span class="text-gray-400 italic">Tidak ada data rincian</span>';
+            let items = text.split(/\r?\n/).filter(i => i.trim() !== '');
+            return '<ul class="list-disc pl-5 space-y-1">' + items.map(i => '<li>'+i+'</li>').join('') + '</ul>';
+        }
+
         function submitLogin() {
             let u = currentLoginType === 'wa' ? document.getElementById('login-wa').value : document.getElementById('login-email').value;
             let p = document.getElementById('login-password').value;
@@ -254,35 +260,15 @@
 
             showLoading('Memverifikasi Akun...');
             
-            if (isSimulation) {
-                setTimeout(() => {
-                    if ((u === '628123456789' || u === 'dai@mail.com') && p === '123456') {
-                        let dummyRes = {
-                            success: true,
-                            user: { dai_id: "DAI-001", nama_dai: "Ustadz Ahmad", nomor_wa: "628123456789", email: "dai@mail.com" },
-                            kinerja: [
-                                { timestamp_verifikasi: "2026-09-05", status: "Diterima", timestamp: "2026-09-01", id_laporan: "LAP-000", bulan_laporan: "September 2026", nama_dai: "Ustadz Ahmad", nilai_kinerja: "90", level: "Jayyid Jiddan", a1_jml: "1", a1_rincian: "Pengajar", waktu_berkantor_jam: "100", c1_halaqah: "1", c1_peserta: "10", c1_aktif: "8", c2_total_halaqah: "1", c2_total_peserta: "20", c2_total_aktif: "10", khotbah_jumat: "4", taklim_tablig: "15", silaturahmi_internal_jml: "1", silaturahmi_internal_rincian: "oke", silaturahmi_eksternal_jml: "1", silaturahmi_eksternal_rincian: "oke", ketidakhadiran_tarbiyah: "1", kafalah_pokok: "1000000", kafalah_kinerja: "450000", total_kafalah: "1450000" },
-                                { timestamp_verifikasi: "2026-10-05", status: "Diterima", timestamp: "2026-10-01", id_laporan: "LAP-001", bulan_laporan: "Oktober 2026", nama_dai: "Ustadz Ahmad", nilai_kinerja: "95", level: "Mumtaz", a1_jml: "1", a1_rincian: "Pengajar Al-Quran", waktu_berkantor_jam: "108", c1_halaqah: "1", c1_peserta: "10", c1_aktif: "9", c2_dirosa_halaqah: "1", c2_dirosa_peserta: "12", c2_dirosa_aktif: "10", c2_tahsin_halaqah: "1", c2_tahsin_peserta: "20", c2_tahsin_aktif: "0", c2_total_halaqah: "2", c2_total_peserta: "32", c2_total_aktif: "10", khotbah_jumat: "5", taklim_tablig: "20", silaturahmi_internal_jml: "1", silaturahmi_internal_rincian: "Pemerintah - oke", silaturahmi_eksternal_jml: "2", silaturahmi_eksternal_rincian: "Pengurus - oke", marhalah: "Marhalah 1", nama_murabbi: "Murabbi A", wa_murabbi: "628111", ketidakhadiran_tarbiyah: "2", nama_pimpinan: "Pimpinan A", jabatan_pimpinan: "Ketua", wa_pimpinan: "628222", hari_izin: "0", kafalah_pokok: "1000000", kafalah_kinerja: "500000", tunjangan_amanah: "200000", tunjangan_wilayah: "100000", tunjangan_keluarga: "300000", bonus_karya_unggulan: "50000", izin: "0", penambah: "0", pengurang: "0", khusus: "0", total_kafalah: "2150000", dpw_dpd_instansi_tempat_tugas: "DPD Wahdah", dpw_dpd_persaudaraan: "100000", kafalah_lajnah_dai_dpp: "2050000" },
-                                { timestamp_verifikasi: "2026-11-05", status: "Ditolak", timestamp: "2026-11-01", id_laporan: "LAP-002", bulan_laporan: "November 2026", nama_dai: "Ustadz Ahmad", nilai_kinerja: "0" }
-                            ]
-                        };
-                        processLoginSuccess(dummyRes);
-                    } else {
-                        hideLoading();
-                        Swal.fire('Gagal Login', 'Untuk simulasi gunakan WA: 08123456789 dan Pass: 123456', 'error');
-                    }
-                }, 1000);
-            } else {
-                google.script.run
-                    .withSuccessHandler(res => {
-                        if(res.success) { processLoginSuccess(res); } 
-                        else { hideLoading(); Swal.fire('Gagal Login', res.message, 'error'); }
-                    })
-                    .withFailureHandler(err => {
-                        hideLoading(); Swal.fire('Error Server', err.toString(), 'error');
-                    })
-                    .processLogin(credentials);
-            }
+            google.script.run
+                .withSuccessHandler(res => {
+                    if(res.success) { processLoginSuccess(res); } 
+                    else { hideLoading(); Swal.fire('Gagal Login', res.message, 'error'); }
+                })
+                .withFailureHandler(err => {
+                    hideLoading(); Swal.fire('Error Server', err.toString(), 'error');
+                })
+                .processLogin(credentials);
         }
 
         function processLoginSuccess(data) {
@@ -290,41 +276,33 @@
             document.getElementById('user-info-name').innerText = db.user.nama_dai;
             document.getElementById('user-info-id').innerText = `ID: ${db.user.dai_id}`;
 
-            let jmlDiterima = 0, jmlDitolak = 0, totalKinerja = 0, totalKafalah = 0;
-            
-            laporanDiterima = db.kinerja.filter(k => {
-                let stat = (k.status || "").trim().toLowerCase();
-                if(stat === 'diterima') {
-                    jmlDiterima++;
-                    totalKinerja += num(k.nilai_kinerja);
-                    totalKafalah += num(k.total_kafalah);
-                    return true;
-                }
-                if(stat === 'ditolak') jmlDitolak++;
-                return false;
-            });
+            laporanDiterima = db.kinerja; // Backend sudah memfilter "Diterima" saja
 
-            // Update Dashboard
-            document.getElementById('stat-diterima').innerText = jmlDiterima;
-            document.getElementById('stat-ditolak').innerText = jmlDitolak;
+            // Hitung Rata-Rata
+            let totalKinerja = 0, totalKafalah = 0;
+            laporanDiterima.forEach(k => {
+                totalKinerja += num(k.nilai_kinerja);
+                totalKafalah += num(k.total_kafalah);
+            });
             
-            let avgKinerja = jmlDiterima > 0 ? (totalKinerja / jmlDiterima).toFixed(1) : 0;
-            let avgKafalah = jmlDiterima > 0 ? (totalKafalah / jmlDiterima) : 0;
+            let jml = laporanDiterima.length;
+            let avgKinerja = jml > 0 ? (totalKinerja / jml).toFixed(1) : 0;
+            let avgKafalah = jml > 0 ? (totalKafalah / jml) : 0;
             
             document.getElementById('stat-avg-kinerja').innerText = avgKinerja;
             document.getElementById('stat-avg-kafalah').innerText = formatRupiah(avgKafalah);
 
-            // Set Dropdown Bulan
+            // Set Dropdown Bulan (Berdasarkan Sheet Bulan)
             const selBulan = document.getElementById('filter-bulan');
             selBulan.innerHTML = '';
             
-            if(laporanDiterima.length === 0) {
-                selBulan.add(new Option("-- Belum Ada Laporan Diterima --", ""));
-                document.getElementById('rincian-container').innerHTML = `<div class="text-center p-8 text-gray-400"><i class="fas fa-folder-open text-4xl mb-3 opacity-30"></i><p>Tidak ada data laporan yang diterima untuk ditampilkan.</p></div>`;
+            if(db.listBulan.length === 0) {
+                selBulan.add(new Option("-- Belum Ada Konfigurasi Bulan --", ""));
+                document.getElementById('rincian-container').innerHTML = `<div class="text-center p-8 text-gray-400"><p>Data list bulan belum diatur di sistem.</p></div>`;
             } else {
-                // Reverse agar terbaru diatas (asumsi data berurutan waktu)
-                let reversed = [...laporanDiterima].reverse();
-                reversed.forEach(k => selBulan.add(new Option(k.bulan_laporan, k.bulan_laporan)));
+                // Reverse agar terbaru di atas (asumsi sheet bulan berurutan dari lama ke baru ke bawah)
+                let reversedBulan = [...db.listBulan].reverse();
+                reversedBulan.forEach(b => selBulan.add(new Option(b, b)));
                 renderRincian();
             }
 
@@ -340,14 +318,20 @@
             if(!bulan) return;
             
             const data = laporanDiterima.find(k => k.bulan_laporan === bulan);
-            if(!data) return;
+            
+            if(!data) {
+                document.getElementById('info-dai-container').innerHTML = '';
+                document.getElementById('tab-kinerja').innerHTML = `<div class="text-center p-8 bg-gray-50 rounded-lg text-gray-400 border border-dashed border-gray-300">Data laporan berstatus Diterima belum tersedia untuk bulan ini.</div>`;
+                document.getElementById('tab-kafalah').innerHTML = '';
+                return;
+            }
 
-            // Info Header
+            // Header Info (Urutan: ID, Waktu Laporan, Waktu Verifikasi, Status)
             document.getElementById('info-dai-container').innerHTML = `
-                <div><p class="text-teal-600/70 font-bold uppercase text-[10px] mb-0.5">Waktu Laporan</p><p class="font-semibold text-teal-900">${data.timestamp || '-'}</p></div>
-                <div><p class="text-teal-600/70 font-bold uppercase text-[10px] mb-0.5">Waktu Verifikasi</p><p class="font-semibold text-teal-900">${data.timestamp_verifikasi || '-'}</p></div>
-                <div><p class="text-teal-600/70 font-bold uppercase text-[10px] mb-0.5">ID Laporan</p><p class="font-semibold text-teal-900">${data.id_laporan || '-'}</p></div>
-                <div><p class="text-teal-600/70 font-bold uppercase text-[10px] mb-0.5">Status</p><p class="font-bold text-green-600"><i class="fas fa-check-circle mr-1"></i> ${data.status}</p></div>
+                <div><p class="text-teal-600/70 font-bold uppercase text-[10px] mb-1 tracking-wider">ID Laporan</p><p class="font-bold text-gray-800 text-sm">${data.id_laporan || '-'}</p></div>
+                <div><p class="text-teal-600/70 font-bold uppercase text-[10px] mb-1 tracking-wider">Waktu Laporan</p><p class="font-semibold text-gray-800 text-sm">${formatTanggalWITA(data.timestamp)}</p></div>
+                <div><p class="text-teal-600/70 font-bold uppercase text-[10px] mb-1 tracking-wider">Waktu Verifikasi</p><p class="font-semibold text-gray-800 text-sm">${formatTanggalWITA(data.timestamp_verifikasi)}</p></div>
+                <div><p class="text-teal-600/70 font-bold uppercase text-[10px] mb-1 tracking-wider">Status</p><p class="font-bold text-green-600 inline-flex items-center bg-green-100 px-3 py-1 rounded-full text-xs"><i class="fas fa-check-circle mr-1.5"></i> ${data.status}</p></div>
             `;
 
             renderTabKinerja(data);
@@ -362,62 +346,59 @@
             if(lvl.includes('mumtaz')) colorLevel = 'text-green-600';
             else if(lvl.includes('jayyid')) colorLevel = 'text-blue-600';
 
+            // Proses Karya Unggulan
+            let karyaHtml = '';
+            const listKarya = [
+                { id: 'a1', title: 'Pengajar Al-Quran' },
+                { id: 'a2', title: 'Murabbi / Pra Murabbi' },
+                { id: 'a3', title: 'Pengurus / Pra Pengurus' },
+                { id: 'a4', title: 'Camaba STIBA' },
+                { id: 'a5', title: 'Camaba Sekolah Dai' }
+            ];
+            
+            listKarya.forEach(k => {
+                let jml = num(d[k.id + '_jml']);
+                let rincian = d[k.id + '_rincian'];
+                if(jml > 0 || (rincian && rincian.trim() !== '')) {
+                    karyaHtml += `<div class="mb-4 last:mb-0">
+                        <p class="font-bold text-gray-700 text-sm mb-2"><i class="fas fa-check text-teal-500 mr-1"></i> ${k.title} <span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs ml-1 font-semibold">${jml} Data</span></p>
+                        <div class="bg-gray-50 border border-gray-100 p-3 rounded-lg text-sm text-gray-600 shadow-inner">
+                            ${renderList(rincian)}
+                        </div>
+                    </div>`;
+                }
+            });
+            if(karyaHtml === '') karyaHtml = '<p class="text-sm text-gray-400 italic p-4 text-center">Tidak ada data karya unggulan pada bulan ini.</p>';
+
             tab.innerHTML = `
-            <!-- Highlight Skor -->
-            <div class="flex items-center justify-center gap-6 bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-                <div class="text-center">
-                    <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Total Nilai Kinerja</p>
-                    <p class="text-5xl font-black text-gray-800">${d.nilai_kinerja || 0}</p>
+            <!-- Highlight Skor (UI Baru) -->
+            <div class="flex items-center justify-center p-6 bg-white border border-gray-200 rounded-xl shadow-sm mb-6">
+                <div class="text-center px-4 md:px-12 w-1/2">
+                    <p class="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Total Nilai Kinerja</p>
+                    <p class="text-5xl md:text-6xl font-black text-gray-800">${d.nilai_kinerja || 0}</p>
                 </div>
                 <div class="h-16 w-px bg-gray-200"></div>
-                <div class="text-center">
-                    <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Predikat Level</p>
-                    <p class="text-2xl font-black ${colorLevel} uppercase">${d.level || '-'}</p>
+                <div class="text-center px-4 md:px-12 w-1/2">
+                    <p class="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Predikat Level</p>
+                    <p class="text-2xl md:text-3xl font-black ${colorLevel} uppercase tracking-wide">${d.level || '-'}</p>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 
                 <!-- Karya Unggulan -->
-                <div class="border rounded-xl bg-white overflow-hidden shadow-sm">
+                <div class="border rounded-xl bg-white overflow-hidden shadow-sm md:col-span-2">
                     <div class="card-header-custom"><i class="fas fa-star text-yellow-500"></i> Karya Unggulan</div>
-                    <div class="p-4 text-sm divide-y divide-gray-100">
-                        <div class="py-2 flex justify-between"><span class="text-gray-600">A1 (Pengajar Al-Quran)</span> <span class="font-semibold">${d.a1_jml||0} data</span></div>
-                        <div class="py-2 flex justify-between"><span class="text-gray-600">A2 (Murabbi)</span> <span class="font-semibold">${d.a2_jml||0} data</span></div>
-                        <div class="py-2 flex justify-between"><span class="text-gray-600">A3 (Pengurus)</span> <span class="font-semibold">${d.a3_jml||0} data</span></div>
-                        <div class="py-2 flex justify-between"><span class="text-gray-600">A4 (Camaba STIBA)</span> <span class="font-semibold">${d.a4_jml||0} data</span></div>
-                        <div class="py-2 flex justify-between"><span class="text-gray-600">A5 (Camaba Sek. Dai)</span> <span class="font-semibold">${d.a5_jml||0} data</span></div>
-                    </div>
-                </div>
-
-                <!-- Halaqah -->
-                <div class="border rounded-xl bg-white overflow-hidden shadow-sm">
-                    <div class="card-header-custom"><i class="fas fa-users text-blue-500"></i> Halaqah Tarbiyah & Quran</div>
-                    <div class="p-4 text-sm divide-y divide-gray-100">
-                        <div class="py-2"><span class="text-gray-600 font-bold block mb-1">Halaqah Tarbiyah</span> 
-                            <div class="grid grid-cols-3 gap-2 text-center mt-1">
-                                <div class="bg-gray-50 p-1 rounded border">Halaqah: <b>${d.c1_halaqah||0}</b></div>
-                                <div class="bg-gray-50 p-1 rounded border">Peserta: <b>${d.c1_peserta||0}</b></div>
-                                <div class="bg-gray-50 p-1 rounded border">Aktif: <b>${d.c1_aktif||0}</b></div>
-                            </div>
-                        </div>
-                        <div class="py-2"><span class="text-gray-600 font-bold block mb-1">Halaqah Quran (Total)</span> 
-                            <div class="grid grid-cols-3 gap-2 text-center mt-1">
-                                <div class="bg-gray-50 p-1 rounded border">Halaqah: <b>${d.c2_total_halaqah||0}</b></div>
-                                <div class="bg-gray-50 p-1 rounded border">Peserta: <b>${d.c2_total_peserta||0}</b></div>
-                                <div class="bg-gray-50 p-1 rounded border">Aktif: <b>${d.c2_total_aktif||0}</b></div>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="p-5">${karyaHtml}</div>
                 </div>
 
                 <!-- Dakwah & Waktu -->
                 <div class="border rounded-xl bg-white overflow-hidden shadow-sm">
-                    <div class="card-header-custom"><i class="fas fa-bullhorn text-orange-500"></i> Dakwah & Berkantor</div>
+                    <div class="card-header-custom"><i class="fas fa-bullhorn text-orange-500"></i> Dakwah Umum & Berkantor</div>
                     <div class="p-4 text-sm divide-y divide-gray-100">
-                        <div class="py-2 flex justify-between"><span class="text-gray-600">Waktu Berkantor</span> <span class="font-semibold">${d.waktu_berkantor_jam||0} Jam</span></div>
-                        <div class="py-2 flex justify-between"><span class="text-gray-600">Khotbah Jumat</span> <span class="font-semibold">${d.khotbah_jumat||0} Kali</span></div>
-                        <div class="py-2 flex justify-between"><span class="text-gray-600">Taklim / Tablig Akbar</span> <span class="font-semibold">${d.taklim_tablig||0} Kali</span></div>
+                        <div class="py-2.5 flex justify-between"><span class="text-gray-600">Waktu Berkantor</span> <span class="font-bold text-gray-800">${d.waktu_berkantor_jam||0} Jam</span></div>
+                        <div class="py-2.5 flex justify-between"><span class="text-gray-600">Khotbah Jumat</span> <span class="font-bold text-gray-800">${d.khotbah_jumat||0} Kali</span></div>
+                        <div class="py-2.5 flex justify-between"><span class="text-gray-600">Taklim / Tablig Akbar</span> <span class="font-bold text-gray-800">${d.taklim_tablig||0} Kali</span></div>
                     </div>
                 </div>
 
@@ -425,10 +406,40 @@
                 <div class="border rounded-xl bg-white overflow-hidden shadow-sm">
                     <div class="card-header-custom"><i class="fas fa-handshake text-green-500"></i> Silaturahmi & Lainnya</div>
                     <div class="p-4 text-sm divide-y divide-gray-100">
-                        <div class="py-2 flex justify-between"><span class="text-gray-600">Silaturahmi Internal</span> <span class="font-semibold">${d.silaturahmi_internal_jml||0} Kali</span></div>
-                        <div class="py-2 flex justify-between"><span class="text-gray-600">Silaturahmi Eksternal</span> <span class="font-semibold">${d.silaturahmi_eksternal_jml||0} Kali</span></div>
-                        <div class="py-2 flex justify-between"><span class="text-gray-600 text-red-500">Alpa Tarbiyah</span> <span class="font-bold text-red-600">${d.ketidakhadiran_tarbiyah||0} Kali</span></div>
-                        <div class="py-2 flex justify-between"><span class="text-gray-600">Hari Izin</span> <span class="font-semibold">${d.hari_izin||0} Hari</span></div>
+                        <div class="py-2.5 flex justify-between"><span class="text-gray-600">Silaturahmi Internal</span> <span class="font-bold text-gray-800">${d.silaturahmi_internal_jml||0} Kali</span></div>
+                        <div class="py-2.5 flex justify-between"><span class="text-gray-600">Silaturahmi Eksternal</span> <span class="font-bold text-gray-800">${d.silaturahmi_eksternal_jml||0} Kali</span></div>
+                        <div class="py-2.5 flex justify-between"><span class="text-red-500">Alpa Tarbiyah</span> <span class="font-bold text-red-600">${d.ketidakhadiran_tarbiyah||0} Kali</span></div>
+                        <div class="py-2.5 flex justify-between"><span class="text-red-500">Izin</span> <span class="font-bold text-red-600">${d.izin||0} Hari</span></div>
+                    </div>
+                </div>
+
+                <!-- Halaqah -->
+                <div class="border rounded-xl bg-white overflow-hidden shadow-sm md:col-span-2">
+                    <div class="card-header-custom"><i class="fas fa-users text-blue-500"></i> Halaqah Tarbiyah & Quran</div>
+                    <div class="p-0 text-sm">
+                        <table class="w-full text-center">
+                            <thead class="bg-gray-50 border-b text-xs text-gray-500 uppercase">
+                                <tr><th class="p-3 text-left">Jenis Halaqah</th><th class="p-3">Jml Halaqah</th><th class="p-3">Peserta</th><th class="p-3">Aktif</th></tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100 font-medium text-gray-700">
+                                <tr>
+                                    <td class="p-3 text-left font-bold text-gray-800 bg-gray-50/50">Halaqah Tarbiyah</td>
+                                    <td class="p-3 bg-gray-50/50">${d.c1_halaqah||0}</td><td class="p-3 bg-gray-50/50">${d.c1_peserta||0}</td><td class="p-3 bg-gray-50/50">${d.c1_aktif||0}</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 text-left pl-6 text-gray-600"><i class="fas fa-angle-right mr-1"></i> HQ - Dirosa</td>
+                                    <td class="p-3">${d.c2_dirosa_halaqah||0}</td><td class="p-3">${d.c2_dirosa_peserta||0}</td><td class="p-3">${d.c2_dirosa_aktif||0}</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 text-left pl-6 text-gray-600"><i class="fas fa-angle-right mr-1"></i> HQ - Tahsin</td>
+                                    <td class="p-3">${d.c2_tahsin_halaqah||0}</td><td class="p-3">${d.c2_tahsin_peserta||0}</td><td class="p-3">${d.c2_tahsin_aktif||0}</td>
+                                </tr>
+                                <tr class="bg-blue-50/30">
+                                    <td class="p-3 text-left font-bold text-blue-800">Total HQ (Quran)</td>
+                                    <td class="p-3 font-bold text-blue-800">${d.c2_total_halaqah||0}</td><td class="p-3 font-bold text-blue-800">${d.c2_total_peserta||0}</td><td class="p-3 font-bold text-blue-800">${d.c2_total_aktif||0}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
@@ -438,38 +449,53 @@
         function renderTabKafalah(d) {
             const tab = document.getElementById('tab-kafalah');
             
-            tab.innerHTML = `
+            // Cek apakah kolom Khusus atau Batasan terisi (menandakan rincian tidak perlu ditampilkan)
+            let isKhusus = (d.khusus && d.khusus.trim() !== '') || (d.batasan && d.batasan.trim() !== '');
+
+            let html = `
             <div class="bg-white border rounded-xl overflow-hidden shadow-sm">
                 <div class="card-header-custom justify-center bg-teal-600 text-white border-none py-4"><i class="fas fa-file-invoice-dollar text-xl"></i> <span class="text-lg">RINCIAN KAFALAH</span></div>
-                
-                <table class="w-full text-sm">
-                    <tbody class="divide-y divide-gray-100">
-                        <tr><td class="p-4 text-gray-600">Kafalah Pokok</td><td class="p-4 font-semibold text-right">${formatRupiah(d.kafalah_pokok)}</td></tr>
-                        <tr><td class="p-4 text-gray-600">Kafalah Kinerja</td><td class="p-4 font-semibold text-right">${formatRupiah(d.kafalah_kinerja)}</td></tr>
-                        
-                        <tr class="bg-gray-50"><td colspan="2" class="px-4 py-2 font-bold text-xs text-gray-500 uppercase">Tunjangan & Bonus</td></tr>
-                        <tr><td class="p-4 text-gray-600 pl-8">Amanah</td><td class="p-4 font-semibold text-right text-blue-700">+ ${formatRupiah(d.tunjangan_amanah)}</td></tr>
-                        <tr><td class="p-4 text-gray-600 pl-8">Wilayah</td><td class="p-4 font-semibold text-right text-blue-700">+ ${formatRupiah(d.tunjangan_wilayah)}</td></tr>
-                        <tr><td class="p-4 text-gray-600 pl-8">Keluarga</td><td class="p-4 font-semibold text-right text-blue-700">+ ${formatRupiah(d.tunjangan_keluarga)}</td></tr>
-                        <tr><td class="p-4 text-gray-600 pl-8">Karya Unggulan</td><td class="p-4 font-semibold text-right text-blue-700">+ ${formatRupiah(d.bonus_karya_unggulan)}</td></tr>
-                        <tr><td class="p-4 text-gray-600 pl-8">Penambah Lainnya</td><td class="p-4 font-semibold text-right text-blue-700">+ ${formatRupiah(d.penambah)}</td></tr>
-                        
-                        <tr class="bg-gray-50"><td colspan="2" class="px-4 py-2 font-bold text-xs text-gray-500 uppercase">Potongan</td></tr>
-                        <tr><td class="p-4 text-red-500 pl-8">Izin</td><td class="p-4 font-semibold text-right text-red-600">- ${formatRupiah(d.izin)}</td></tr>
-                        <tr><td class="p-4 text-red-500 pl-8">Pengurang Lainnya</td><td class="p-4 font-semibold text-right text-red-600">- ${formatRupiah(d.pengurang)}</td></tr>
-                        
-                        <tr class="bg-teal-50 border-t-2 border-teal-200">
-                            <td class="p-4 font-black text-teal-900 text-base">TOTAL KAFALAH</td>
-                            <td class="p-4 font-black text-right text-teal-700 text-xl">${formatRupiah(d.total_kafalah)}</td>
-                        </tr>
+                <table class="w-full text-sm text-gray-700">
+                    <tbody class="divide-y divide-gray-100">`;
 
-                        <tr class="bg-gray-50"><td colspan="2" class="px-4 py-2 font-bold text-xs text-gray-500 uppercase">Distribusi Sumber Dana</td></tr>
-                        <tr><td class="p-4 text-gray-500 pl-8 text-xs">DPW/DPD Tempat Tugas</td><td class="p-4 font-semibold text-right text-xs">${d.dpw_dpd_instansi_tempat_tugas || '-'}</td></tr>
-                        <tr><td class="p-4 text-gray-500 pl-8 text-xs">Subsidi Persaudaraan</td><td class="p-4 font-semibold text-right text-xs">${formatRupiah(d.dpw_dpd_persaudaraan)}</td></tr>
-                        <tr><td class="p-4 text-gray-500 pl-8 text-xs">Lajnah Dai DPP</td><td class="p-4 font-bold text-right text-xs text-gray-700">${formatRupiah(d.kafalah_lajnah_dai_dpp)}</td></tr>
+            if(!isKhusus) {
+                // BLOK PENDAPATAN (HIJAU)
+                html += `
+                        <tr class="bg-green-50"><td colspan="2" class="px-4 py-2 font-bold text-xs text-green-700 uppercase"><i class="fas fa-plus-circle mr-1"></i> Komponen Pendapatan</td></tr>
+                        <tr><td class="p-4 pl-8">Kafalah Pokok</td><td class="p-4 font-semibold text-right text-green-700">${formatRupiah(d.kafalah_pokok)}</td></tr>
+                        <tr><td class="p-4 pl-8">Kafalah Kinerja</td><td class="p-4 font-semibold text-right text-green-700">${formatRupiah(d.kafalah_kinerja)}</td></tr>
+                        <tr><td class="p-4 pl-8">Tunjangan Amanah</td><td class="p-4 font-semibold text-right text-green-700">${formatRupiah(d.tunjangan_amanah)}</td></tr>
+                        <tr><td class="p-4 pl-8">Tunjangan Wilayah</td><td class="p-4 font-semibold text-right text-green-700">${formatRupiah(d.tunjangan_wilayah)}</td></tr>
+                        <tr><td class="p-4 pl-8">Tunjangan Keluarga</td><td class="p-4 font-semibold text-right text-green-700">${formatRupiah(d.tunjangan_keluarga)}</td></tr>
+                        <tr><td class="p-4 pl-8">Bonus Karya Unggulan</td><td class="p-4 font-semibold text-right text-green-700">${formatRupiah(d.bonus_karya_unggulan)}</td></tr>
+                        <tr><td class="p-4 pl-8">Penambah Lainnya</td><td class="p-4 font-semibold text-right text-green-700">${formatRupiah(d.penambah)}</td></tr>
+                `;
+
+                // BLOK POTONGAN (MERAH)
+                html += `
+                        <tr class="bg-red-50"><td colspan="2" class="px-4 py-2 font-bold text-xs text-red-600 uppercase"><i class="fas fa-minus-circle mr-1"></i> Komponen Potongan</td></tr>
+                        <tr><td class="p-4 pl-8">Izin</td><td class="p-4 font-semibold text-right text-red-600">- ${formatRupiah(d.izin)}</td></tr>
+                        <tr><td class="p-4 pl-8">Pengurang Lainnya</td><td class="p-4 font-semibold text-right text-red-600">- ${formatRupiah(d.pengurang)}</td></tr>
+                `;
+            } else {
+                html += `<tr><td colspan="2" class="p-6 text-center text-gray-500 italic border-b bg-gray-50">Rincian disembunyikan karena kondisi khusus/batasan.</td></tr>`;
+            }
+
+            // BLOK REKAP/TOTAL (BIRU)
+            html += `
+                        <tr class="bg-blue-50/50"><td colspan="2" class="px-4 py-2 font-bold text-xs text-blue-700 uppercase"><i class="fas fa-money-check-alt mr-1"></i> Rekapitulasi & Distribusi Dana</td></tr>
+                        <tr class="bg-blue-50 border-t-2 border-blue-200">
+                            <td class="p-5 font-black text-blue-900 text-base uppercase">TOTAL KAFALAH</td>
+                            <td class="p-5 font-black text-right text-blue-700 text-2xl">${formatRupiah(d.total_kafalah)}</td>
+                        </tr>
+                        <tr><td class="p-4 pl-8 text-xs text-gray-600">Sumber: DPW/DPD/Instansi Tempat Tugas</td><td class="p-4 font-semibold text-right text-xs text-gray-800">${d.dpw_dpd_instansi_tempat_tugas || '-'}</td></tr>
+                        <tr><td class="p-4 pl-8 text-xs text-gray-600">Sumber: Subsidi Persaudaraan</td><td class="p-4 font-semibold text-right text-xs text-gray-800">${formatRupiah(d.dpw_dpd_persaudaraan)}</td></tr>
+                        <tr class="bg-blue-50/20"><td class="p-4 pl-8 text-sm font-bold text-blue-800">Beban Kafalah Lajnah Dai DPP</td><td class="p-4 font-black text-right text-sm text-blue-800">${formatRupiah(d.kafalah_lajnah_dai_dpp)}</td></tr>
                     </tbody>
                 </table>
             </div>`;
+            
+            tab.innerHTML = html;
         }
 
         // ========================
@@ -477,38 +503,44 @@
         // ========================
         function bukaModalGrafik() {
             if(laporanDiterima.length === 0) {
-                Swal.fire('Info', 'Tidak ada data untuk ditampilkan pada grafik.', 'info');
+                Swal.fire('Info', 'Tidak ada data laporan diterima untuk ditampilkan.', 'info');
                 return;
             }
             
             document.getElementById('modal-grafik').classList.remove('hidden');
             
-            // Urutkan data berdasarkan bulan untuk grafik (Ascending - Lama ke Baru)
-            let sortedData = [...laporanDiterima].reverse();
-            let labels = sortedData.map(d => d.bulan_laporan.split(' ')[0]); // Ambil nama bulan saja
+            // Urutkan data berdasarkan urutan listBulan dari sheet (Kronologis Kiri ke Kanan)
+            // Asumsi: listBulan di-set urut dari lama ke baru
+            let sortedData = [];
+            db.listBulan.forEach(bln => {
+                let found = laporanDiterima.find(k => k.bulan_laporan === bln);
+                if(found) sortedData.push(found);
+            });
+
+            let labels = sortedData.map(d => d.bulan_laporan.split(' ')[0]); // Ambil nama bulan
             let dataKinerja = sortedData.map(d => num(d.nilai_kinerja));
             let dataKafalah = sortedData.map(d => num(d.total_kafalah));
 
-            // Render Chart Kinerja
+            // Chart Kinerja (Line)
             const ctxKin = document.getElementById('chartKinerja').getContext('2d');
             if(chartInstanceKinerja) chartInstanceKinerja.destroy();
             chartInstanceKinerja = new Chart(ctxKin, {
                 type: 'line',
                 data: {
                     labels: labels,
-                    datasets: [{ label: 'Skor Kinerja', data: dataKinerja, borderColor: '#0ea5e9', backgroundColor: 'rgba(14, 165, 233, 0.1)', tension: 0.3, fill: true, pointBackgroundColor: '#0284c7' }]
+                    datasets: [{ label: 'Skor Kinerja', data: dataKinerja, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.15)', tension: 0.4, fill: true, pointBackgroundColor: '#047857', pointRadius: 5 }]
                 },
                 options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100 } } }
             });
 
-            // Render Chart Kafalah
+            // Chart Kafalah (Bar)
             const ctxKaf = document.getElementById('chartKafalah').getContext('2d');
             if(chartInstanceKafalah) chartInstanceKafalah.destroy();
             chartInstanceKafalah = new Chart(ctxKaf, {
                 type: 'bar',
                 data: {
                     labels: labels,
-                    datasets: [{ label: 'Total Kafalah (Rp)', data: dataKafalah, backgroundColor: '#0f766e', borderRadius: 4 }]
+                    datasets: [{ label: 'Total Kafalah (Rp)', data: dataKafalah, backgroundColor: '#3b82f6', borderRadius: 6 }]
                 },
                 options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
             });
