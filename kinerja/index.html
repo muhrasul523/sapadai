@@ -535,11 +535,13 @@
                 hideLoading();
                 document.getElementById('month-page').style.display = 'none';
                 document.getElementById('dashboard-page').style.display = 'block';
-                setupForm(bln, res.found ? res.data : null);
+                // Parameter ditambahkan untuk menerima latest_karya dari backend
+                setupForm(bln, res.found ? res.data : null, res.latest_karya);
             });
         }
 
-        function setupForm(bulan, histData) {
+        // Fungsi Setup Form diubah sedikit argumennya untuk menangani Karya Unggulan Terbaru
+        function setupForm(bulan, histData, latestKarya) {
             document.getElementById('lbl_nama').innerText = currentUser.nama_dai;
             document.getElementById('lbl_bulan').innerText = bulan;
             
@@ -575,18 +577,24 @@
                 document.getElementById('taklim_tablig').value = histData.taklim_tablig || '';
                 document.getElementById('ketidakhadiran_tarbiyah').value = histData.ketidakhadiran_tarbiyah || '';
 
-                rebuildKarya('karya_quran', histData.a1_rincian);
-                rebuildKarya('karya_murabbi', histData.a2_rincian);
-                rebuildKarya('karya_pengurus', histData.a3_rincian);
-                rebuildKarya('karya_stiba', histData.a4_rincian);
-                rebuildKarya('karya_dai', histData.a5_rincian);
-
                 if(parseInt(histData.c1_halaqah) > 0) addHalaqahTarbiyah(histData.c1_peserta, histData.c1_aktif);
                 if(parseInt(histData.c2_dirosa_halaqah) > 0) addHalaqahQuran('Dirosa', histData.c2_dirosa_peserta, histData.c2_dirosa_aktif);
                 if(parseInt(histData.c2_tahsin_halaqah) > 0) addHalaqahQuran('Tahsin', histData.c2_tahsin_peserta, histData.c2_tahsin_aktif);
 
                 rebuildSilaturahmi('silaturahmi_internal', histData.silaturahmi_internal_rincian);
                 rebuildSilaturahmi('silaturahmi_eksternal', histData.silaturahmi_eksternal_rincian);
+            }
+
+            // MENGISI OTOMATIS 5 KARYA UNGGULAN DENGAN DATA TERAKHIR
+            // Fallback: Jika latestKarya ada, gunakan. Jika belum pernah mengisi sebelumnya sama sekali, cek histData (walau jarang).
+            let sourceKarya = latestKarya || histData || null; 
+            
+            if(sourceKarya) {
+                rebuildKarya('karya_quran', sourceKarya.a1_rincian);
+                rebuildKarya('karya_murabbi', sourceKarya.a2_rincian);
+                rebuildKarya('karya_pengurus', sourceKarya.a3_rincian);
+                rebuildKarya('karya_stiba', sourceKarya.a4_rincian);
+                rebuildKarya('karya_dai', sourceKarya.a5_rincian);
             }
         }
 
