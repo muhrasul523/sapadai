@@ -12,7 +12,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #1f2937; }
@@ -103,19 +103,27 @@
             
             <!-- Dashboard Rekap -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="font-bold text-lg text-gray-800"><i class="fas fa-chart-pie text-teal-600 mr-2"></i> Ringkasan Performa (Seluruh Bulan)</h2>
-                    <button onclick="bukaModalGrafik()" class="bg-teal-50 border border-teal-200 text-teal-700 px-4 py-2 rounded-lg text-sm font-bold hover:bg-teal-100 transition shadow-sm"><i class="fas fa-chart-line mr-1"></i> Lihat Grafik</button>
+                <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-3">
+                    <h2 class="font-bold text-lg text-gray-800"><i class="fas fa-chart-pie text-teal-600 mr-2"></i> Ringkasan Kinerja Keseluruhan</h2>
+                    <button onclick="bukaModalGrafik()" class="bg-teal-50 border border-teal-200 text-teal-700 px-4 py-2 rounded-lg text-sm font-bold hover:bg-teal-100 transition shadow-sm"><i class="fas fa-chart-line mr-1"></i> Grafik</button>
                 </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-green-50 p-6 rounded-xl border border-green-100 text-center">
-                        <p class="text-sm text-green-600 font-bold uppercase tracking-wide mb-1">Rata-Rata Kinerja</p>
-                        <p class="text-4xl font-black text-green-800" id="stat-avg-kinerja">0</p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-green-50 p-4 rounded-xl border border-green-100 text-center">
+                        <p class="text-[10px] text-green-600 font-bold uppercase tracking-wide mb-1">Rata-Rata Kinerja</p>
+                        <p class="text-3xl font-black text-green-800" id="stat-avg-kinerja">0</p>
                     </div>
-                    <div class="bg-blue-50 p-6 rounded-xl border border-blue-100 text-center">
-                        <p class="text-sm text-blue-600 font-bold uppercase tracking-wide mb-1">Rata-Rata Kafalah</p>
-                        <p class="text-3xl font-black text-blue-800 mt-2" id="stat-avg-kafalah">Rp 0</p>
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 text-center">
+                        <p class="text-[10px] text-blue-600 font-bold uppercase tracking-wide mb-1">Rata-Rata Kafalah</p>
+                        <p class="text-lg md:text-xl font-black text-blue-800 mt-2 truncate" id="stat-avg-kafalah">Rp 0</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 text-center">
+                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wide mb-1">Total Masuk</p>
+                        <p class="text-3xl font-black text-gray-800" id="stat-laporan-masuk">0</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-xl border border-red-100 text-center">
+                        <p class="text-[10px] text-red-600 font-bold uppercase tracking-wide mb-1">Tidak Masuk</p>
+                        <p class="text-3xl font-black text-red-800" id="stat-laporan-tidak-masuk">0</p>
                     </div>
                 </div>
             </div>
@@ -133,23 +141,7 @@
                 </div>
 
                 <div class="p-5" id="rincian-container">
-                    
-                    <!-- Header Info Banner -->
-                    <div class="bg-[#f2fbf9] border border-teal-200 rounded-xl p-4 mb-6 grid grid-cols-2 md:grid-cols-4 gap-4 items-center shadow-sm" id="info-dai-container">
-                        <!-- Rendered via JS -->
-                    </div>
-
-                    <!-- Navigasi Tab -->
-                    <div class="flex gap-2 w-full mb-6">
-                        <button onclick="switchTab('kinerja')" id="btn-tab-kinerja" class="flex-1 px-4 py-3 tab-btn active rounded-lg text-sm font-bold transition flex justify-center items-center gap-2"><i class="fas fa-tasks"></i> Kinerja Dai</button>
-                        <button onclick="switchTab('kafalah')" id="btn-tab-kafalah" class="flex-1 px-4 py-3 tab-btn rounded-lg text-sm font-bold transition flex justify-center items-center gap-2"><i class="fas fa-wallet"></i> Rincian Kafalah</button>
-                    </div>
-
-                    <!-- TAB 1: Kinerja -->
-                    <div id="tab-kinerja" class="space-y-6"></div>
-
-                    <!-- TAB 2: Kafalah -->
-                    <div id="tab-kafalah" class="hidden space-y-6"></div>
+                    <!-- Placeholder sebelum render -->
                 </div>
             </div>
             
@@ -160,17 +152,17 @@
     <div id="modal-grafik" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center p-5 border-b sticky top-0 bg-white z-10">
-                <h3 class="font-bold text-xl text-gray-800"><i class="fas fa-chart-line text-teal-600 mr-2"></i> Grafik Kinerja & Kafalah</h3>
+                <h3 class="font-bold text-xl text-gray-800"><i class="fas fa-chart-line text-teal-600 mr-2"></i> Grafik Kronologis</h3>
                 <button onclick="tutupModalGrafik()" class="text-gray-400 hover:text-red-500 text-2xl transition"><i class="fas fa-times"></i></button>
             </div>
             <div class="p-6 space-y-10">
                 <div>
-                    <h4 class="text-sm font-bold text-center mb-3 text-gray-500 uppercase tracking-widest">Trend Nilai Kinerja (Kronologis)</h4>
+                    <h4 class="text-sm font-bold text-center mb-3 text-gray-500 uppercase tracking-widest">Trend Nilai Kinerja</h4>
                     <canvas id="chartKinerja" height="80"></canvas>
                 </div>
                 <hr class="border-gray-200">
                 <div>
-                    <h4 class="text-sm font-bold text-center mb-3 text-gray-500 uppercase tracking-widest">Trend Total Kafalah (Kronologis)</h4>
+                    <h4 class="text-sm font-bold text-center mb-3 text-gray-500 uppercase tracking-widest">Trend Total Kafalah</h4>
                     <canvas id="chartKafalah" height="80"></canvas>
                 </div>
             </div>
@@ -178,7 +170,13 @@
     </div>
 
     <script>
-        let db = { user: null, kinerja: [], listBulan: [] };
+        // =====================================
+        // KONFIGURASI PENTING UNTUK GITHUB PAGES
+        // =====================================
+        // PASTE URL WEB APP GOOGLE APPS SCRIPT ANDA DI SINI
+        const GITHUB_API_URL = "URL_WEB_APP_ANDA_DISINI"; 
+
+        let db = { user: null, laporan: [], listBulan: [] };
         let laporanDiterima = []; 
         let currentLoginType = 'wa';
         let chartInstanceKinerja = null;
@@ -219,66 +217,92 @@
             else { pwd.type = 'password'; icon.classList.replace('fa-eye-slash', 'fa-eye'); }
         }
 
-        function switchTab(tab) {
-            document.getElementById('tab-kinerja').style.display = tab === 'kinerja' ? 'block' : 'none';
-            document.getElementById('tab-kafalah').style.display = tab === 'kafalah' ? 'block' : 'none';
-            document.getElementById('btn-tab-kinerja').className = tab === 'kinerja' ? 'flex-1 px-4 py-3 tab-btn active rounded-lg text-sm font-bold transition flex justify-center items-center gap-2' : 'flex-1 px-4 py-3 tab-btn rounded-lg text-sm font-bold transition flex justify-center items-center gap-2';
-            document.getElementById('btn-tab-kafalah').className = tab === 'kafalah' ? 'flex-1 px-4 py-3 tab-btn active rounded-lg text-sm font-bold transition flex justify-center items-center gap-2' : 'flex-1 px-4 py-3 tab-btn rounded-lg text-sm font-bold transition flex justify-center items-center gap-2';
-        }
-
         function formatRupiah(angka) {
-            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(Number(angka) || 0);
+            if(!angka || isNaN(angka)) return '-';
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(Number(angka));
         }
 
         function num(val) { return Number(val) || 0; }
 
-        // Formatter Tanggal: 3 Okt 2026 12.00 WITA
+        // Format Tanggal: "3 Okt 2026 12.00 WITA"
         function formatTanggalWITA(dateStr) {
-            if(!dateStr || dateStr === '-') return '-';
+            if(!dateStr || dateStr.trim() === '-' || dateStr.trim() === '') return '-';
             try {
                 let d = new Date(dateStr);
-                if(!isNaN(d.getTime())) {
-                    const bln = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
-                    let jam = String(d.getHours()).padStart(2, '0');
-                    let mnt = String(d.getMinutes()).padStart(2, '0');
-                    return `${d.getDate()} ${bln[d.getMonth()]} ${d.getFullYear()} ${jam}.${mnt} WITA`;
-                }
-                return dateStr + ' WITA'; 
+                if(isNaN(d.getTime())) return dateStr; 
+                
+                const bln = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+                let jam = String(d.getHours()).padStart(2, '0');
+                let mnt = String(d.getMinutes()).padStart(2, '0');
+                
+                return `${d.getDate()} ${bln[d.getMonth()]} ${d.getFullYear()} ${jam}.${mnt} WITA`;
             } catch(e) { return dateStr; }
         }
 
         function renderList(text) {
-            if(!text || text.trim() === '-' || text.trim() === '') return '<span class="text-gray-400 italic">Tidak ada data rincian</span>';
+            if(!text || text.trim() === '-' || text.trim() === '') return '';
             let items = text.split(/\r?\n/).filter(i => i.trim() !== '');
             return '<ul class="list-disc pl-5 space-y-1">' + items.map(i => '<li>'+i+'</li>').join('') + '</ul>';
         }
 
+        // ==========================
+        // PROSES LOGIN
+        // ==========================
         function submitLogin() {
             let u = currentLoginType === 'wa' ? document.getElementById('login-wa').value : document.getElementById('login-email').value;
             let p = document.getElementById('login-password').value;
             let credentials = { type: currentLoginType, username: u, password: p };
 
-            showLoading('Memverifikasi Akun...');
+            showLoading('Memverifikasi & Sinkronisasi...');
             
-            google.script.run
-                .withSuccessHandler(res => {
+            // Cek apakah dieksekusi di dalam Apps Script native
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run
+                    .withSuccessHandler(res => {
+                        if(res.success) { processLoginSuccess(res); } 
+                        else { hideLoading(); Swal.fire('Gagal', res.message, 'error'); }
+                    })
+                    .withFailureHandler(err => {
+                        hideLoading(); Swal.fire('Error Server', err.toString(), 'error');
+                    })
+                    .processLogin(credentials);
+            } else {
+                // Dieksekusi di luar (contoh: GitHub Pages)
+                if (GITHUB_API_URL === "URL_WEB_APP_ANDA_DISINI") {
+                    hideLoading();
+                    Swal.fire('Konfigurasi Error', 'Anda belum memasukkan GITHUB_API_URL pada kode HTML.', 'error');
+                    return;
+                }
+
+                fetch(GITHUB_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'login', data: credentials })
+                })
+                .then(res => res.json())
+                .then(res => {
                     if(res.success) { processLoginSuccess(res); } 
-                    else { hideLoading(); Swal.fire('Gagal Login', res.message, 'error'); }
+                    else { hideLoading(); Swal.fire('Gagal', res.message, 'error'); }
                 })
-                .withFailureHandler(err => {
-                    hideLoading(); Swal.fire('Error Server', err.toString(), 'error');
-                })
-                .processLogin(credentials);
+                .catch(err => {
+                    hideLoading(); Swal.fire('Error Koneksi', 'Gagal menghubungi server database.', 'error');
+                });
+            }
         }
 
         function processLoginSuccess(data) {
             db = data;
-            document.getElementById('user-info-name').innerText = db.user.nama_dai;
-            document.getElementById('user-info-id').innerText = `ID: ${db.user.dai_id}`;
+            document.getElementById('user-info-name').innerText = db.user.nama;
+            document.getElementById('user-info-id').innerText = `ID: ${db.user.id}`;
 
-            laporanDiterima = db.kinerja; // Backend sudah memfilter "Diterima" saja
+            let totalMasuk = db.laporan.length;
+            let totalBulan = db.listBulan.length;
+            let tidakMasuk = totalBulan - totalMasuk;
+            if (tidakMasuk < 0) tidakMasuk = 0;
 
-            // Hitung Rata-Rata
+            // Filter yang Diterima saja
+            laporanDiterima = db.laporan.filter(k => (k.status || "").toLowerCase() === 'diterima');
+
             let totalKinerja = 0, totalKafalah = 0;
             laporanDiterima.forEach(k => {
                 totalKinerja += num(k.nilai_kinerja);
@@ -291,16 +315,17 @@
             
             document.getElementById('stat-avg-kinerja').innerText = avgKinerja;
             document.getElementById('stat-avg-kafalah').innerText = formatRupiah(avgKafalah);
+            document.getElementById('stat-laporan-masuk').innerText = totalMasuk;
+            document.getElementById('stat-laporan-tidak-masuk').innerText = tidakMasuk;
 
-            // Set Dropdown Bulan (Berdasarkan Sheet Bulan)
             const selBulan = document.getElementById('filter-bulan');
             selBulan.innerHTML = '';
             
             if(db.listBulan.length === 0) {
-                selBulan.add(new Option("-- Belum Ada Konfigurasi Bulan --", ""));
-                document.getElementById('rincian-container').innerHTML = `<div class="text-center p-8 text-gray-400"><p>Data list bulan belum diatur di sistem.</p></div>`;
+                selBulan.add(new Option("-- Data Bulan Kosong --", ""));
+                document.getElementById('rincian-container').innerHTML = `<div class="text-center p-8 text-gray-400">Hubungi admin untuk setup bulan.</div>`;
             } else {
-                // Reverse agar terbaru di atas (asumsi sheet bulan berurutan dari lama ke baru ke bawah)
+                // Reverse agar terbaru di atas dropdown
                 let reversedBulan = [...db.listBulan].reverse();
                 reversedBulan.forEach(b => selBulan.add(new Option(b, b)));
                 renderRincian();
@@ -313,55 +338,85 @@
 
         function logout() { location.reload(); }
 
+        function switchTabRincian(tab) {
+            document.getElementById('tab-kinerja').style.display = tab === 'kinerja' ? 'block' : 'none';
+            document.getElementById('tab-kafalah').style.display = tab === 'kafalah' ? 'block' : 'none';
+            document.getElementById('btn-tab-kinerja').className = tab === 'kinerja' ? 'flex-1 px-4 py-3 tab-btn active rounded-lg text-sm font-bold transition flex justify-center items-center gap-2' : 'flex-1 px-4 py-3 tab-btn rounded-lg text-sm font-bold transition flex justify-center items-center gap-2';
+            document.getElementById('btn-tab-kafalah').className = tab === 'kafalah' ? 'flex-1 px-4 py-3 tab-btn active rounded-lg text-sm font-bold transition flex justify-center items-center gap-2' : 'flex-1 px-4 py-3 tab-btn rounded-lg text-sm font-bold transition flex justify-center items-center gap-2';
+        }
+
         function renderRincian() {
-            const bulan = document.getElementById('filter-bulan').value;
-            if(!bulan) return;
+            const selectedVal = document.getElementById('filter-bulan').value;
+            if(!selectedVal) return;
             
-            const data = laporanDiterima.find(k => k.bulan_laporan === bulan);
+            const data = laporanDiterima.find(k => 
+                (k.bulan_laporan || "").trim() === selectedVal || 
+                (k.bulan_id_laporan || "").trim() === selectedVal
+            );
             
             if(!data) {
-                document.getElementById('info-dai-container').innerHTML = '';
-                document.getElementById('tab-kinerja').innerHTML = `<div class="text-center p-8 bg-gray-50 rounded-lg text-gray-400 border border-dashed border-gray-300">Data laporan berstatus Diterima belum tersedia untuk bulan ini.</div>`;
-                document.getElementById('tab-kafalah').innerHTML = '';
+                document.getElementById('rincian-container').innerHTML = `<div class="text-center p-10 bg-gray-50 rounded-xl text-gray-400 border border-dashed border-gray-300"><i class="fas fa-file-excel text-4xl mb-3 opacity-30"></i><p>Laporan berstatus <b>DITERIMA</b> belum tersedia untuk bulan ini.</p></div>`;
                 return;
             }
 
-            // Header Info (Urutan: ID, Waktu Laporan, Waktu Verifikasi, Status)
-            document.getElementById('info-dai-container').innerHTML = `
-                <div><p class="text-teal-600/70 font-bold uppercase text-[10px] mb-1 tracking-wider">ID Laporan</p><p class="font-bold text-gray-800 text-sm">${data.id_laporan || '-'}</p></div>
-                <div><p class="text-teal-600/70 font-bold uppercase text-[10px] mb-1 tracking-wider">Waktu Laporan</p><p class="font-semibold text-gray-800 text-sm">${formatTanggalWITA(data.timestamp)}</p></div>
-                <div><p class="text-teal-600/70 font-bold uppercase text-[10px] mb-1 tracking-wider">Waktu Verifikasi</p><p class="font-semibold text-gray-800 text-sm">${formatTanggalWITA(data.timestamp_verifikasi)}</p></div>
-                <div><p class="text-teal-600/70 font-bold uppercase text-[10px] mb-1 tracking-wider">Status</p><p class="font-bold text-green-600 inline-flex items-center bg-green-100 px-3 py-1 rounded-full text-xs"><i class="fas fa-check-circle mr-1.5"></i> ${data.status}</p></div>
+            let containerHtml = `
+            <!-- HEADER INFO -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+                <div class="p-5 border-b border-gray-100 bg-teal-50/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-0">
+                    <div class="w-full md:w-1/3 text-left">
+                        <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1">ID Laporan</p>
+                        <p class="font-bold text-gray-800 text-sm">${data.id_laporan || data.bulan_id_laporan || '-'}</p>
+                    </div>
+                    <div class="w-full md:w-1/3 text-left md:text-center md:border-l md:border-r border-gray-200 px-0 md:px-4">
+                        <div class="mb-2">
+                            <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-0.5">Waktu Laporan</p>
+                            <p class="font-semibold text-gray-800 text-xs">${formatTanggalWITA(data.timestamp_laporan || data.timestamp)}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-0.5">Waktu Verifikasi</p>
+                            <p class="font-semibold text-gray-800 text-xs">${formatTanggalWITA(data.timestamp_verifikasi)}</p>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/3 text-left md:text-right">
+                        <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1">Status</p>
+                        <span class="px-3 py-1 bg-green-100 text-green-700 border border-green-200 rounded-full text-xs font-bold inline-flex items-center"><i class="fas fa-check-circle mr-1.5"></i> ${data.status}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABS -->
+            <div class="flex gap-2 w-full mb-6">
+                <button onclick="switchTabRincian('kinerja')" id="btn-tab-kinerja" class="flex-1 px-4 py-3 tab-btn active rounded-lg text-sm font-bold transition flex justify-center items-center gap-2"><i class="fas fa-tasks"></i> Kinerja Dai</button>
+                <button onclick="switchTabRincian('kafalah')" id="btn-tab-kafalah" class="flex-1 px-4 py-3 tab-btn rounded-lg text-sm font-bold transition flex justify-center items-center gap-2"><i class="fas fa-wallet"></i> Rincian Kafalah</button>
+            </div>
+
+            <div id="tab-kinerja" class="space-y-6">${getHtmlKinerja(data)}</div>
+            <div id="tab-kafalah" class="hidden space-y-6">${getHtmlKafalah(data)}</div>
             `;
 
-            renderTabKinerja(data);
-            renderTabKafalah(data);
+            document.getElementById('rincian-container').innerHTML = containerHtml;
         }
 
-        function renderTabKinerja(d) {
-            const tab = document.getElementById('tab-kinerja');
-            
+        function getHtmlKinerja(d) {
             let colorLevel = 'text-gray-800';
             let lvl = (d.level || '').toLowerCase();
             if(lvl.includes('mumtaz')) colorLevel = 'text-green-600';
             else if(lvl.includes('jayyid')) colorLevel = 'text-blue-600';
 
-            // Proses Karya Unggulan
+            // KARYA UNGGULAN
             let karyaHtml = '';
             const listKarya = [
-                { id: 'a1', title: 'Pengajar Al-Quran' },
-                { id: 'a2', title: 'Murabbi / Pra Murabbi' },
-                { id: 'a3', title: 'Pengurus / Pra Pengurus' },
-                { id: 'a4', title: 'Camaba STIBA' },
-                { id: 'a5', title: 'Camaba Sekolah Dai' }
+                { key: 'a1', title: 'Pengajar Al-Quran' },
+                { key: 'a2', title: 'Murabbi / Pra Murabbi' },
+                { key: 'a3', title: 'Pengurus / Pra Pengurus' },
+                { key: 'a4', title: 'Camaba STIBA' },
+                { key: 'a5', title: 'Camaba Sekolah Dai' }
             ];
-            
             listKarya.forEach(k => {
-                let jml = num(d[k.id + '_jml']);
-                let rincian = d[k.id + '_rincian'];
-                if(jml > 0 || (rincian && rincian.trim() !== '')) {
+                let rincian = d[k.key + '_rincian'];
+                if(rincian && rincian.trim() !== '') {
                     karyaHtml += `<div class="mb-4 last:mb-0">
-                        <p class="font-bold text-gray-700 text-sm mb-2"><i class="fas fa-check text-teal-500 mr-1"></i> ${k.title} <span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs ml-1 font-semibold">${jml} Data</span></p>
+                        <p class="font-bold text-teal-700 text-sm mb-2"><i class="fas fa-check-circle mr-1"></i> ${k.title}</p>
                         <div class="bg-gray-50 border border-gray-100 p-3 rounded-lg text-sm text-gray-600 shadow-inner">
                             ${renderList(rincian)}
                         </div>
@@ -370,29 +425,25 @@
             });
             if(karyaHtml === '') karyaHtml = '<p class="text-sm text-gray-400 italic p-4 text-center">Tidak ada data karya unggulan pada bulan ini.</p>';
 
-            tab.innerHTML = `
-            <!-- Highlight Skor (UI Baru) -->
+            return `
             <div class="flex items-center justify-center p-6 bg-white border border-gray-200 rounded-xl shadow-sm mb-6">
-                <div class="text-center px-4 md:px-12 w-1/2">
-                    <p class="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Total Nilai Kinerja</p>
-                    <p class="text-5xl md:text-6xl font-black text-gray-800">${d.nilai_kinerja || 0}</p>
+                <div class="text-right pr-6 md:pr-12 w-1/2">
+                    <p class="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Total Nilai Kinerja</p>
+                    <p class="text-5xl md:text-6xl font-black text-[#1e293b]">${d.nilai_kinerja || 0}</p>
                 </div>
                 <div class="h-16 w-px bg-gray-200"></div>
-                <div class="text-center px-4 md:px-12 w-1/2">
-                    <p class="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Predikat Level</p>
+                <div class="text-left pl-6 md:pl-12 w-1/2">
+                    <p class="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Predikat Level</p>
                     <p class="text-2xl md:text-3xl font-black ${colorLevel} uppercase tracking-wide">${d.level || '-'}</p>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
-                <!-- Karya Unggulan -->
                 <div class="border rounded-xl bg-white overflow-hidden shadow-sm md:col-span-2">
                     <div class="card-header-custom"><i class="fas fa-star text-yellow-500"></i> Karya Unggulan</div>
                     <div class="p-5">${karyaHtml}</div>
                 </div>
 
-                <!-- Dakwah & Waktu -->
                 <div class="border rounded-xl bg-white overflow-hidden shadow-sm">
                     <div class="card-header-custom"><i class="fas fa-bullhorn text-orange-500"></i> Dakwah Umum & Berkantor</div>
                     <div class="p-4 text-sm divide-y divide-gray-100">
@@ -402,21 +453,19 @@
                     </div>
                 </div>
 
-                <!-- Silaturahmi & Lainnya -->
                 <div class="border rounded-xl bg-white overflow-hidden shadow-sm">
                     <div class="card-header-custom"><i class="fas fa-handshake text-green-500"></i> Silaturahmi & Lainnya</div>
                     <div class="p-4 text-sm divide-y divide-gray-100">
                         <div class="py-2.5 flex justify-between"><span class="text-gray-600">Silaturahmi Internal</span> <span class="font-bold text-gray-800">${d.silaturahmi_internal_jml||0} Kali</span></div>
                         <div class="py-2.5 flex justify-between"><span class="text-gray-600">Silaturahmi Eksternal</span> <span class="font-bold text-gray-800">${d.silaturahmi_eksternal_jml||0} Kali</span></div>
                         <div class="py-2.5 flex justify-between"><span class="text-red-500">Alpa Tarbiyah</span> <span class="font-bold text-red-600">${d.ketidakhadiran_tarbiyah||0} Kali</span></div>
-                        <div class="py-2.5 flex justify-between"><span class="text-red-500">Izin</span> <span class="font-bold text-red-600">${d.izin||0} Hari</span></div>
+                        <div class="py-2.5 flex justify-between"><span class="text-red-500">Izin</span> <span class="font-bold text-red-600">${d.izin||d.hari_izin||0} Hari</span></div>
                     </div>
                 </div>
 
-                <!-- Halaqah -->
                 <div class="border rounded-xl bg-white overflow-hidden shadow-sm md:col-span-2">
                     <div class="card-header-custom"><i class="fas fa-users text-blue-500"></i> Halaqah Tarbiyah & Quran</div>
-                    <div class="p-0 text-sm">
+                    <div class="p-0 text-sm overflow-x-auto">
                         <table class="w-full text-center">
                             <thead class="bg-gray-50 border-b text-xs text-gray-500 uppercase">
                                 <tr><th class="p-3 text-left">Jenis Halaqah</th><th class="p-3">Jml Halaqah</th><th class="p-3">Peserta</th><th class="p-3">Aktif</th></tr>
@@ -427,11 +476,11 @@
                                     <td class="p-3 bg-gray-50/50">${d.c1_halaqah||0}</td><td class="p-3 bg-gray-50/50">${d.c1_peserta||0}</td><td class="p-3 bg-gray-50/50">${d.c1_aktif||0}</td>
                                 </tr>
                                 <tr>
-                                    <td class="p-3 text-left pl-6 text-gray-600"><i class="fas fa-angle-right mr-1"></i> HQ - Dirosa</td>
+                                    <td class="p-3 text-left pl-6 text-gray-600"><i class="fas fa-angle-right mr-1 text-gray-400"></i> HQ - Dirosa</td>
                                     <td class="p-3">${d.c2_dirosa_halaqah||0}</td><td class="p-3">${d.c2_dirosa_peserta||0}</td><td class="p-3">${d.c2_dirosa_aktif||0}</td>
                                 </tr>
                                 <tr>
-                                    <td class="p-3 text-left pl-6 text-gray-600"><i class="fas fa-angle-right mr-1"></i> HQ - Tahsin</td>
+                                    <td class="p-3 text-left pl-6 text-gray-600"><i class="fas fa-angle-right mr-1 text-gray-400"></i> HQ - Tahsin</td>
                                     <td class="p-3">${d.c2_tahsin_halaqah||0}</td><td class="p-3">${d.c2_tahsin_peserta||0}</td><td class="p-3">${d.c2_tahsin_aktif||0}</td>
                                 </tr>
                                 <tr class="bg-blue-50/30">
@@ -442,14 +491,10 @@
                         </table>
                     </div>
                 </div>
-
             </div>`;
         }
 
-        function renderTabKafalah(d) {
-            const tab = document.getElementById('tab-kafalah');
-            
-            // Cek apakah kolom Khusus atau Batasan terisi (menandakan rincian tidak perlu ditampilkan)
+        function getHtmlKafalah(d) {
             let isKhusus = (d.khusus && d.khusus.trim() !== '') || (d.batasan && d.batasan.trim() !== '');
 
             let html = `
@@ -459,7 +504,7 @@
                     <tbody class="divide-y divide-gray-100">`;
 
             if(!isKhusus) {
-                // BLOK PENDAPATAN (HIJAU)
+                // HIJAU - PENDAPATAN
                 html += `
                         <tr class="bg-green-50"><td colspan="2" class="px-4 py-2 font-bold text-xs text-green-700 uppercase"><i class="fas fa-plus-circle mr-1"></i> Komponen Pendapatan</td></tr>
                         <tr><td class="p-4 pl-8">Kafalah Pokok</td><td class="p-4 font-semibold text-right text-green-700">${formatRupiah(d.kafalah_pokok)}</td></tr>
@@ -470,78 +515,68 @@
                         <tr><td class="p-4 pl-8">Bonus Karya Unggulan</td><td class="p-4 font-semibold text-right text-green-700">${formatRupiah(d.bonus_karya_unggulan)}</td></tr>
                         <tr><td class="p-4 pl-8">Penambah Lainnya</td><td class="p-4 font-semibold text-right text-green-700">${formatRupiah(d.penambah)}</td></tr>
                 `;
-
-                // BLOK POTONGAN (MERAH)
+                // MERAH - POTONGAN
                 html += `
                         <tr class="bg-red-50"><td colspan="2" class="px-4 py-2 font-bold text-xs text-red-600 uppercase"><i class="fas fa-minus-circle mr-1"></i> Komponen Potongan</td></tr>
-                        <tr><td class="p-4 pl-8">Izin</td><td class="p-4 font-semibold text-right text-red-600">- ${formatRupiah(d.izin)}</td></tr>
+                        <tr><td class="p-4 pl-8">Izin</td><td class="p-4 font-semibold text-right text-red-600">- ${formatRupiah(d.izin || d.hari_izin)}</td></tr>
                         <tr><td class="p-4 pl-8">Pengurang Lainnya</td><td class="p-4 font-semibold text-right text-red-600">- ${formatRupiah(d.pengurang)}</td></tr>
                 `;
             } else {
-                html += `<tr><td colspan="2" class="p-6 text-center text-gray-500 italic border-b bg-gray-50">Rincian disembunyikan karena kondisi khusus/batasan.</td></tr>`;
+                html += `<tr><td colspan="2" class="p-6 text-center text-gray-500 italic border-b bg-gray-50"><i class="fas fa-info-circle text-gray-400 mr-1"></i> Rincian komponen disembunyikan karena terdapat kondisi khusus/batasan.</td></tr>`;
             }
 
-            // BLOK REKAP/TOTAL (BIRU)
+            // BIRU - REKAP TOTAL (Selalu Tampil)
             html += `
                         <tr class="bg-blue-50/50"><td colspan="2" class="px-4 py-2 font-bold text-xs text-blue-700 uppercase"><i class="fas fa-money-check-alt mr-1"></i> Rekapitulasi & Distribusi Dana</td></tr>
                         <tr class="bg-blue-50 border-t-2 border-blue-200">
                             <td class="p-5 font-black text-blue-900 text-base uppercase">TOTAL KAFALAH</td>
                             <td class="p-5 font-black text-right text-blue-700 text-2xl">${formatRupiah(d.total_kafalah)}</td>
                         </tr>
-                        <tr><td class="p-4 pl-8 text-xs text-gray-600">Sumber: DPW/DPD/Instansi Tempat Tugas</td><td class="p-4 font-semibold text-right text-xs text-gray-800">${d.dpw_dpd_instansi_tempat_tugas || '-'}</td></tr>
-                        <tr><td class="p-4 pl-8 text-xs text-gray-600">Sumber: Subsidi Persaudaraan</td><td class="p-4 font-semibold text-right text-xs text-gray-800">${formatRupiah(d.dpw_dpd_persaudaraan)}</td></tr>
-                        <tr class="bg-blue-50/20"><td class="p-4 pl-8 text-sm font-bold text-blue-800">Beban Kafalah Lajnah Dai DPP</td><td class="p-4 font-black text-right text-sm text-blue-800">${formatRupiah(d.kafalah_lajnah_dai_dpp)}</td></tr>
+                        <tr><td class="p-4 pl-8 text-xs text-gray-600">DPW/DPD/Instansi Tempat Tugas</td><td class="p-4 font-semibold text-right text-xs text-gray-800">${d.dpw_dpd_instansi_tempat_tugas || '-'}</td></tr>
+                        <tr><td class="p-4 pl-8 text-xs text-gray-600">DPW/DPD Persaudaraan</td><td class="p-4 font-semibold text-right text-xs text-gray-800">${formatRupiah(d.dpw_dpd_persaudaraan)}</td></tr>
+                        <tr class="bg-blue-50/20"><td class="p-4 pl-8 text-sm font-bold text-blue-900">Kafalah Lajnah Dai DPP</td><td class="p-4 font-black text-right text-sm text-blue-900">${formatRupiah(d.kafalah_lajnah_dai_dpp)}</td></tr>
                     </tbody>
                 </table>
             </div>`;
             
-            tab.innerHTML = html;
+            return html;
         }
 
         // ========================
-        // LOGIC GRAFIK (Chart.js)
+        // GRAFIK (Chart.js)
         // ========================
         function bukaModalGrafik() {
             if(laporanDiterima.length === 0) {
-                Swal.fire('Info', 'Tidak ada data laporan diterima untuk ditampilkan.', 'info');
+                Swal.fire('Info', 'Belum ada data laporan diterima untuk ditampilkan.', 'info');
                 return;
             }
             
             document.getElementById('modal-grafik').classList.remove('hidden');
             
-            // Urutkan data berdasarkan urutan listBulan dari sheet (Kronologis Kiri ke Kanan)
-            // Asumsi: listBulan di-set urut dari lama ke baru
+            // Urutkan data berdasarkan urutan listBulan dari sheet (Kronologis dari kiri/lama ke kanan/baru)
             let sortedData = [];
             db.listBulan.forEach(bln => {
-                let found = laporanDiterima.find(k => k.bulan_laporan === bln);
+                let found = laporanDiterima.find(k => (k.bulan_laporan || "").trim() === bln || (k.bulan_id_laporan || "").trim() === bln);
                 if(found) sortedData.push(found);
             });
 
-            let labels = sortedData.map(d => d.bulan_laporan.split(' ')[0]); // Ambil nama bulan
+            let labels = sortedData.map(d => (d.bulan_laporan || d.bulan_id_laporan).split(' ')[0]); 
             let dataKinerja = sortedData.map(d => num(d.nilai_kinerja));
             let dataKafalah = sortedData.map(d => num(d.total_kafalah));
 
-            // Chart Kinerja (Line)
             const ctxKin = document.getElementById('chartKinerja').getContext('2d');
             if(chartInstanceKinerja) chartInstanceKinerja.destroy();
             chartInstanceKinerja = new Chart(ctxKin, {
                 type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{ label: 'Skor Kinerja', data: dataKinerja, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.15)', tension: 0.4, fill: true, pointBackgroundColor: '#047857', pointRadius: 5 }]
-                },
+                data: { labels: labels, datasets: [{ label: 'Skor Kinerja', data: dataKinerja, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.15)', tension: 0.4, fill: true, pointBackgroundColor: '#047857', pointRadius: 5 }] },
                 options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100 } } }
             });
 
-            // Chart Kafalah (Bar)
             const ctxKaf = document.getElementById('chartKafalah').getContext('2d');
             if(chartInstanceKafalah) chartInstanceKafalah.destroy();
             chartInstanceKafalah = new Chart(ctxKaf, {
                 type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{ label: 'Total Kafalah (Rp)', data: dataKafalah, backgroundColor: '#3b82f6', borderRadius: 6 }]
-                },
+                data: { labels: labels, datasets: [{ label: 'Total Kafalah (Rp)', data: dataKafalah, backgroundColor: '#3b82f6', borderRadius: 6 }] },
                 options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
             });
         }
