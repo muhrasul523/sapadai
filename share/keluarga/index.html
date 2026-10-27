@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="id" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Portal Data Keluarga Dai</title>
+    
+    <!-- Meta Tag untuk Preview WhatsApp -->
+    <link rel="icon" type="image/png" href="https://sapadai.wadahdigital.my.id/logo_sapadai_1.png">
+    <meta property="og:title" content="Portal Data Keluarga Dai">
+    <meta property="og:description" content="Aplikasi pengelolaan data istri dan anak Dai utusan.">
+    <meta property="og:image" content="https://sapadai.wadahdigital.my.id/logo_sapadai_1.png">
+    <meta property="og:type" content="website">
+    
+    <!-- Library Eksternal -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- Konfigurasi Tema (Warna Teal/Hijau Organisasi Modern) -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 50: '#f0fdfa', 100: '#ccfbf1', 200: '#99f6e4', 300: '#5eead4', 400: '#2dd4bf', 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e', 800: '#115e59', 900: '#134e4a' },
+                        darkBg: '#0b1312',
+                        darkCard: '#111c1a',
+                        darkHover: '#182b28',
+                        darkBorder: '#1e3834'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; }
+        
+        /* Desain Scrollbar Rapi */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-thumb { background: #1e3834; }
+        
+        .table-container { max-height: calc(100vh - 280px); overflow-y: auto; }
+        
+        /* Efek Loading Halus */
+        .spinner { border: 4px solid rgba(15, 118, 110, 0.1); width: 48px; height: 48px; border-radius: 50%; border-left-color: #0f766e; animation: spin 1s linear infinite; }
+        .dark .spinner { border: 4px solid rgba(20, 184, 166, 0.1); border-left-color: #14b8a6; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-darkBg dark:text-gray-200 h-screen w-screen overflow-hidden">
+
+    <!-- LAYAR PEMUATAN (LOADING) -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-white/90 dark:bg-darkBg/90 z-[100] hidden flex flex-col justify-center items-center backdrop-blur-sm transition-all duration-300">
+        <div class="spinner mb-4"></div>
+        <h2 class="text-lg font-bold text-brand-700 dark:text-brand-400">Memproses...</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Mohon tunggu sebentar</p>
+    </div>
+
+    <!-- HALAMAN LOGIN (KUNCI DI TENGAH LAYAR) -->
+    <div id="view-login" class="fixed inset-0 flex items-center justify-center bg-gray-50 dark:bg-darkBg z-50 p-4">
+        
+        <!-- Tombol Ubah Tema -->
+        <div class="absolute top-6 right-6">
+            <button onclick="toggleTheme()" class="w-10 h-10 rounded-full bg-white dark:bg-darkCard shadow flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-brand-600 transition-colors border border-gray-200 dark:border-darkBorder">
+                <i class="fas fa-moon dark:hidden"></i>
+                <i class="fas fa-sun hidden dark:block"></i>
+            </button>
+        </div>
+
+        <div class="bg-white dark:bg-darkCard p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 dark:border-darkBorder relative overflow-hidden">
+            <!-- Garis Aksen -->
+            <div class="absolute top-0 left-0 w-full h-1.5 bg-brand-600 dark:bg-brand-500"></div>
+            
+            <div class="text-center mb-8 mt-2">
+                <img src="https://sapadai.wadahdigital.my.id/logo_sapadai_1.png" alt="Logo" class="h-16 mx-auto mb-4 object-contain">
+                <h1 class="text-xl font-bold text-gray-900 dark:text-white uppercase tracking-wide">Portal Keluarga Dai</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium mt-1">WAHDAH ISLAMIYAH</p>
+            </div>
+            
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Kode Akses</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                            <i class="fas fa-key"></i>
+                        </span>
+                        <input type="password" id="kodeAkses" required placeholder="Masukkan kode akses..." 
+                            class="w-full pl-11 pr-4 py-3 bg-gray-50 dark:bg-darkHover border border-gray-200 dark:border-darkBorder rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all dark:text-white placeholder-gray-400">
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-brand-700 hover:bg-brand-800 dark:bg-brand-600 dark:hover:bg-brand-500 text-white font-bold py-3 px-4 rounded-xl transition-colors flex justify-center items-center shadow-lg shadow-brand-700/20">
+                    <i class="fas fa-sign-in-alt mr-2"></i> Masuk Aplikasi
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- HALAMAN UTAMA (DASHBOARD & TABEL) -->
+    <div id="view-main" class="hidden fixed inset-0 flex flex-col bg-gray-50 dark:bg-darkBg z-40">
+        
+        <!-- Navbar -->
+        <nav class="bg-white dark:bg-darkCard border-b border-gray-200 dark:border-darkBorder px-4 py-3 sm:px-6 flex justify-between items-center shadow-sm">
+            <div class="flex items-center gap-3">
+                <img src="https://sapadai.wadahdigital.my.id/logo_sapadai_1.png" alt="Logo" class="h-8 w-8 object-contain">
+                <div>
+                    <h1 class="font-bold text-gray-900 dark:text-white text-sm sm:text-base">Data Keluarga Dai</h1>
+                    <p class="text-[10px] text-brand-600 dark:text-brand-400 font-bold uppercase tracking-wide">Pembaruan 2026</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <button onclick="toggleTheme()" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-darkHover flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-brand-600 border border-gray-200 dark:border-darkBorder transition-colors">
+                    <i class="fas fa-moon dark:hidden text-sm"></i>
+                    <i class="fas fa-sun hidden dark:block text-sm"></i>
+                </button>
+                <button onclick="logout()" class="text-sm font-bold text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 px-4 py-1.5 rounded-lg transition-colors flex items-center">
+                    <i class="fas fa-power-off sm:mr-2"></i> <span class="hidden sm:inline">Keluar</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Area Konten Utama -->
+        <main class="flex-1 p-4 sm:p-6 flex flex-col max-w-7xl mx-auto w-full gap-5 overflow-hidden">
+            
+            <!-- Ringkasan Angka -->
+            <div class="grid grid-cols-3 gap-3 sm:gap-4 shrink-0">
+                <div class="bg-white dark:bg-darkCard p-4 rounded-xl border border-gray-100 dark:border-darkBorder shadow-sm flex flex-col justify-center relative overflow-hidden">
+                    <div class="absolute -right-2 -bottom-2 opacity-5 text-brand-600 text-6xl"><i class="fas fa-user-tie"></i></div>
+                    <p class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-1 z-10">Total Dai</p>
+                    <h3 id="countDai" class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white z-10">0</h3>
+                </div>
+                <div class="bg-white dark:bg-darkCard p-4 rounded-xl border border-gray-100 dark:border-darkBorder shadow-sm flex flex-col justify-center relative overflow-hidden">
+                    <div class="absolute -right-2 -bottom-2 opacity-5 text-brand-600 text-6xl"><i class="fas fa-female"></i></div>
+                    <p class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-1 z-10">Istri Terdata</p>
+                    <h3 id="countIstri" class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white z-10">0</h3>
+                </div>
+                <div class="bg-white dark:bg-darkCard p-4 rounded-xl border border-gray-100 dark:border-darkBorder shadow-sm flex flex-col justify-center relative overflow-hidden">
+                    <div class="absolute -right-2 -bottom-2 opacity-5 text-brand-600 text-6xl"><i class="fas fa-children"></i></div>
+                    <p class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-1 z-10">Total Anak</p>
+                    <h3 id="countAnak" class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white z-10">0</h3>
+                </div>
+            </div>
+
+            <!-- Area Tabel & Alat -->
+            <div class="flex-1 bg-white dark:bg-darkCard border border-gray-200 dark:border-darkBorder rounded-xl shadow-sm flex flex-col overflow-hidden">
+                
+                <!-- Alat Pencarian & Filter -->
+                <div class="p-4 border-b border-gray-100 dark:border-darkBorder bg-gray-50/50 dark:bg-darkHover/30 flex flex-col lg:flex-row gap-4 justify-between items-center">
+                    <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+                        
+                        <!-- Pencarian Teks -->
+                        <div class="relative w-full sm:w-64">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400"><i class="fas fa-search"></i></span>
+                            <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Cari nama atau penempatan..." 
+                                class="w-full pl-10 pr-4 py-2 bg-white dark:bg-darkHover border border-gray-300 dark:border-darkBorder rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm dark:text-white shadow-sm">
+                        </div>
+                        
+                        <!-- Filter Status -->
+                        <div class="relative w-full sm:w-48">
+                            <select id="statusFilter" onchange="applyFilters()" class="w-full pl-3 pr-10 py-2 bg-white dark:bg-darkHover border border-gray-300 dark:border-darkBorder rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm dark:text-white font-medium cursor-pointer appearance-none shadow-sm">
+                                <option value="">Semua Status</option>
+                                <option value="menikah" selected>Sudah Menikah</option>
+                                <option value="belum">Belum Menikah</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400"><i class="fas fa-chevron-down text-xs"></i></div>
+                        </div>
+                    </div>
+
+                    <!-- Tombol Unduh -->
+                    <div class="flex gap-2 w-full lg:w-auto justify-end">
+                        <button onclick="exportExcel()" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-lg transition-colors shadow-sm flex items-center">
+                            <i class="fas fa-file-excel mr-2"></i> Unduh Excel
+                        </button>
+                        <button onclick="exportPDF()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-lg transition-colors shadow-sm flex items-center">
+                            <i class="fas fa-file-pdf mr-2"></i> Unduh PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Kontainer Tabel -->
+                <div class="table-container flex-1 relative bg-white dark:bg-darkCard">
+                    <table class="min-w-full w-full text-left text-sm whitespace-nowrap">
+                        <thead class="bg-gray-100 dark:bg-darkHover sticky top-0 z-10 text-gray-600 dark:text-gray-300 font-bold border-b border-gray-200 dark:border-darkBorder shadow-sm uppercase tracking-wider text-[11px]">
+                            <tr>
+                                <th class="px-4 py-3 text-center w-12">No</th>
+                                <th class="px-4 py-3 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition" onclick="sortTable('nama_dai')">Nama Dai <i class="fas fa-sort text-gray-400 ml-1"></i></th>
+                                <th class="px-4 py-3 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition" onclick="sortTable('tahun_diutus')">Tahun Diutus <i class="fas fa-sort text-gray-400 ml-1"></i></th>
+                                <th class="px-4 py-3 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition" onclick="sortTable('penempatan')">Penempatan <i class="fas fa-sort text-gray-400 ml-1"></i></th>
+                                <th class="px-4 py-3 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition" onclick="sortTable('nama_istri')">Nama Istri <i class="fas fa-sort text-gray-400 ml-1"></i></th>
+                                <th class="px-4 py-3 text-center">NIK Istri</th>
+                                <th class="px-4 py-3 text-center">Tgl Lahir Istri</th>
+                                <th class="px-4 py-3 text-center">WhatsApp</th>
+                                <th class="px-4 py-3 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition text-center" onclick="sortTable('jumlah_anak')">Anak <i class="fas fa-sort text-gray-400 ml-1"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="divide-y divide-gray-100 dark:divide-darkBorder text-gray-800 dark:text-gray-200 font-medium">
+                            <!-- Data akan dimuat di sini -->
+                        </tbody>
+                    </table>
+                    
+                    <div id="noDataMessage" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-white dark:bg-darkCard z-0">
+                        <div class="text-6xl text-gray-200 dark:text-darkHover mb-4"><i class="fas fa-folder-open"></i></div>
+                        <p class="text-gray-500 dark:text-gray-400 font-semibold text-lg">Data tidak ditemukan.</p>
+                    </div>
+                </div>
+            </div>
+            
+        </main>
+    </div>
+
+    <!-- JAVASCRIPT LOGIKA -->
+    <script>
+        // MASUKKAN URL GOOGLE APPS SCRIPT ANDA DI SINI
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxGlIhFR3wE_3CH6d8LngZUmIQcXQbjZMtCqJ3hDmx2pZx4Avksg-fhhaAchsnZFGOOtg/exec"; 
+        
+        let dbData = [];
+        let filteredData = [];
+        let currentSort = { key: '', dir: 'asc' };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+        });
+
+        function initTheme() {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+        }
+
+        const showLoading = () => document.getElementById('loadingOverlay').classList.remove('hidden');
+        const hideLoading = () => document.getElementById('loadingOverlay').classList.add('hidden');
+        
+        function switchView(view) {
+            if (view === 'main') {
+                document.getElementById('view-login').classList.add('hidden');
+                document.getElementById('view-main').classList.remove('hidden');
+                document.getElementById('view-main').classList.add('flex');
+            } else {
+                document.getElementById('view-main').classList.add('hidden');
+                document.getElementById('view-main').classList.remove('flex');
+                document.getElementById('view-login').classList.remove('hidden');
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const code = document.getElementById('kodeAkses').value.trim();
+            if(!code) return;
+            showLoading();
+
+            try {
+                if (typeof google !== 'undefined' && google.script && google.script.run) {
+                    // Berjalan di dalam Google Apps Script langsung
+                    google.script.run.withSuccessHandler(res => processResponse(res))
+                        .withFailureHandler(err => { hideLoading(); Swal.fire('Kesalahan', 'Gagal memuat data dari server.', 'error'); })
+                        .getAllData(code);
+                } else if (GAS_URL !== "") {
+                    // Berjalan di GitHub / Eksternal
+                    const res = await fetch(`${GAS_URL}?endpoint=data&code=${encodeURIComponent(code)}`);
+                    processResponse(await res.json());
+                } else {
+                    // MODE SIMULASI DI CANVAS GEMINI
+                    setTimeout(() => {
+                        if(code === "WAHDAH2026") {
+                            processResponse({
+                                status: "success",
+                                data: [
+                                    { nama_dai: "Ust. Fulan, Lc", tahun_diutus: "2019", penempatan: "Makassar", nama_istri: "Aisyah Hanum", nik_istri: "73711223344", tgl_lahir_istri: "2001-10-09", wa_istri: "081234567890", jumlah_anak: 2 },
+                                    { nama_dai: "Ust. Fulan, Lc", tahun_diutus: "2019", penempatan: "Makassar", nama_istri: "Khadijah", nik_istri: "73711223355", tgl_lahir_istri: "1999-05-12", wa_istri: "6285299887766", jumlah_anak: 1 },
+                                    { nama_dai: "Ust. Abdullah", tahun_diutus: "2021", penempatan: "Kendari", nama_istri: "Belum Menikah", nik_istri: "-", tgl_lahir_istri: "-", wa_istri: "-", jumlah_anak: 0 }
+                                ]
+                            });
+                        } else {
+                            processResponse({ status: "error", message: "Kode Akses salah!" });
+                        }
+                    }, 800);
+                }
+            } catch (err) {
+                hideLoading();
+                Swal.fire('Koneksi Terputus', 'Periksa jaringan internet Anda atau pastikan URL backend sudah benar.', 'error');
+            }
+        }
+
+        function processResponse(res) {
+            hideLoading();
+            if (res.status === "success") {
+                dbData = res.data;
+                document.getElementById('kodeAkses').value = '';
+                switchView('main');
+                document.getElementById('statusFilter').value = 'menikah'; // Default: Sudah Menikah
+                applyFilters();
+            } else {
+                Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: res.message, confirmButtonColor: '#0f766e' });
+            }
+        }
+
+        function logout() {
+            dbData = [];
+            document.getElementById('searchInput').value = '';
+            switchView('login');
+        }
+
+        // Membersihkan nomor WA untuk format wa.me
+        function formatWA(waRaw) {
+            if (!waRaw || waRaw === '-' || waRaw.toString().toLowerCase().includes('belum')) return null;
+            let clean = waRaw.toString().replace(/\D/g, '');
+            if (clean.startsWith('0')) clean = '62' + clean.substring(1);
+            if (clean.startsWith('8')) clean = '628' + clean.substring(1);
+            return clean.length >= 10 ? clean : null;
+        }
+
+        // Format tanggal bahasa Indonesia (Contoh: 9 Oktober 2001)
+        function formatTanggalIndo(dateStr) {
+            if (!dateStr || dateStr === '-' || dateStr.toLowerCase().includes('belum')) return '-';
+            try {
+                const parts = dateStr.split('-'); 
+                if (parts.length === 3) {
+                    const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                    const d = parseInt(parts[2], 10);
+                    const m = parseInt(parts[1], 10) - 1;
+                    const y = parts[0];
+                    if(m >= 0 && m < 12) return `${d} ${months[m]} ${y}`;
+                }
+                const dObj = new Date(dateStr);
+                if(!isNaN(dObj.getTime())) {
+                    const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                    return `${dObj.getDate()} ${months[dObj.getMonth()]} ${dObj.getFullYear()}`;
+                }
+                return dateStr;
+            } catch (e) { return dateStr; }
+        }
+
+        function renderUI() {
+            const tbody = document.getElementById('tableBody');
+            const noData = document.getElementById('noDataMessage');
+            
+            const uniqueDais = new Set(filteredData.map(d => d.nama_dai)).size;
+            let totalIstri = 0;
+            let totalAnak = 0;
+
+            tbody.innerHTML = '';
+            
+            if (filteredData.length === 0) {
+                noData.classList.remove('hidden');
+            } else {
+                noData.classList.add('hidden');
+                
+                filteredData.forEach((row, idx) => {
+                    const isBelumMenikah = row.nama_istri.toLowerCase().includes('belum') || row.nama_istri === '-';
+                    if(!isBelumMenikah) totalIstri++;
+                    totalAnak += parseInt(row.jumlah_anak || 0);
+
+                    const waNum = formatWA(row.wa_istri);
+                    let waHtml = `<span class="text-gray-400 italic text-xs">-</span>`;
+                    
+                    if (waNum) {
+                        waHtml = `
+                            <a href="https://wa.me/${waNum}" target="_blank" 
+                               class="inline-flex items-center px-3 py-1.5 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded hover:bg-green-200 transition-colors text-xs font-bold border border-green-200 dark:border-green-800">
+                                <i class="fab fa-whatsapp text-sm mr-1.5"></i> Hubungi
+                            </a>`;
+                    }
+
+                    const istriHtml = !isBelumMenikah ? 
+                        `<span class="font-bold text-gray-900 dark:text-gray-100">${row.nama_istri}</span>` : 
+                        `<span class="px-2.5 py-1 bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400 rounded text-[11px] font-bold border border-red-200 dark:border-red-800">Belum Menikah</span>`;
+
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-brand-50/50 dark:hover:bg-darkHover transition-colors group">
+                            <td class="px-4 py-3 text-center text-gray-500 dark:text-gray-400">${idx + 1}</td>
+                            <td class="px-4 py-3 font-bold text-gray-900 dark:text-white">${row.nama_dai}</td>
+                            <td class="px-4 py-3 text-center"><span class="px-2 py-1 bg-gray-100 dark:bg-darkBg text-gray-700 dark:text-gray-300 rounded text-xs font-bold border border-gray-200 dark:border-darkBorder">${row.tahun_diutus}</span></td>
+                            <td class="px-4 py-3">${row.penempatan}</td>
+                            <td class="px-4 py-3">${istriHtml}</td>
+                            <td class="px-4 py-3 text-center text-gray-600 dark:text-gray-400 font-mono tracking-wide">${row.nik_istri}</td>
+                            <td class="px-4 py-3 text-center text-gray-700 dark:text-gray-300">${formatTanggalIndo(row.tgl_lahir_istri)}</td>
+                            <td class="px-4 py-3 text-center">${waHtml}</td>
+                            <td class="px-4 py-3 text-center">
+                                <span class="inline-flex justify-center items-center w-7 h-7 rounded-full bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 text-xs font-bold border border-brand-200 dark:border-brand-800">
+                                    ${row.jumlah_anak}
+                                </span>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            document.getElementById('countDai').textContent = uniqueDais;
+            document.getElementById('countIstri').textContent = totalIstri;
+            document.getElementById('countAnak').textContent = totalAnak;
+        }
+
+        function applyFilters() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+
+            filteredData = dbData.filter(row => {
+                const textMatch = 
+                    row.nama_dai.toLowerCase().includes(query) || 
+                    row.nama_istri.toLowerCase().includes(query) ||
+                    row.penempatan.toLowerCase().includes(query);
+                
+                let statusMatch = true;
+                const isMenikah = !row.nama_istri.toLowerCase().includes('belum') && row.nama_istri !== '-';
+                if (status === 'menikah') statusMatch = isMenikah;
+                if (status === 'belum') statusMatch = !isMenikah;
+
+                return textMatch && statusMatch;
+            });
+            
+            if(currentSort.key) {
+                performSort(currentSort.key, currentSort.dir === 'asc');
+            } else {
+                renderUI();
+            }
+        }
+
+        function sortTable(key) {
+            const isAsc = (currentSort.key === key && currentSort.dir === 'asc') ? false : true;
+            currentSort = { key, dir: isAsc ? 'asc' : 'desc' };
+            
+            document.querySelectorAll('th i').forEach(icon => icon.className = 'fas fa-sort text-gray-400 ml-1 opacity-50');
+            const activeIcon = document.querySelector(`th[onclick="sortTable('${key}')"] i`);
+            if (activeIcon) activeIcon.className = isAsc ? 'fas fa-sort-up text-brand-600 dark:text-brand-400 ml-1' : 'fas fa-sort-down text-brand-600 dark:text-brand-400 ml-1';
+
+            performSort(key, isAsc);
+        }
+
+        function performSort(key, isAsc) {
+            filteredData.sort((a, b) => {
+                let valA = a[key] || '';
+                let valB = b[key] || '';
+                
+                if (key === 'jumlah_anak' || key === 'tahun_diutus') {
+                    valA = parseInt(valA) || 0;
+                    valB = parseInt(valB) || 0;
+                } else {
+                    valA = valA.toString().toLowerCase();
+                    valB = valB.toString().toLowerCase();
+                }
+
+                if (valA < valB) return isAsc ? -1 : 1;
+                if (valA > valB) return isAsc ? 1 : -1;
+                return 0;
+            });
+            renderUI();
+        }
+
+        function exportExcel() {
+            if(filteredData.length === 0) return Swal.fire('Info', 'Tidak ada data untuk diunduh.', 'info');
+            const exportData = filteredData.map((row, idx) => ({
+                "NO": idx + 1,
+                "NAMA DAI": row.nama_dai,
+                "TAHUN DIUTUS": row.tahun_diutus,
+                "PENEMPATAN": row.penempatan,
+                "NAMA ISTRI": row.nama_istri,
+                "NIK ISTRI": row.nik_istri,
+                "TANGGAL LAHIR": formatTanggalIndo(row.tgl_lahir_istri),
+                "WHATSAPP": row.wa_istri !== '-' ? row.wa_istri : '',
+                "JUMLAH ANAK": row.jumlah_anak
+            }));
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            ws['!cols'] = [{wch: 5}, {wch: 30}, {wch: 15}, {wch: 25}, {wch: 25}, {wch: 20}, {wch: 20}, {wch: 20}, {wch: 15}];
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "DataKeluargaDai");
+            XLSX.writeFile(wb, "Data_Keluarga_Dai_2026.xlsx");
+        }
+
+        function exportPDF() {
+            if(filteredData.length === 0) return Swal.fire('Info', 'Tidak ada data untuk diunduh.', 'info');
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('landscape');
+            doc.setFontSize(14); doc.setFont("helvetica", "bold");
+            doc.text("DATA KELUARGA DAI - WAHDAH ISLAMIYAH", 14, 15);
+            doc.setFontSize(9); doc.setFont("helvetica", "normal");
+            doc.text("Dibuat pada: " + new Date().toLocaleString('id-ID'), 14, 21);
+
+            const tableRows = filteredData.map((row, idx) => [
+                idx + 1, row.nama_dai, row.tahun_diutus, row.penempatan, row.nama_istri, row.nik_istri, 
+                formatTanggalIndo(row.tgl_lahir_istri), row.wa_istri, row.jumlah_anak
+            ]);
+
+            doc.autoTable({
+                head: [["No", "Nama Dai", "Diutus", "Penempatan", "Nama Istri", "NIK", "Tgl Lahir", "WhatsApp", "Anak"]],
+                body: tableRows, startY: 26, theme: 'grid',
+                styles: { fontSize: 8, font: 'helvetica', cellPadding: 3 },
+                headStyles: { fillColor: [15, 118, 110], textColor: 255, fontStyle: 'bold' },
+                alternateRowStyles: { fillColor: [248, 250, 252] }
+            });
+            doc.save('Data_Keluarga_Dai_2026.pdf');
+        }
+    </script>
+</body>
+</html>
