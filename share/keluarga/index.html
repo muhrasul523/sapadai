@@ -58,6 +58,12 @@
         .spinner { border: 3px solid rgba(15, 118, 110, 0.1); width: 44px; height: 44px; border-radius: 50%; border-left-color: #0f766e; animation: spin 0.8s linear infinite; }
         .dark .spinner { border: 3px solid rgba(20, 184, 166, 0.1); border-left-color: #14b8a6; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Progres Bar Loading */
+        .progress-container { width: 220px; height: 8px; background-color: #e2e8f0; border-radius: 10px; margin-top: 16px; overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,0.1); }
+        .dark .progress-container { background-color: #1e293b; box-shadow: inset 0 1px 2px rgba(0,0,0,0.5); }
+        .progress-bar { height: 100%; width: 0%; background-color: #0f766e; border-radius: 10px; transition: width 0.15s ease-out; box-shadow: 0 0 10px rgba(15,118,110,0.5); }
+        .dark .progress-bar { background-color: #14b8a6; box-shadow: 0 0 10px rgba(20,184,166,0.4); }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-darkBg dark:text-slate-200 h-screen w-screen overflow-hidden">
@@ -67,6 +73,12 @@
         <div class="spinner mb-5 shadow-lg shadow-brand-500/20 rounded-full"></div>
         <h2 class="text-lg font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">Memuat...</h2>
         <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">Mohon tunggu</p>
+        
+        <!-- Elemen Progres Bar -->
+        <div class="progress-container">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+        <p class="text-xs font-bold text-brand-600 dark:text-brand-400 mt-2" id="progressText">0%</p>
     </div>
 
     <!-- HALAMAN LOGIN (DIKUNCI DI TENGAH LAYAR) -->
@@ -136,7 +148,7 @@
         </nav>
 
         <!-- Area Konten Utama -->
-        <main class="flex-1 p-4 sm:p-6 flex flex-col max-w-7xl mx-auto w-full gap-5 overflow-hidden relative">
+        <main class="flex-1 p-4 sm:p-6 flex flex-col w-full gap-5 overflow-hidden relative">
             
             <!-- Ringkasan Angka Modern -->
             <div class="grid grid-cols-3 gap-3 sm:gap-5 shrink-0">
@@ -235,6 +247,7 @@
         let dbData = [];
         let filteredData = [];
         let currentSort = { key: '', dir: 'asc' };
+        let progressInterval;
 
         document.addEventListener('DOMContentLoaded', () => {
             initTheme();
@@ -253,8 +266,39 @@
             localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
         }
 
-        const showLoading = () => document.getElementById('loadingOverlay').classList.remove('hidden');
-        const hideLoading = () => document.getElementById('loadingOverlay').classList.add('hidden');
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+            let pBar = document.getElementById('progressBar');
+            let pText = document.getElementById('progressText');
+            pBar.style.width = '0%';
+            pText.textContent = '0%';
+            
+            let progress = 0;
+            clearInterval(progressInterval);
+            
+            // Animasi pergerakan cepat progres bar hingga maks 95% sebelum respon asli datang
+            progressInterval = setInterval(() => {
+                progress += Math.floor(Math.random() * 20) + 10;
+                if (progress > 95) progress = 95;
+                pBar.style.width = progress + '%';
+                pText.textContent = progress + '%';
+            }, 100);
+        }
+
+        function hideLoading() { 
+            let pBar = document.getElementById('progressBar');
+            let pText = document.getElementById('progressText');
+            
+            // Saat selesai, paksa 100%
+            pBar.style.width = '100%';
+            pText.textContent = '100%';
+            clearInterval(progressInterval);
+            
+            // Berikan jeda sepersekian detik agar user melihat 100% lalu hilangkan overlay
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }, 300);
+        }
         
         function switchView(view) {
             if (view === 'main') {
@@ -423,29 +467,36 @@
             document.getElementById('countAnak').textContent = totalAnak;
         }
 
+        let filterTimeout; // Variabel penyimpan jeda waktu untuk menghindari freeze
+
         function applyFilters() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const status = document.getElementById('statusFilter').value;
-
-            filteredData = dbData.filter(row => {
-                const textMatch = 
-                    (row.nama_dai || "").toLowerCase().includes(query) || 
-                    (row.nama_istri || "").toLowerCase().includes(query) ||
-                    (row.penempatan || "").toLowerCase().includes(query);
-                
-                let statusMatch = true;
-                const isMenikah = !(row.nama_istri || "").toLowerCase().includes('belum') && row.nama_istri !== '-';
-                if (status === 'menikah') statusMatch = isMenikah;
-                if (status === 'belum') statusMatch = !isMenikah;
-
-                return textMatch && statusMatch;
-            });
+            clearTimeout(filterTimeout);
             
-            if(currentSort.key) {
-                performSort(currentSort.key, currentSort.dir === 'asc');
-            } else {
-                renderUI();
-            }
+            // Debounce (Jeda 100ms) - Mencegah sistem mencoba merender setiap kali tombol diketik secara cepat
+            filterTimeout = setTimeout(() => {
+                const query = document.getElementById('searchInput').value.toLowerCase();
+                const status = document.getElementById('statusFilter').value;
+
+                filteredData = dbData.filter(row => {
+                    const textMatch = 
+                        (row.nama_dai || "").toLowerCase().includes(query) || 
+                        (row.nama_istri || "").toLowerCase().includes(query) ||
+                        (row.penempatan || "").toLowerCase().includes(query);
+                    
+                    let statusMatch = true;
+                    const isMenikah = !(row.nama_istri || "").toLowerCase().includes('belum') && row.nama_istri !== '-';
+                    if (status === 'menikah') statusMatch = isMenikah;
+                    if (status === 'belum') statusMatch = !isMenikah;
+
+                    return textMatch && statusMatch;
+                });
+                
+                if(currentSort.key) {
+                    performSort(currentSort.key, currentSort.dir === 'asc');
+                } else {
+                    renderUI();
+                }
+            }, 100);
         }
 
         function sortTable(key) {
