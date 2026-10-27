@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Portal Data Keluarga Dai</title>
+    <title>Portal Keluarga Dai Utusan</title>
     
-    <!-- Meta Tag untuk Preview WhatsApp -->
+    <!-- Meta Tag untuk Preview WhatsApp & Favicon -->
     <link rel="icon" type="image/png" href="https://sapadai.wadahdigital.my.id/logo_sapadai_1.png">
-    <meta property="og:title" content="Portal Data Keluarga Dai">
-    <meta property="og:description" content="Aplikasi pengelolaan data istri dan anak Dai utusan.">
+    <meta property="og:title" content="Portal Keluarga Dai Utusan - Wahdah Islamiyah">
+    <meta property="og:description" content="Aplikasi pengelolaan data istri dan anak Dai utusan Wahdah Islamiyah.">
     <meta property="og:image" content="https://sapadai.wadahdigital.my.id/logo_sapadai_1.png">
     <meta property="og:type" content="website">
     
@@ -20,7 +20,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
-    <!-- Konfigurasi Tema (Warna Teal/Hijau Organisasi Modern) -->
+    <!-- Konfigurasi Tema Modern (Warna Teal & Slate Soft Premium) -->
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -29,10 +29,11 @@
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
                         brand: { 50: '#f0fdfa', 100: '#ccfbf1', 200: '#99f6e4', 300: '#5eead4', 400: '#2dd4bf', 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e', 800: '#115e59', 900: '#134e4a' },
-                        darkBg: '#0b1312',
-                        darkCard: '#111c1a',
-                        darkHover: '#182b28',
-                        darkBorder: '#1e3834'
+                        slate: { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' },
+                        darkBg: '#09100e',
+                        darkCard: '#101a18',
+                        darkHover: '#162421',
+                        darkBorder: '#1c302c'
                     }
                 }
             }
@@ -40,150 +41,154 @@
     </script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
         
         body { font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; }
         
-        /* Desain Scrollbar Rapi */
+        /* Desain Scrollbar Rapi & Halus */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .dark ::-webkit-scrollbar-thumb { background: #1e3834; }
+        .dark ::-webkit-scrollbar-thumb { background: #1c302c; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
         .table-container { max-height: calc(100vh - 280px); overflow-y: auto; }
         
-        /* Efek Loading Halus */
-        .spinner { border: 4px solid rgba(15, 118, 110, 0.1); width: 48px; height: 48px; border-radius: 50%; border-left-color: #0f766e; animation: spin 1s linear infinite; }
-        .dark .spinner { border: 4px solid rgba(20, 184, 166, 0.1); border-left-color: #14b8a6; }
+        /* Efek Loading Spinner Premium */
+        .spinner { border: 3px solid rgba(15, 118, 110, 0.1); width: 44px; height: 44px; border-radius: 50%; border-left-color: #0f766e; animation: spin 0.8s linear infinite; }
+        .dark .spinner { border: 3px solid rgba(20, 184, 166, 0.1); border-left-color: #14b8a6; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 dark:bg-darkBg dark:text-gray-200 h-screen w-screen overflow-hidden">
+<body class="bg-slate-50 text-slate-800 dark:bg-darkBg dark:text-slate-200 h-screen w-screen overflow-hidden">
 
-    <!-- LAYAR PEMUATAN (LOADING) -->
-    <div id="loadingOverlay" class="fixed inset-0 bg-white/90 dark:bg-darkBg/90 z-[100] hidden flex flex-col justify-center items-center backdrop-blur-sm transition-all duration-300">
-        <div class="spinner mb-4"></div>
-        <h2 class="text-lg font-bold text-brand-700 dark:text-brand-400">Memproses...</h2>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Mohon tunggu sebentar</p>
+    <!-- LAYAR PEMUATAN (LOADING) UMUM -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-white/90 dark:bg-darkBg/95 z-[100] hidden flex flex-col justify-center items-center backdrop-blur-md transition-all duration-300">
+        <div class="spinner mb-5 shadow-lg shadow-brand-500/20 rounded-full"></div>
+        <h2 class="text-lg font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">Memuat Sistem...</h2>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">Mohon tunggu sebentar</p>
     </div>
 
-    <!-- HALAMAN LOGIN (KUNCI DI TENGAH LAYAR) -->
-    <div id="view-login" class="fixed inset-0 flex items-center justify-center bg-gray-50 dark:bg-darkBg z-50 p-4">
+    <!-- HALAMAN LOGIN (DIKUNCI DI TENGAH LAYAR) -->
+    <div id="view-login" class="fixed inset-0 flex items-center justify-center bg-slate-50 dark:bg-darkBg z-50 p-4">
         
         <!-- Tombol Ubah Tema -->
         <div class="absolute top-6 right-6">
-            <button onclick="toggleTheme()" class="w-10 h-10 rounded-full bg-white dark:bg-darkCard shadow flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-brand-600 transition-colors border border-gray-200 dark:border-darkBorder">
+            <button onclick="toggleTheme()" class="w-10 h-10 rounded-full bg-white dark:bg-darkCard shadow-sm shadow-slate-200/50 flex items-center justify-center text-slate-500 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 transition-all border border-slate-200 dark:border-darkBorder hover:scale-105">
                 <i class="fas fa-moon dark:hidden"></i>
                 <i class="fas fa-sun hidden dark:block"></i>
             </button>
         </div>
 
-        <div class="bg-white dark:bg-darkCard p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 dark:border-darkBorder relative overflow-hidden">
+        <div class="bg-white dark:bg-darkCard p-8 sm:p-10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none w-full max-w-md border border-slate-100 dark:border-darkBorder relative overflow-hidden">
             <!-- Garis Aksen -->
-            <div class="absolute top-0 left-0 w-full h-1.5 bg-brand-600 dark:bg-brand-500"></div>
+            <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-brand-500 to-brand-700"></div>
             
             <div class="text-center mb-8 mt-2">
-                <img src="https://sapadai.wadahdigital.my.id/logo_sapadai_1.png" alt="Logo" class="h-16 mx-auto mb-4 object-contain">
-                <h1 class="text-xl font-bold text-gray-900 dark:text-white uppercase tracking-wide">Portal Keluarga Dai</h1>
-                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium mt-1">WAHDAH ISLAMIYAH</p>
+                <img src="https://sapadai.wadahdigital.my.id/logo_sapadai_1.png" alt="Logo" class="h-16 mx-auto mb-5 object-contain drop-shadow-sm">
+                <h1 class="text-3xl font-black text-slate-900 dark:text-white leading-tight tracking-tight uppercase">PORTAL</h1>
+                <h2 class="text-lg md:text-xl font-extrabold text-brand-600 dark:text-brand-400 leading-snug tracking-wide uppercase mt-1">Keluarga Dai Utusan</h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-bold tracking-widest uppercase mt-3">Wahdah Islamiyah</p>
             </div>
             
             <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-6">
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Kode Akses</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
-                            <i class="fas fa-key"></i>
+                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Security Key</label>
+                    <div class="relative group">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400 group-focus-within:text-brand-500 transition-colors">
+                            <i class="fas fa-shield-alt"></i>
                         </span>
                         <input type="password" id="kodeAkses" required placeholder="Masukkan kode akses..." 
-                            class="w-full pl-11 pr-4 py-3 bg-gray-50 dark:bg-darkHover border border-gray-200 dark:border-darkBorder rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all dark:text-white placeholder-gray-400">
+                            class="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-darkHover border border-slate-200 dark:border-darkBorder rounded-xl focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 outline-none transition-all dark:text-white font-medium placeholder-slate-400">
                     </div>
                 </div>
-                <button type="submit" class="w-full bg-brand-700 hover:bg-brand-800 dark:bg-brand-600 dark:hover:bg-brand-500 text-white font-bold py-3 px-4 rounded-xl transition-colors flex justify-center items-center shadow-lg shadow-brand-700/20">
-                    <i class="fas fa-sign-in-alt mr-2"></i> Masuk Aplikasi
+                <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 dark:bg-brand-600 dark:hover:bg-brand-500 text-white font-bold py-3.5 px-4 rounded-xl transition-all flex justify-center items-center shadow-lg shadow-brand-600/25 hover:shadow-brand-600/40 transform active:scale-95">
+                    <i class="fas fa-sign-in-alt mr-2"></i> Otentikasi
                 </button>
             </form>
         </div>
     </div>
 
     <!-- HALAMAN UTAMA (DASHBOARD & TABEL) -->
-    <div id="view-main" class="hidden fixed inset-0 flex flex-col bg-gray-50 dark:bg-darkBg z-40">
+    <div id="view-main" class="hidden fixed inset-0 flex flex-col bg-slate-50 dark:bg-darkBg z-40">
         
-        <!-- Navbar -->
-        <nav class="bg-white dark:bg-darkCard border-b border-gray-200 dark:border-darkBorder px-4 py-3 sm:px-6 flex justify-between items-center shadow-sm">
+        <!-- Navbar Premium -->
+        <nav class="bg-white/80 dark:bg-darkCard/90 backdrop-blur-lg border-b border-slate-200 dark:border-darkBorder px-4 py-3 sm:px-6 flex justify-between items-center shadow-sm z-20 relative">
             <div class="flex items-center gap-3">
-                <img src="https://sapadai.wadahdigital.my.id/logo_sapadai_1.png" alt="Logo" class="h-8 w-8 object-contain">
+                <div class="bg-slate-50 dark:bg-darkHover p-1.5 rounded-lg border border-slate-100 dark:border-darkBorder">
+                    <img src="https://sapadai.wadahdigital.my.id/logo_sapadai_1.png" alt="Logo" class="h-7 w-7 object-contain">
+                </div>
                 <div>
-                    <h1 class="font-bold text-gray-900 dark:text-white text-sm sm:text-base">Data Keluarga Dai</h1>
-                    <p class="text-[10px] text-brand-600 dark:text-brand-400 font-bold uppercase tracking-wide">Pembaruan 2026</p>
+                    <h1 class="font-extrabold text-slate-900 dark:text-white text-sm sm:text-base leading-tight uppercase tracking-tight">Portal Keluarga Dai Utusan</h1>
+                    <p class="text-[10px] text-brand-600 dark:text-brand-400 font-bold uppercase tracking-wider mt-0.5">Wahdah Islamiyah</p>
                 </div>
             </div>
             
             <div class="flex items-center gap-3">
-                <button onclick="toggleTheme()" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-darkHover flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-brand-600 border border-gray-200 dark:border-darkBorder transition-colors">
+                <button onclick="toggleTheme()" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-darkHover flex items-center justify-center text-slate-500 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 border border-slate-200 dark:border-darkBorder transition-all hover:scale-105">
                     <i class="fas fa-moon dark:hidden text-sm"></i>
                     <i class="fas fa-sun hidden dark:block text-sm"></i>
                 </button>
-                <button onclick="logout()" class="text-sm font-bold text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 px-4 py-1.5 rounded-lg transition-colors flex items-center">
+                <button onclick="logout()" class="text-sm font-bold text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 px-4 py-2 rounded-xl transition-colors flex items-center shadow-sm">
                     <i class="fas fa-power-off sm:mr-2"></i> <span class="hidden sm:inline">Keluar</span>
                 </button>
             </div>
         </nav>
 
         <!-- Area Konten Utama -->
-        <main class="flex-1 p-4 sm:p-6 flex flex-col max-w-7xl mx-auto w-full gap-5 overflow-hidden">
+        <main class="flex-1 p-4 sm:p-6 flex flex-col max-w-7xl mx-auto w-full gap-5 overflow-hidden relative">
             
-            <!-- Ringkasan Angka -->
-            <div class="grid grid-cols-3 gap-3 sm:gap-4 shrink-0">
-                <div class="bg-white dark:bg-darkCard p-4 rounded-xl border border-gray-100 dark:border-darkBorder shadow-sm flex flex-col justify-center relative overflow-hidden">
-                    <div class="absolute -right-2 -bottom-2 opacity-5 text-brand-600 text-6xl"><i class="fas fa-user-tie"></i></div>
-                    <p class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-1 z-10">Total Dai</p>
-                    <h3 id="countDai" class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white z-10">0</h3>
+            <!-- Ringkasan Angka Modern -->
+            <div class="grid grid-cols-3 gap-3 sm:gap-5 shrink-0">
+                <div class="bg-white dark:bg-darkCard p-5 rounded-2xl border border-slate-200 dark:border-darkBorder shadow-sm shadow-slate-200/40 dark:shadow-none flex flex-col justify-center relative overflow-hidden group hover:border-brand-300 transition-colors">
+                    <div class="absolute -right-4 -bottom-4 opacity-[0.03] dark:opacity-5 text-brand-600 text-7xl transform group-hover:scale-110 transition-transform"><i class="fas fa-user-tie"></i></div>
+                    <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest mb-1 z-10">Total Dai</p>
+                    <h3 id="countDai" class="text-2xl sm:text-4xl font-black text-slate-900 dark:text-white z-10 tracking-tight">0</h3>
                 </div>
-                <div class="bg-white dark:bg-darkCard p-4 rounded-xl border border-gray-100 dark:border-darkBorder shadow-sm flex flex-col justify-center relative overflow-hidden">
-                    <div class="absolute -right-2 -bottom-2 opacity-5 text-brand-600 text-6xl"><i class="fas fa-female"></i></div>
-                    <p class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-1 z-10">Istri Terdata</p>
-                    <h3 id="countIstri" class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white z-10">0</h3>
+                <div class="bg-white dark:bg-darkCard p-5 rounded-2xl border border-slate-200 dark:border-darkBorder shadow-sm shadow-slate-200/40 dark:shadow-none flex flex-col justify-center relative overflow-hidden group hover:border-brand-300 transition-colors">
+                    <div class="absolute -right-4 -bottom-4 opacity-[0.03] dark:opacity-5 text-brand-600 text-7xl transform group-hover:scale-110 transition-transform"><i class="fas fa-female"></i></div>
+                    <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest mb-1 z-10">Istri Terdata</p>
+                    <h3 id="countIstri" class="text-2xl sm:text-4xl font-black text-slate-900 dark:text-white z-10 tracking-tight">0</h3>
                 </div>
-                <div class="bg-white dark:bg-darkCard p-4 rounded-xl border border-gray-100 dark:border-darkBorder shadow-sm flex flex-col justify-center relative overflow-hidden">
-                    <div class="absolute -right-2 -bottom-2 opacity-5 text-brand-600 text-6xl"><i class="fas fa-children"></i></div>
-                    <p class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-1 z-10">Total Anak</p>
-                    <h3 id="countAnak" class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white z-10">0</h3>
+                <div class="bg-white dark:bg-darkCard p-5 rounded-2xl border border-slate-200 dark:border-darkBorder shadow-sm shadow-slate-200/40 dark:shadow-none flex flex-col justify-center relative overflow-hidden group hover:border-brand-300 transition-colors">
+                    <div class="absolute -right-4 -bottom-4 opacity-[0.03] dark:opacity-5 text-brand-600 text-7xl transform group-hover:scale-110 transition-transform"><i class="fas fa-children"></i></div>
+                    <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest mb-1 z-10">Total Anak</p>
+                    <h3 id="countAnak" class="text-2xl sm:text-4xl font-black text-slate-900 dark:text-white z-10 tracking-tight">0</h3>
                 </div>
             </div>
 
             <!-- Area Tabel & Alat -->
-            <div class="flex-1 bg-white dark:bg-darkCard border border-gray-200 dark:border-darkBorder rounded-xl shadow-sm flex flex-col overflow-hidden">
+            <div class="flex-1 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl shadow-sm shadow-slate-200/50 dark:shadow-none flex flex-col overflow-hidden relative">
                 
                 <!-- Alat Pencarian & Filter -->
-                <div class="p-4 border-b border-gray-100 dark:border-darkBorder bg-gray-50/50 dark:bg-darkHover/30 flex flex-col lg:flex-row gap-4 justify-between items-center">
+                <div class="p-4 border-b border-slate-100 dark:border-darkBorder bg-slate-50/80 dark:bg-darkHover/30 backdrop-blur-sm flex flex-col lg:flex-row gap-4 justify-between items-center z-10">
                     <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
                         
                         <!-- Pencarian Teks -->
-                        <div class="relative w-full sm:w-64">
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400"><i class="fas fa-search"></i></span>
-                            <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Cari nama atau penempatan..." 
-                                class="w-full pl-10 pr-4 py-2 bg-white dark:bg-darkHover border border-gray-300 dark:border-darkBorder rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm dark:text-white shadow-sm">
+                        <div class="relative w-full sm:w-72">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400"><i class="fas fa-search"></i></span>
+                            <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Cari nama dai, istri, penempatan..." 
+                                class="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-darkHover border border-slate-200 dark:border-darkBorder rounded-xl focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 outline-none text-sm dark:text-white shadow-sm font-medium placeholder-slate-400 transition-all">
                         </div>
                         
-                        <!-- Filter Status -->
-                        <div class="relative w-full sm:w-48">
-                            <select id="statusFilter" onchange="applyFilters()" class="w-full pl-3 pr-10 py-2 bg-white dark:bg-darkHover border border-gray-300 dark:border-darkBorder rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm dark:text-white font-medium cursor-pointer appearance-none shadow-sm">
+                        <!-- Filter Status Pernikahan -->
+                        <div class="relative w-full sm:w-52">
+                            <select id="statusFilter" onchange="applyFilters()" class="w-full pl-4 pr-10 py-2.5 bg-white dark:bg-darkHover border border-slate-200 dark:border-darkBorder rounded-xl focus:ring-2 focus:ring-brand-500/50 outline-none text-sm dark:text-white font-bold text-slate-700 cursor-pointer appearance-none shadow-sm transition-all">
                                 <option value="">Semua Status</option>
                                 <option value="menikah" selected>Sudah Menikah</option>
                                 <option value="belum">Belum Menikah</option>
                             </select>
-                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400"><i class="fas fa-chevron-down text-xs"></i></div>
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400"><i class="fas fa-chevron-down text-xs"></i></div>
                         </div>
                     </div>
 
                     <!-- Tombol Unduh -->
-                    <div class="flex gap-2 w-full lg:w-auto justify-end">
-                        <button onclick="exportExcel()" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-lg transition-colors shadow-sm flex items-center">
-                            <i class="fas fa-file-excel mr-2"></i> Unduh Excel
+                    <div class="flex gap-2.5 w-full lg:w-auto justify-end">
+                        <button onclick="exportExcel()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl transition-all shadow-sm shadow-emerald-600/20 hover:shadow-emerald-600/40 flex items-center active:scale-95">
+                            <i class="fas fa-file-excel mr-2 text-emerald-100"></i> Excel
                         </button>
-                        <button onclick="exportPDF()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-lg transition-colors shadow-sm flex items-center">
-                            <i class="fas fa-file-pdf mr-2"></i> Unduh PDF
+                        <button onclick="exportPDF()" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold rounded-xl transition-all shadow-sm shadow-rose-600/20 hover:shadow-rose-600/40 flex items-center active:scale-95">
+                            <i class="fas fa-file-pdf mr-2 text-rose-100"></i> PDF
                         </button>
                     </div>
                 </div>
@@ -191,27 +196,28 @@
                 <!-- Kontainer Tabel -->
                 <div class="table-container flex-1 relative bg-white dark:bg-darkCard">
                     <table class="min-w-full w-full text-left text-sm whitespace-nowrap">
-                        <thead class="bg-gray-100 dark:bg-darkHover sticky top-0 z-10 text-gray-600 dark:text-gray-300 font-bold border-b border-gray-200 dark:border-darkBorder shadow-sm uppercase tracking-wider text-[11px]">
+                        <thead class="bg-slate-100/90 dark:bg-darkHover/90 backdrop-blur-md sticky top-0 z-20 text-slate-600 dark:text-slate-300 font-extrabold border-b border-slate-200 dark:border-darkBorder shadow-sm uppercase tracking-wider text-[11px]">
                             <tr>
-                                <th class="px-4 py-3 text-center w-12">No</th>
-                                <th class="px-4 py-3 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition" onclick="sortTable('nama_dai')">Nama Dai <i class="fas fa-sort text-gray-400 ml-1"></i></th>
-                                <th class="px-4 py-3 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition" onclick="sortTable('tahun_diutus')">Tahun Diutus <i class="fas fa-sort text-gray-400 ml-1"></i></th>
-                                <th class="px-4 py-3 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition" onclick="sortTable('penempatan')">Penempatan <i class="fas fa-sort text-gray-400 ml-1"></i></th>
-                                <th class="px-4 py-3 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition" onclick="sortTable('nama_istri')">Nama Istri <i class="fas fa-sort text-gray-400 ml-1"></i></th>
-                                <th class="px-4 py-3 text-center">NIK Istri</th>
-                                <th class="px-4 py-3 text-center">Tgl Lahir Istri</th>
-                                <th class="px-4 py-3 text-center">WhatsApp</th>
-                                <th class="px-4 py-3 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition text-center" onclick="sortTable('jumlah_anak')">Anak <i class="fas fa-sort text-gray-400 ml-1"></i></th>
+                                <th class="px-4 py-3.5 text-center w-12 rounded-tl-lg">No</th>
+                                <th class="px-4 py-3.5 cursor-pointer hover:text-brand-600 transition group" onclick="sortTable('nama_dai')">Nama Dai <i class="fas fa-sort text-slate-300 group-hover:text-brand-400 ml-1"></i></th>
+                                <th class="px-4 py-3.5 cursor-pointer hover:text-brand-600 transition group text-center" onclick="sortTable('tahun_diutus')">Utusan <i class="fas fa-sort text-slate-300 group-hover:text-brand-400 ml-1"></i></th>
+                                <th class="px-4 py-3.5 cursor-pointer hover:text-brand-600 transition group" onclick="sortTable('penempatan')">Penempatan <i class="fas fa-sort text-slate-300 group-hover:text-brand-400 ml-1"></i></th>
+                                <th class="px-4 py-3.5 cursor-pointer hover:text-brand-600 transition group" onclick="sortTable('nama_istri')">Nama Istri <i class="fas fa-sort text-slate-300 group-hover:text-brand-400 ml-1"></i></th>
+                                <th class="px-4 py-3.5 text-center">NIK Istri</th>
+                                <th class="px-4 py-3.5 text-center">Tgl Lahir Istri</th>
+                                <th class="px-4 py-3.5 text-center">WhatsApp Istri</th>
+                                <th class="px-4 py-3.5 cursor-pointer hover:text-brand-600 transition group text-center rounded-tr-lg" onclick="sortTable('jumlah_anak')">Anak <i class="fas fa-sort text-slate-300 group-hover:text-brand-400 ml-1"></i></th>
                             </tr>
                         </thead>
-                        <tbody id="tableBody" class="divide-y divide-gray-100 dark:divide-darkBorder text-gray-800 dark:text-gray-200 font-medium">
-                            <!-- Data akan dimuat di sini -->
+                        <tbody id="tableBody" class="text-slate-700 dark:text-slate-200 font-medium">
+                            <!-- Data akan dimuat secara dinamis melalui JavaScript -->
                         </tbody>
                     </table>
                     
-                    <div id="noDataMessage" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-white dark:bg-darkCard z-0">
-                        <div class="text-6xl text-gray-200 dark:text-darkHover mb-4"><i class="fas fa-folder-open"></i></div>
-                        <p class="text-gray-500 dark:text-gray-400 font-semibold text-lg">Data tidak ditemukan.</p>
+                    <div id="noDataMessage" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-white/90 dark:bg-darkCard/90 backdrop-blur-sm z-10">
+                        <div class="text-7xl text-slate-200 dark:text-darkBorder mb-5"><i class="fas fa-inbox"></i></div>
+                        <p class="text-slate-500 dark:text-slate-400 font-bold text-lg tracking-wide">Data tidak ditemukan.</p>
+                        <p class="text-slate-400 dark:text-slate-500 text-sm mt-1">Coba sesuaikan kata kunci pencarian atau filter.</p>
                     </div>
                 </div>
             </div>
@@ -221,7 +227,9 @@
 
     <!-- JAVASCRIPT LOGIKA -->
     <script>
-        // MASUKKAN URL GOOGLE APPS SCRIPT ANDA DI SINI
+        // ==========================================
+        // URL GOOGLE APPS SCRIPT ANDA DI SINI
+        // ==========================================
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxGlIhFR3wE_3CH6d8LngZUmIQcXQbjZMtCqJ3hDmx2pZx4Avksg-fhhaAchsnZFGOOtg/exec"; 
         
         let dbData = [];
@@ -268,16 +276,14 @@
 
             try {
                 if (typeof google !== 'undefined' && google.script && google.script.run) {
-                    // Berjalan di dalam Google Apps Script langsung
                     google.script.run.withSuccessHandler(res => processResponse(res))
-                        .withFailureHandler(err => { hideLoading(); Swal.fire('Kesalahan', 'Gagal memuat data dari server.', 'error'); })
+                        .withFailureHandler(err => { hideLoading(); Swal.fire('Kesalahan', 'Gagal memuat data dari database.', 'error'); })
                         .getAllData(code);
                 } else if (GAS_URL !== "") {
-                    // Berjalan di GitHub / Eksternal
                     const res = await fetch(`${GAS_URL}?endpoint=data&code=${encodeURIComponent(code)}`);
                     processResponse(await res.json());
                 } else {
-                    // MODE SIMULASI DI CANVAS GEMINI
+                    // MODE SIMULASI DI CANVAS
                     setTimeout(() => {
                         if(code === "WAHDAH2026") {
                             processResponse({
@@ -289,7 +295,7 @@
                                 ]
                             });
                         } else {
-                            processResponse({ status: "error", message: "Kode Akses salah!" });
+                            processResponse({ status: "error", message: "Security Key tidak valid!" });
                         }
                     }, 800);
                 }
@@ -305,10 +311,10 @@
                 dbData = res.data;
                 document.getElementById('kodeAkses').value = '';
                 switchView('main');
-                document.getElementById('statusFilter').value = 'menikah'; // Default: Sudah Menikah
+                document.getElementById('statusFilter').value = 'menikah'; // Set filter default Sudah Menikah
                 applyFilters();
             } else {
-                Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: res.message, confirmButtonColor: '#0f766e' });
+                Swal.fire({ icon: 'error', title: 'Otentikasi Gagal', text: res.message, confirmButtonColor: '#0f766e', borderRadius: '12px' });
             }
         }
 
@@ -318,19 +324,18 @@
             switchView('login');
         }
 
-        // Membersihkan nomor WA untuk format wa.me
         function formatWA(waRaw) {
-            if (!waRaw || waRaw === '-' || waRaw.toString().toLowerCase().includes('belum')) return null;
+            if (!waRaw || waRaw === '-' || waRaw.toString().toLowerCase().includes('belum') || waRaw.toString().trim() === '') return null;
             let clean = waRaw.toString().replace(/\D/g, '');
             if (clean.startsWith('0')) clean = '62' + clean.substring(1);
             if (clean.startsWith('8')) clean = '628' + clean.substring(1);
             return clean.length >= 10 ? clean : null;
         }
 
-        // Format tanggal bahasa Indonesia (Contoh: 9 Oktober 2001)
         function formatTanggalIndo(dateStr) {
             if (!dateStr || dateStr === '-' || dateStr.toLowerCase().includes('belum')) return '-';
             try {
+                // Handle format string YYYY-MM-DD
                 const parts = dateStr.split('-'); 
                 if (parts.length === 3) {
                     const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
@@ -339,6 +344,7 @@
                     const y = parts[0];
                     if(m >= 0 && m < 12) return `${d} ${months[m]} ${y}`;
                 }
+                // Fallback standard parsing Date
                 const dObj = new Date(dateStr);
                 if(!isNaN(dObj.getTime())) {
                     const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
@@ -352,6 +358,7 @@
             const tbody = document.getElementById('tableBody');
             const noData = document.getElementById('noDataMessage');
             
+            // Hitung statistik (unik Dai berdasarkan nama, total istri yang sah, total anak)
             const uniqueDais = new Set(filteredData.map(d => d.nama_dai)).size;
             let totalIstri = 0;
             let totalAnak = 0;
@@ -369,32 +376,38 @@
                     totalAnak += parseInt(row.jumlah_anak || 0);
 
                     const waNum = formatWA(row.wa_istri);
-                    let waHtml = `<span class="text-gray-400 italic text-xs">-</span>`;
+                    let waHtml = `<span class="text-slate-400 italic text-xs font-semibold">-</span>`;
                     
                     if (waNum) {
+                        const displayWa = row.wa_istri;
                         waHtml = `
                             <a href="https://wa.me/${waNum}" target="_blank" 
-                               class="inline-flex items-center px-3 py-1.5 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded hover:bg-green-200 transition-colors text-xs font-bold border border-green-200 dark:border-green-800">
-                                <i class="fab fa-whatsapp text-sm mr-1.5"></i> Hubungi
+                               class="inline-flex items-center px-3 py-1.5 bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-colors text-xs font-bold border border-emerald-200/60 dark:border-emerald-800/50 shadow-sm whitespace-nowrap group">
+                                <i class="fab fa-whatsapp text-emerald-500 dark:text-emerald-400 text-[15px] mr-2 transform group-hover:scale-110 transition-transform"></i> ${displayWa}
                             </a>`;
                     }
 
                     const istriHtml = !isBelumMenikah ? 
-                        `<span class="font-bold text-gray-900 dark:text-gray-100">${row.nama_istri}</span>` : 
-                        `<span class="px-2.5 py-1 bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400 rounded text-[11px] font-bold border border-red-200 dark:border-red-800">Belum Menikah</span>`;
+                        `<span class="font-bold text-slate-900 dark:text-slate-100">${row.nama_istri}</span>` : 
+                        `<span class="px-2.5 py-1 bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400 rounded-md text-[11px] font-bold border border-rose-100 dark:border-rose-800/50 uppercase tracking-wide">Belum Menikah</span>`;
+
+                    // Selang-seling baris Ganjil Genap
+                    const rowBg = idx % 2 === 0 ? 'bg-white dark:bg-darkCard' : 'bg-slate-50 dark:bg-[#121c19]';
 
                     tbody.innerHTML += `
-                        <tr class="hover:bg-brand-50/50 dark:hover:bg-darkHover transition-colors group">
-                            <td class="px-4 py-3 text-center text-gray-500 dark:text-gray-400">${idx + 1}</td>
-                            <td class="px-4 py-3 font-bold text-gray-900 dark:text-white">${row.nama_dai}</td>
-                            <td class="px-4 py-3 text-center"><span class="px-2 py-1 bg-gray-100 dark:bg-darkBg text-gray-700 dark:text-gray-300 rounded text-xs font-bold border border-gray-200 dark:border-darkBorder">${row.tahun_diutus}</span></td>
-                            <td class="px-4 py-3">${row.penempatan}</td>
+                        <tr class="${rowBg} hover:bg-brand-50/70 dark:hover:bg-darkHover transition-colors border-b border-slate-100 dark:border-darkBorder/60 last:border-0 group">
+                            <td class="px-4 py-3 text-center text-slate-500 dark:text-slate-400 font-semibold">${idx + 1}</td>
+                            <td class="px-4 py-3 font-extrabold text-slate-900 dark:text-white">${row.nama_dai}</td>
+                            <td class="px-4 py-3 text-center">
+                                <span class="px-2.5 py-1 bg-slate-100 dark:bg-darkBg text-slate-700 dark:text-slate-300 rounded text-xs font-bold border border-slate-200 dark:border-darkBorder shadow-sm">${row.tahun_diutus}</span>
+                            </td>
+                            <td class="px-4 py-3 font-semibold">${row.penempatan}</td>
                             <td class="px-4 py-3">${istriHtml}</td>
-                            <td class="px-4 py-3 text-center text-gray-600 dark:text-gray-400 font-mono tracking-wide">${row.nik_istri}</td>
-                            <td class="px-4 py-3 text-center text-gray-700 dark:text-gray-300">${formatTanggalIndo(row.tgl_lahir_istri)}</td>
+                            <td class="px-4 py-3 text-center text-slate-600 dark:text-slate-400 font-mono font-medium tracking-wider">${row.nik_istri}</td>
+                            <td class="px-4 py-3 text-center text-slate-700 dark:text-slate-300 font-semibold whitespace-nowrap">${formatTanggalIndo(row.tgl_lahir_istri)}</td>
                             <td class="px-4 py-3 text-center">${waHtml}</td>
                             <td class="px-4 py-3 text-center">
-                                <span class="inline-flex justify-center items-center w-7 h-7 rounded-full bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 text-xs font-bold border border-brand-200 dark:border-brand-800">
+                                <span class="inline-flex justify-center items-center w-7 h-7 rounded-full bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-300 text-xs font-bold border border-brand-200 dark:border-brand-800/50 shadow-sm">
                                     ${row.jumlah_anak}
                                 </span>
                             </td>
@@ -403,6 +416,7 @@
                 });
             }
 
+            // Animasi update angka
             document.getElementById('countDai').textContent = uniqueDais;
             document.getElementById('countIstri').textContent = totalIstri;
             document.getElementById('countAnak').textContent = totalAnak;
@@ -414,12 +428,12 @@
 
             filteredData = dbData.filter(row => {
                 const textMatch = 
-                    row.nama_dai.toLowerCase().includes(query) || 
-                    row.nama_istri.toLowerCase().includes(query) ||
-                    row.penempatan.toLowerCase().includes(query);
+                    (row.nama_dai || "").toLowerCase().includes(query) || 
+                    (row.nama_istri || "").toLowerCase().includes(query) ||
+                    (row.penempatan || "").toLowerCase().includes(query);
                 
                 let statusMatch = true;
-                const isMenikah = !row.nama_istri.toLowerCase().includes('belum') && row.nama_istri !== '-';
+                const isMenikah = !(row.nama_istri || "").toLowerCase().includes('belum') && row.nama_istri !== '-';
                 if (status === 'menikah') statusMatch = isMenikah;
                 if (status === 'belum') statusMatch = !isMenikah;
 
@@ -437,7 +451,7 @@
             const isAsc = (currentSort.key === key && currentSort.dir === 'asc') ? false : true;
             currentSort = { key, dir: isAsc ? 'asc' : 'desc' };
             
-            document.querySelectorAll('th i').forEach(icon => icon.className = 'fas fa-sort text-gray-400 ml-1 opacity-50');
+            document.querySelectorAll('th i').forEach(icon => icon.className = 'fas fa-sort text-slate-300 group-hover:text-brand-400 ml-1 transition-colors');
             const activeIcon = document.querySelector(`th[onclick="sortTable('${key}')"] i`);
             if (activeIcon) activeIcon.className = isAsc ? 'fas fa-sort-up text-brand-600 dark:text-brand-400 ml-1' : 'fas fa-sort-down text-brand-600 dark:text-brand-400 ml-1';
 
@@ -474,24 +488,26 @@
                 "NAMA ISTRI": row.nama_istri,
                 "NIK ISTRI": row.nik_istri,
                 "TANGGAL LAHIR": formatTanggalIndo(row.tgl_lahir_istri),
-                "WHATSAPP": row.wa_istri !== '-' ? row.wa_istri : '',
+                "WHATSAPP ISTRi": row.wa_istri !== '-' ? row.wa_istri : '',
                 "JUMLAH ANAK": row.jumlah_anak
             }));
             const ws = XLSX.utils.json_to_sheet(exportData);
-            ws['!cols'] = [{wch: 5}, {wch: 30}, {wch: 15}, {wch: 25}, {wch: 25}, {wch: 20}, {wch: 20}, {wch: 20}, {wch: 15}];
+            ws['!cols'] = [{wch: 5}, {wch: 35}, {wch: 15}, {wch: 25}, {wch: 30}, {wch: 20}, {wch: 22}, {wch: 20}, {wch: 15}];
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "DataKeluargaDai");
-            XLSX.writeFile(wb, "Data_Keluarga_Dai_2026.xlsx");
+            XLSX.writeFile(wb, "Data_Keluarga_Dai_Utusan.xlsx");
         }
 
         function exportPDF() {
             if(filteredData.length === 0) return Swal.fire('Info', 'Tidak ada data untuk diunduh.', 'info');
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('landscape');
-            doc.setFontSize(14); doc.setFont("helvetica", "bold");
-            doc.text("DATA KELUARGA DAI - WAHDAH ISLAMIYAH", 14, 15);
-            doc.setFontSize(9); doc.setFont("helvetica", "normal");
-            doc.text("Dibuat pada: " + new Date().toLocaleString('id-ID'), 14, 21);
+            doc.setFontSize(16); doc.setFont("helvetica", "bold");
+            doc.text("DATA KELUARGA DAI UTUSAN", 14, 15);
+            doc.setFontSize(12); doc.setFont("helvetica", "normal");
+            doc.text("WAHDAH ISLAMIYAH", 14, 22);
+            doc.setFontSize(9); doc.setTextColor(100);
+            doc.text("Diekspor pada: " + new Date().toLocaleString('id-ID'), 14, 28);
 
             const tableRows = filteredData.map((row, idx) => [
                 idx + 1, row.nama_dai, row.tahun_diutus, row.penempatan, row.nama_istri, row.nik_istri, 
@@ -499,13 +515,13 @@
             ]);
 
             doc.autoTable({
-                head: [["No", "Nama Dai", "Diutus", "Penempatan", "Nama Istri", "NIK", "Tgl Lahir", "WhatsApp", "Anak"]],
-                body: tableRows, startY: 26, theme: 'grid',
-                styles: { fontSize: 8, font: 'helvetica', cellPadding: 3 },
+                head: [["No", "Nama Dai", "Utusan", "Penempatan", "Nama Istri", "NIK Istri", "Tgl Lahir", "WhatsApp Istri", "Anak"]],
+                body: tableRows, startY: 33, theme: 'grid',
+                styles: { fontSize: 8.5, font: 'helvetica', cellPadding: 3.5 },
                 headStyles: { fillColor: [15, 118, 110], textColor: 255, fontStyle: 'bold' },
                 alternateRowStyles: { fillColor: [248, 250, 252] }
             });
-            doc.save('Data_Keluarga_Dai_2026.pdf');
+            doc.save('Data_Keluarga_Dai_Utusan.pdf');
         }
     </script>
 </body>
