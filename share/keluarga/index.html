@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SAPADAI - DATA KELUARGA</title>
+    <title>Portal Keluarga Dai Utusan</title>
     
     <!-- Meta Tag untuk Preview WhatsApp & Favicon -->
-    <link rel="icon" type="image/png" href="https://sapadai.wadahdigital.my.id/logo_sapadai_1.png">
+    <link rel="icon" type="image/png" href="https://sapadai.wadahdigital.my.id/logo_sapadai_2.png">
     <meta property="og:title" content="Portal Keluarga Dai Utusan - Wahdah Islamiyah">
     <meta property="og:description" content="Aplikasi pengelolaan data istri dan anak Dai utusan Wahdah Islamiyah.">
-    <meta property="og:image" content="https://sapadai.wadahdigital.my.id/logo_sapadai_1.png">
+    <meta property="og:image" content="https://sapadai.wadahdigital.my.id/logo_sapadai_2.png">
     <meta property="og:type" content="website">
     
     <!-- Library Eksternal -->
@@ -65,8 +65,8 @@
     <!-- LAYAR PEMUATAN (LOADING) UMUM -->
     <div id="loadingOverlay" class="fixed inset-0 bg-white/90 dark:bg-darkBg/95 z-[100] hidden flex flex-col justify-center items-center backdrop-blur-md transition-all duration-300">
         <div class="spinner mb-5 shadow-lg shadow-brand-500/20 rounded-full"></div>
-        <h2 class="text-lg font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">Memuat Sistem...</h2>
-        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">Mohon tunggu sebentar</p>
+        <h2 class="text-lg font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">Memuat...</h2>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">Mohon tunggu</p>
     </div>
 
     <!-- HALAMAN LOGIN (DIKUNCI DI TENGAH LAYAR) -->
@@ -93,7 +93,7 @@
             
             <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-6">
                 <div>
-                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Security Key</label>
+                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Kode Akses</label>
                     <div class="relative group">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400 group-focus-within:text-brand-500 transition-colors">
                             <i class="fas fa-shield-alt"></i>
@@ -103,7 +103,7 @@
                     </div>
                 </div>
                 <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 dark:bg-brand-600 dark:hover:bg-brand-500 text-white font-bold py-3.5 px-4 rounded-xl transition-all flex justify-center items-center shadow-lg shadow-brand-600/25 hover:shadow-brand-600/40 transform active:scale-95">
-                    <i class="fas fa-sign-in-alt mr-2"></i> Otentikasi
+                    <i class="fas fa-sign-in-alt mr-2"></i> Masuk
                 </button>
             </form>
         </div>
@@ -280,10 +280,11 @@
                         .withFailureHandler(err => { hideLoading(); Swal.fire('Kesalahan', 'Gagal memuat data dari database.', 'error'); })
                         .getAllData(code);
                 } else if (GAS_URL !== "") {
-                    const res = await fetch(`${GAS_URL}?endpoint=data&code=${encodeURIComponent(code)}`);
+                    // PERBAIKAN: Parameter disesuaikan menjadi '&kode=' agar terdeteksi oleh backend Google Apps Script Anda.
+                    const res = await fetch(`${GAS_URL}?endpoint=data&kode=${encodeURIComponent(code)}`);
                     processResponse(await res.json());
                 } else {
-                    // MODE SIMULASI DI CANVAS
+                    // MODE SIMULASI DI CANVAS (Dipercepat)
                     setTimeout(() => {
                         if(code === "WAHDAH2026") {
                             processResponse({
@@ -295,9 +296,9 @@
                                 ]
                             });
                         } else {
-                            processResponse({ status: "error", message: "Security Key tidak valid!" });
+                            processResponse({ status: "error", message: "Kode Akses tidak valid!" });
                         }
-                    }, 800);
+                    }, 300);
                 }
             } catch (err) {
                 hideLoading();
@@ -314,7 +315,7 @@
                 document.getElementById('statusFilter').value = 'menikah'; // Set filter default Sudah Menikah
                 applyFilters();
             } else {
-                Swal.fire({ icon: 'error', title: 'Otentikasi Gagal', text: res.message, confirmButtonColor: '#0f766e', borderRadius: '12px' });
+                Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: res.message, confirmButtonColor: '#0f766e', borderRadius: '12px' });
             }
         }
 
@@ -391,8 +392,8 @@
                         `<span class="font-bold text-slate-900 dark:text-slate-100">${row.nama_istri}</span>` : 
                         `<span class="px-2.5 py-1 bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400 rounded-md text-[11px] font-bold border border-rose-100 dark:border-rose-800/50 uppercase tracking-wide">Belum Menikah</span>`;
 
-                    // Selang-seling baris Ganjil Genap
-                    const rowBg = idx % 2 === 0 ? 'bg-white dark:bg-darkCard' : 'bg-slate-50 dark:bg-[#121c19]';
+                    // Selang-seling baris Ganjil Genap dengan warna lebih lembut dan dapat dibedakan
+                    const rowBg = idx % 2 === 0 ? 'bg-white dark:bg-darkCard' : 'bg-slate-50/80 dark:bg-[#15221f]';
 
                     tbody.innerHTML += `
                         <tr class="${rowBg} hover:bg-brand-50/70 dark:hover:bg-darkHover transition-colors border-b border-slate-100 dark:border-darkBorder/60 last:border-0 group">
