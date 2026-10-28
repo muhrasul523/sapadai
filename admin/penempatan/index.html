@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIMPDAI - Dashboard</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
+    <style>
+        /* Modern Clean SaaS Dashboard Styles (Soft Blue & Green) */
+        :root {
+            --primary: #1565c0; /* Soft Blue Dark */
+            --primary-light: #e3f2fd;
+            --secondary: #2e7d32; /* Soft Green Dark */
+            --secondary-light: #e8f5e9;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-dark: #334155;
+            --text-muted: #64748b;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Loading Overlay */
+        #loadingOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Card Styles */
+        .saas-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        /* Metric Cards */
+        .metric-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        .metric-blue { background: var(--primary-light); color: var(--primary); }
+        .metric-green { background: var(--secondary-light); color: var(--secondary); }
+        
+        /* Table Styles */
+        .table-responsive {
+            max-height: 550px;
+            overflow-y: auto;
+        }
+        .table thead th {
+            position: sticky;
+            top: 0;
+            background-color: #ffffff;
+            z-index: 1;
+            box-shadow: 0 1px 0 rgba(0,0,0,0.1);
+            cursor: pointer;
+            border-bottom: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .table thead th:hover { color: var(--primary); }
+        .table tbody tr { vertical-align: middle; font-size: 0.9rem; }
+        
+        /* Login Page */
+        .login-wrapper {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary-light) 100%);
+        }
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        /* Header */
+        .navbar {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        /* Badges */
+        .badge-aktif { background-color: var(--secondary-light); color: var(--secondary); border: 1px solid #c8e6c9; }
+        .badge-nonaktif { background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+    </style>
+</head>
+<body>
+
+    <!-- LOADING OVERLAY -->
+    <div id="loadingOverlay">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <h5 class="mt-3 text-muted" id="loadingText">Memuat Data...</h5>
+    </div>
+
+    <!-- VIEW: LOGIN -->
+    <div id="viewLogin" class="login-wrapper d-none">
+        <div class="login-card">
+            <div class="mb-4">
+                <i class="bi bi-shield-lock-fill text-primary" style="font-size: 3rem;"></i>
+                <h3 class="mt-3 fw-bold">SIMPDAI V2</h3>
+                <p class="text-muted small">Sistem Manajemen Penempatan Dai</p>
+            </div>
+            <form id="formLogin" onsubmit="handleLogin(event)">
+                <div class="mb-3">
+                    <input type="text" class="form-control form-control-lg text-center" id="kodeAkses" placeholder="Masukkan Kode Akses" required autocomplete="off">
+                </div>
+                <button type="submit" class="btn btn-primary w-100 btn-lg" id="btnLogin">Masuk</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- VIEW: DASHBOARD -->
+    <div id="viewDashboard" class="d-none">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg px-4 py-3">
+            <div class="container-fluid">
+                <span class="navbar-brand fw-bold text-primary">
+                    <i class="bi bi-geo-alt-fill me-2"></i>SIMPDAI Dashboard
+                </span>
+                <button class="btn btn-outline-danger btn-sm" onclick="handleLogout()">
+                    <i class="bi bi-box-arrow-right me-1"></i> Log Out
+                </button>
+            </div>
+        </nav>
+
+        <div class="container-fluid px-4 py-4">
+            <!-- Metrics -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <div class="saas-card d-flex align-items-center">
+                        <div class="metric-icon metric-blue me-3"><i class="bi bi-people-fill"></i></div>
+                        <div>
+                            <p class="text-muted mb-0 small fw-bold">Total Dai</p>
+                            <h3 class="fw-bold mb-0" id="metrikTotal">0</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="saas-card d-flex align-items-center">
+                        <div class="metric-icon metric-green me-3"><i class="bi bi-check-circle-fill"></i></div>
+                        <div>
+                            <p class="text-muted mb-0 small fw-bold">Dai Aktif</p>
+                            <h3 class="fw-bold mb-0" id="metrikAktif">0</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="saas-card d-flex align-items-center">
+                        <div class="metric-icon metric-blue me-3"><i class="bi bi-clock-history"></i></div>
+                        <div>
+                            <p class="text-muted mb-0 small fw-bold">Total Mutasi</p>
+                            <h3 class="fw-bold mb-0" id="metrikMutasi">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Data Card -->
+            <div class="saas-card">
+                <!-- Toolbar -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                            <input type="text" class="form-control" id="searchData" placeholder="Cari Nama / ID / Lokasi..." oninput="applyFilters()">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" id="filterStatus" onchange="applyFilters()">
+                            <option value="">Semua Status</option>
+                            <option value="Aktif">Aktif</option>
+                            <option value="Tidak Aktif">Tidak Aktif</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" id="filterProvinsi" onchange="applyFilters()">
+                            <option value="">Semua Provinsi</option>
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <button class="btn btn-outline-success me-2" onclick="exportExcel()">
+                            <i class="bi bi-file-earmark-excel me-1"></i> Excel
+                        </button>
+                        <button class="btn btn-outline-danger" onclick="exportPDF()">
+                            <i class="bi bi-file-earmark-pdf me-1"></i> PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th onclick="handleSort('ID_Dai')">ID Dai <i class="bi bi-arrow-down-up small"></i></th>
+                                <th onclick="handleSort('Nama')">Nama <i class="bi bi-arrow-down-up small"></i></th>
+                                <th onclick="handleSort('Status')">Status <i class="bi bi-arrow-down-up small"></i></th>
+                                <th onclick="handleSort('Provinsi')">Prov/Kab <i class="bi bi-arrow-down-up small"></i></th>
+                                <th>Lokasi Rinci</th>
+                                <th>SK Penempatan</th>
+                                <th>No SK</th>
+                                <th class="text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Data populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDIT MUTASI -->
+    <div class="modal fade" id="modalMutasi" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-0">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2 text-primary"></i>Update Penempatan Dai</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formMutasi" onsubmit="submitMutasi(event)">
+                        <input type="hidden" id="mutasiIdDai">
+                        <input type="hidden" id="mutasiIdWilayah"> <!-- Hidden Wilayah ID -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small fw-bold">Nama Dai</label>
+                                <input type="text" class="form-control bg-light" id="mutasiNama" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small fw-bold">Status Keaktifan</label>
+                                <select class="form-select" id="mutasiStatus" required>
+                                    <option value="Aktif">Aktif</option>
+                                    <option value="Tidak Aktif">Tidak Aktif</option>
+                                </select>
+                            </div>
+                        </div>
+                        <hr class="text-muted">
+                        <h6 class="fw-bold mb-3">Lokasi Penempatan Baru</h6>
+                        
+                        <!-- Cascade Dropdowns (From Sheet Wilayah) -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small fw-bold">Provinsi</label>
+                                <select class="form-select" id="inputProvinsi" required onchange="populateKabupaten()">
+                                    <option value="" disabled selected>Pilih Provinsi...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small fw-bold">Kabupaten/Kota</label>
+                                <select class="form-select" id="inputKabupaten" required onchange="populateKecamatan()" disabled>
+                                    <option value="" disabled selected>Pilih Kabupaten...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small fw-bold">Kecamatan</label>
+                                <select class="form-select" id="inputKecamatan" required onchange="populateKelurahan()" disabled>
+                                    <option value="" disabled selected>Pilih Kecamatan...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small fw-bold">Kelurahan/Desa</label>
+                                <select class="form-select" id="inputKelurahan" required onchange="setKodeWilayah()" disabled>
+                                    <option value="" disabled selected>Pilih Kelurahan...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small fw-bold">SK Penempatan (Instansi/Teks)</label>
+                                <input type="text" class="form-control" id="inputSKPenempatan" placeholder="Cth: DPD Wahdah Islamiyah Kab. Bulukumba" required autocomplete="off">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small fw-bold">Nomor SK</label>
+                                <input type="text" class="form-control" id="inputNoSK" placeholder="Cth: SK/123/2026" required autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="mt-2 text-end text-muted small">
+                            ID Wilayah yang terpilih: <span id="displayIdWilayah" class="fw-bold text-primary">-</span>
+                        </div>
+
+                        <div class="text-end mt-4">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary px-4" id="btnSimpanMutasi">Simpan Perubahan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL RIWAYAT -->
+    <div class="modal fade" id="modalRiwayat" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content border-0">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-clock-history me-2 text-primary"></i>Riwayat Mutasi: <span id="riwayatNama" class="text-primary"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Provinsi & Kab</th>
+                                    <th>Kecamatan & Kelurahan</th>
+                                    <th>SK Penempatan</th>
+                                    <th>No SK</th>
+                                    <th>Kode Wilayah</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableRiwayatBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EXTERNAL LIBRARIES -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Export Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- MAIN APP LOGIC -->
+    <script>
+        // ==========================================
+        // KONFIGURASI URL WEBAPP
+        // Masukkan URL deployment WebApp GAS Anda di sini jika frontend dihosting terpisah.
+        // Jika dikosongkan, script akan otomatis memprioritaskan API bawaan Apps Script (google.script.run).
+        const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzfH_gckgItEaqehF5higjawYmU0aUq1LuEPsLJBTYV_MJwgDMYp8LyAfDv4MieUnc9vg/exec"; 
+        // ==========================================
+
+        // --- 1. GLOBAL VARIABLES & STATE ---
+        let db = { akses: [], wilayah: [], dai: [], riwayat: [] };
+        let currentFilteredData = [];
+        let sortConfig = { key: 'Nama', asc: true };
+
+        // UI Helpers
+        const showLoader = (text = "Memuat...") => {
+            document.getElementById('loadingText').innerText = text;
+            document.getElementById('loadingOverlay').classList.remove('d-none');
+        };
+        const hideLoader = () => document.getElementById('loadingOverlay').classList.add('d-none');
+        
+        const Toast = Swal.mixin({
+            toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true
+        });
+
+        // --- 2. INITIALIZATION & DATA LOADING ---
+        document.addEventListener("DOMContentLoaded", () => {
+            checkAuthSession();
+        });
+
+        function checkAuthSession() {
+            const isLogged = sessionStorage.getItem('simpdai_auth');
+            if (isLogged) {
+                loadData();
+            } else {
+                hideLoader();
+                document.getElementById('viewLogin').classList.remove('d-none');
+            }
+        }
+
+        async function loadData() {
+            showLoader("Menghubungkan ke Database...");
+            document.getElementById('viewLogin').classList.add('d-none');
+            document.getElementById('viewDashboard').classList.remove('d-none');
+
+            // 1. Prioritize Native GAS Environment
+            if (typeof google !== 'undefined' && google.script) {
+                console.log("Running via google.script.run");
+                google.script.run
+                    .withSuccessHandler(res => {
+                        db = res;
+                        initDashboard();
+                        hideLoader();
+                    })
+                    .withFailureHandler(err => {
+                        hideLoader();
+                        Swal.fire("Error", "Gagal mengambil data.", "error");
+                        console.error(err);
+                    })
+                    .getAllData();
+            } 
+            // 2. Fetch via External WebApp URL
+            else if (WEBAPP_URL !== "") {
+                console.log("Running via External Fetch API");
+                try {
+                    const response = await fetch(`${WEBAPP_URL}?api=true`);
+                    const result = await response.json();
+                    if(result.status === 'success') {
+                        db = result.data;
+                        initDashboard();
+                    } else {
+                        throw new Error(result.message);
+                    }
+                } catch (err) {
+                    Swal.fire("Error", "Gagal menghubungi WebApp. Pastikan URL benar.", "error");
+                    console.error(err);
+                }
+                hideLoader();
+            } 
+            // 3. Fallback: Simulation Mode
+            else {
+                console.log("Running in Simulation Mode (Canvas)");
+                setTimeout(() => {
+                    db = getDummyDB();
+                    initDashboard();
+                    hideLoader();
+                }, 800);
+            }
+        }
+
+        // --- 3. DUMMY DATABASE (SIMULATION) ---
+        function getDummyDB() {
+            return {
+                akses: [{ KodeAkses: "ADMIN123", Role: "Administrator", Status: "Aktif" }],
+                wilayah: [
+                    { ID_Wilayah: "W-73.71.11.1001", Provinsi: "Sulawesi Selatan", Kabupaten: "Makassar", Kecamatan: "Tamalanrea", Kelurahan: "Tamalanrea Indah" },
+                    { ID_Wilayah: "W-73.71.11.1002", Provinsi: "Sulawesi Selatan", Kabupaten: "Makassar", Kecamatan: "Tamalanrea", Kelurahan: "Bira" },
+                    { ID_Wilayah: "W-73.71.14.1001", Provinsi: "Sulawesi Selatan", Kabupaten: "Makassar", Kecamatan: "Biringkanaya", Kelurahan: "Sudiang" },
+                    { ID_Wilayah: "W-73.09.01.1001", Provinsi: "Sulawesi Selatan", Kabupaten: "Gowa", Kecamatan: "Somba Opu", Kelurahan: "Sungguminasa" }
+                ],
+                dai: [
+                    { ID_Dai: "DAI-001", Nama: "Ahmad Baihaqi", Status: "Aktif", ID_Wilayah: "W-73.71.11.1001", Provinsi: "Sulawesi Selatan", Kabupaten: "Makassar", Kecamatan: "Tamalanrea", Kelurahan: "Tamalanrea Indah", SK_Penempatan: "DPD Wahdah Islamiyah Kota Makassar", No_SK: "SK/111/2026", LastUpdate: "2026-01-01 10:00:00" },
+                    { ID_Dai: "DAI-002", Nama: "Budi Santoso", Status: "Aktif", ID_Wilayah: "W-73.09.01.1001", Provinsi: "Sulawesi Selatan", Kabupaten: "Gowa", Kecamatan: "Somba Opu", Kelurahan: "Sungguminasa", SK_Penempatan: "DPD Wahdah Islamiyah Kab. Gowa", No_SK: "SK/112/2026", LastUpdate: "2026-01-15 09:30:00" }
+                ],
+                riwayat: [
+                    { ID_Riwayat: "RWY-001", ID_Dai: "DAI-001", Nama: "Ahmad Baihaqi", Status: "Aktif", ID_Wilayah: "W-73.71.11.1001", Provinsi: "Sulawesi Selatan", Kabupaten: "Makassar", Kecamatan: "Tamalanrea", Kelurahan: "Tamalanrea Indah", SK_Penempatan: "DPD Wahdah Islamiyah Kota Makassar", No_SK: "SK/111/2026", TanggalMutasi: "2026-01-01 10:00:00" }
+                ]
+            };
+        }
+
+        // --- 4. AUTHENTICATION ---
+        function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnLogin');
+            const code = document.getElementById('kodeAkses').value.trim();
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Verifikasi...';
+
+            setTimeout(() => {
+                if (code === "ADMIN123") {
+                    sessionStorage.setItem('simpdai_auth', 'true');
+                    Toast.fire({ icon: 'success', title: 'Login Berhasil' });
+                    loadData();
+                } else {
+                    Swal.fire("Akses Ditolak", "Kode akses tidak valid.", "error");
+                    btn.disabled = false;
+                    btn.innerText = 'Masuk';
+                }
+            }, 1000);
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem('simpdai_auth');
+            location.reload();
+        }
+
+        // --- 5. RENDER & LOGIC ---
+        function initDashboard() {
+            populateFilterProvinsi();
+            applyFilters();
+        }
+
+        function populateFilterProvinsi() {
+            const select = document.getElementById('filterProvinsi');
+            const provs = [...new Set(db.dai.map(d => d.Provinsi))];
+            select.innerHTML = '<option value="">Semua Provinsi</option>';
+            provs.forEach(p => {
+                if(p) select.innerHTML += `<option value="${p}">${p}</option>`;
+            });
+        }
+
+        function applyFilters() {
+            const search = document.getElementById('searchData').value.toLowerCase();
+            const status = document.getElementById('filterStatus').value;
+            const prov = document.getElementById('filterProvinsi').value;
+
+            currentFilteredData = db.dai.filter(row => {
+                const matchSearch = row.Nama.toLowerCase().includes(search) || 
+                                    row.ID_Dai.toLowerCase().includes(search) || 
+                                    row.Kabupaten.toLowerCase().includes(search) ||
+                                    row.SK_Penempatan.toLowerCase().includes(search);
+                const matchStatus = status === "" || row.Status === status;
+                const matchProv = prov === "" || row.Provinsi === prov;
+                return matchSearch && matchStatus && matchProv;
+            });
+
+            currentFilteredData.sort((a, b) => {
+                let valA = a[sortConfig.key] || "";
+                let valB = b[sortConfig.key] || "";
+                if (valA < valB) return sortConfig.asc ? -1 : 1;
+                if (valA > valB) return sortConfig.asc ? 1 : -1;
+                return 0;
+            });
+
+            renderTable();
+            updateMetrics();
+        }
+
+        function handleSort(key) {
+            if (sortConfig.key === key) sortConfig.asc = !sortConfig.asc;
+            else { sortConfig.key = key; sortConfig.asc = true; }
+            applyFilters();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            if (currentFilteredData.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="bi bi-folder-x mb-2" style="font-size: 3rem;"></i>
+                            <p>Data tidak ditemukan.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            currentFilteredData.forEach(row => {
+                const badgeClass = row.Status === 'Aktif' ? 'badge-aktif' : 'badge-nonaktif';
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="fw-bold text-primary">${row.ID_Dai}</td>
+                    <td class="fw-bold">${row.Nama}</td>
+                    <td><span class="badge rounded-pill px-3 py-2 ${badgeClass}">${row.Status}</span></td>
+                    <td>
+                        <div class="fw-bold">${row.Kabupaten}</div>
+                        <div class="small text-muted">${row.Provinsi}</div>
+                    </td>
+                    <td class="small">
+                        <span class="text-dark">${row.Kecamatan}</span><br>
+                        <span class="text-muted">${row.Kelurahan}</span>
+                    </td>
+                    <td class="small text-dark">${row.SK_Penempatan}</td>
+                    <td class="small text-muted">${row.No_SK}</td>
+                    <td>
+                        <button class="btn btn-sm btn-light border me-1" title="Edit Mutasi" onclick='openModalMutasi(${JSON.stringify(row).replace(/'/g, "&#39;")})'>
+                            <i class="bi bi-pencil-square text-primary"></i>
+                        </button>
+                        <button class="btn btn-sm btn-light border" title="Riwayat" onclick="openRiwayat('${row.ID_Dai}', '${row.Nama}')">
+                            <i class="bi bi-clock-history text-secondary"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateMetrics() {
+            document.getElementById('metrikTotal').innerText = db.dai.length;
+            document.getElementById('metrikAktif').innerText = db.dai.filter(d => d.Status === 'Aktif').length;
+            document.getElementById('metrikMutasi').innerText = db.riwayat.length;
+        }
+
+        // --- 6. CASCADE DROPDOWNS DARI SHEET WILAYAH ---
+        function getUniqueValues(arr, key) {
+            return [...new Set(arr.map(item => item[key]))].filter(val => val);
+        }
+
+        function initCascade() {
+            const selProv = document.getElementById('inputProvinsi');
+            selProv.innerHTML = '<option value="" disabled selected>Pilih Provinsi...</option>';
+            const provs = getUniqueValues(db.wilayah, 'Provinsi');
+            provs.forEach(prov => { selProv.innerHTML += `<option value="${prov}">${prov}</option>`; });
+        }
+
+        function populateKabupaten() {
+            const prov = document.getElementById('inputProvinsi').value;
+            const selKab = document.getElementById('inputKabupaten');
+            const selKec = document.getElementById('inputKecamatan');
+            const selKel = document.getElementById('inputKelurahan');
+            
+            selKec.innerHTML = '<option value="" disabled selected>Pilih Kecamatan...</option>'; selKec.disabled = true;
+            selKel.innerHTML = '<option value="" disabled selected>Pilih Kelurahan...</option>'; selKel.disabled = true;
+            document.getElementById('mutasiIdWilayah').value = "";
+            document.getElementById('displayIdWilayah').innerText = "-";
+            
+            const kabs = getUniqueValues(db.wilayah.filter(w => w.Provinsi === prov), 'Kabupaten');
+            selKab.innerHTML = '<option value="" disabled selected>Pilih Kabupaten...</option>';
+            kabs.forEach(kab => { selKab.innerHTML += `<option value="${kab}">${kab}</option>`; });
+            selKab.disabled = false;
+        }
+
+        function populateKecamatan() {
+            const prov = document.getElementById('inputProvinsi').value;
+            const kab = document.getElementById('inputKabupaten').value;
+            const selKec = document.getElementById('inputKecamatan');
+            const selKel = document.getElementById('inputKelurahan');
+            
+            selKel.innerHTML = '<option value="" disabled selected>Pilih Kelurahan...</option>'; selKel.disabled = true;
+            document.getElementById('mutasiIdWilayah').value = "";
+            document.getElementById('displayIdWilayah').innerText = "-";
+            
+            const kecs = getUniqueValues(db.wilayah.filter(w => w.Provinsi === prov && w.Kabupaten === kab), 'Kecamatan');
+            selKec.innerHTML = '<option value="" disabled selected>Pilih Kecamatan...</option>';
+            kecs.forEach(kec => { selKec.innerHTML += `<option value="${kec}">${kec}</option>`; });
+            selKec.disabled = false;
+        }
+
+        function populateKelurahan() {
+            const prov = document.getElementById('inputProvinsi').value;
+            const kab = document.getElementById('inputKabupaten').value;
+            const kec = document.getElementById('inputKecamatan').value;
+            const selKel = document.getElementById('inputKelurahan');
+            
+            document.getElementById('mutasiIdWilayah').value = "";
+            document.getElementById('displayIdWilayah').innerText = "-";
+
+            const kels = getUniqueValues(db.wilayah.filter(w => w.Provinsi === prov && w.Kabupaten === kab && w.Kecamatan === kec), 'Kelurahan');
+            selKel.innerHTML = '<option value="" disabled selected>Pilih Kelurahan...</option>';
+            kels.forEach(kel => { selKel.innerHTML += `<option value="${kel}">${kel}</option>`; });
+            selKel.disabled = false;
+        }
+
+        function setKodeWilayah() {
+            const prov = document.getElementById('inputProvinsi').value;
+            const kab = document.getElementById('inputKabupaten').value;
+            const kec = document.getElementById('inputKecamatan').value;
+            const kel = document.getElementById('inputKelurahan').value;
+            
+            const wilayahObj = db.wilayah.find(w => w.Provinsi === prov && w.Kabupaten === kab && w.Kecamatan === kec && w.Kelurahan === kel);
+            
+            if (wilayahObj) {
+                document.getElementById('mutasiIdWilayah').value = wilayahObj.ID_Wilayah;
+                document.getElementById('displayIdWilayah').innerText = wilayahObj.ID_Wilayah;
+            } else {
+                document.getElementById('mutasiIdWilayah').value = "";
+                document.getElementById('displayIdWilayah').innerText = "Data Kode Tidak Ditemukan";
+            }
+        }
+
+        // --- 7. MODAL ACTIONS (CRUD) ---
+        function openModalMutasi(dataRow) {
+            initCascade();
+            document.getElementById('mutasiIdDai').value = dataRow.ID_Dai;
+            document.getElementById('mutasiNama').value = dataRow.Nama;
+            document.getElementById('mutasiStatus').value = dataRow.Status;
+            
+            // Reset Dropdowns & Fields
+            document.getElementById('inputProvinsi').value = "";
+            document.getElementById('inputKabupaten').disabled = true;
+            document.getElementById('inputKecamatan').disabled = true;
+            document.getElementById('inputKelurahan').disabled = true;
+            document.getElementById('inputSKPenempatan').value = "";
+            document.getElementById('inputNoSK').value = "";
+            document.getElementById('mutasiIdWilayah').value = "";
+            document.getElementById('displayIdWilayah').innerText = "-";
+            
+            const modal = new bootstrap.Modal(document.getElementById('modalMutasi'));
+            modal.show();
+        }
+
+        async function submitMutasi(e) {
+            e.preventDefault();
+            const idWilayah = document.getElementById('mutasiIdWilayah').value;
+            
+            if(!idWilayah) {
+                Swal.fire("Peringatan", "Kode Wilayah tidak ditemukan. Pastikan Anda memilih Kelurahan dari daftar.", "warning");
+                return;
+            }
+
+            const btn = document.getElementById('btnSimpanMutasi');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Menyimpan...';
+
+            const payload = {
+                idDai: document.getElementById('mutasiIdDai').value,
+                nama: document.getElementById('mutasiNama').value,
+                status: document.getElementById('mutasiStatus').value,
+                idWilayah: idWilayah,
+                provinsi: document.getElementById('inputProvinsi').value,
+                kabupaten: document.getElementById('inputKabupaten').value,
+                kecamatan: document.getElementById('inputKecamatan').value,
+                kelurahan: document.getElementById('inputKelurahan').value,
+                skPenempatan: document.getElementById('inputSKPenempatan').value,
+                noSK: document.getElementById('inputNoSK').value
+            };
+
+            // 1. Native Environment
+            if (typeof google !== 'undefined' && google.script) {
+                google.script.run
+                    .withSuccessHandler(res => {
+                        if(res.status === 'success') {
+                            google.script.run.withSuccessHandler(newData => {
+                                db = newData; finishSave(btn);
+                            }).getAllData();
+                        } else { showError(btn, res.message); }
+                    })
+                    .withFailureHandler(err => { showError(btn, "Gagal menghubungi server."); })
+                    .saveMutasi(payload);
+            } 
+            // 2. Fetch External URL
+            else if (WEBAPP_URL !== "") {
+                try {
+                    const postReq = await fetch(WEBAPP_URL, {
+                        method: "POST", body: JSON.stringify({ action: "saveMutasi", data: payload })
+                    });
+                    const result = await postReq.json();
+                    if(result.status === 'success') {
+                        loadData(); // reload data 
+                        finishSave(btn);
+                    } else { showError(btn, result.message); }
+                } catch (err) { showError(btn, err.toString()); }
+            }
+            // 3. Simulation
+            else {
+                setTimeout(() => {
+                    const index = db.dai.findIndex(d => d.ID_Dai === payload.idDai);
+                    if(index !== -1) {
+                        db.dai[index] = { ...db.dai[index], ...payload, LastUpdate: new Date().toLocaleString('id-ID') };
+                    }
+                    db.riwayat.push({ ...payload, ID_Riwayat: "RWY-" + new Date().getTime(), TanggalMutasi: new Date().toLocaleString('id-ID') });
+                    finishSave(btn);
+                }, 1000);
+            }
+        }
+
+        function finishSave(btn) {
+            bootstrap.Modal.getInstance(document.getElementById('modalMutasi')).hide();
+            Toast.fire({ icon: 'success', title: 'Data Mutasi Diperbarui' });
+            btn.disabled = false; btn.innerText = 'Simpan Perubahan';
+            initDashboard();
+        }
+
+        function showError(btn, msg) {
+            Swal.fire("Error", msg, "error");
+            btn.disabled = false; btn.innerText = 'Simpan Perubahan';
+        }
+
+        function openRiwayat(idDai, nama) {
+            document.getElementById('riwayatNama').innerText = nama;
+            const tbody = document.getElementById('tableRiwayatBody');
+            tbody.innerHTML = '';
+            
+            const logs = db.riwayat.filter(r => r.ID_Dai === idDai).sort((a,b) => (a.TanggalMutasi < b.TanggalMutasi ? 1 : -1));
+            
+            if (logs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Belum ada riwayat mutasi.</td></tr>';
+            } else {
+                logs.forEach(log => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="small">${log.TanggalMutasi}</td>
+                            <td class="small">${log.Provinsi}<br><span class="fw-bold">${log.Kabupaten}</span></td>
+                            <td class="small">${log.Kecamatan}, ${log.Kelurahan}</td>
+                            <td class="small text-dark fw-bold">${log.SK_Penempatan}</td>
+                            <td class="small text-muted">${log.No_SK}</td>
+                            <td class="small text-primary">${log.ID_Wilayah}</td>
+                        </tr>
+                    `;
+                });
+            }
+            new bootstrap.Modal(document.getElementById('modalRiwayat')).show();
+        }
+
+        // --- 8. EXPORT FUNCTIONS ---
+        function exportExcel() {
+            if(currentFilteredData.length === 0) return Swal.fire("Info", "Tidak ada data untuk diexport", "info");
+            const dataToExport = currentFilteredData.map(d => ({
+                "ID Dai": d.ID_Dai, "Nama": d.Nama, "Status": d.Status, "ID Wilayah": d.ID_Wilayah,
+                "Provinsi": d.Provinsi, "Kabupaten": d.Kabupaten, "Kecamatan": d.Kecamatan, "Kelurahan": d.Kelurahan,
+                "SK Penempatan": d.SK_Penempatan, "No SK": d.No_SK, "Terakhir Update": d.LastUpdate
+            }));
+            const ws = XLSX.utils.json_to_sheet(dataToExport);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Data_Dai");
+            XLSX.writeFile(wb, "Data_Penempatan_Dai.xlsx");
+        }
+
+        function exportPDF() {
+            if(currentFilteredData.length === 0) return Swal.fire("Info", "Tidak ada data untuk diexport", "info");
+            const { jsPDF } = window.jspdf; const doc = new jsPDF('landscape');
+            doc.setFontSize(14); doc.text("Laporan Data Penempatan Dai", 14, 15);
+            doc.setFontSize(10); doc.text("Dicetak pada: " + new Date().toLocaleString(), 14, 22);
+
+            const tableColumn = ["ID Dai", "Nama", "Status", "Lokasi", "SK Penempatan", "No SK"];
+            const tableRows = currentFilteredData.map(d => [
+                d.ID_Dai, d.Nama, d.Status, `${d.Kabupaten}, ${d.Provinsi}`, d.SK_Penempatan, d.No_SK
+            ]);
+
+            doc.autoTable({
+                head: [tableColumn], body: tableRows, startY: 28,
+                theme: 'grid', styles: { fontSize: 8 }, headStyles: { fillColor: [21, 101, 192] }
+            });
+            doc.save('Laporan_Penempatan_Dai.pdf');
+        }
+    </script>
+</body>
+</html>
