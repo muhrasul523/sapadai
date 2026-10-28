@@ -316,20 +316,28 @@
                         <div class="w-full md:w-1/2 flex flex-col">
                             <h5 class="font-bold text-teal-800 text-xs uppercase mb-2 pb-1 border-b"><i class="fas fa-chart-line text-blue-500 mr-1"></i> Kinerja Laporan</h5>
                             
-                            <!-- Baris: Amanah (Kiri) & Waktu Berkantor (Kanan) -->
-                            <div class="grid grid-cols-2 gap-2 mb-3">
+                            <!-- Baris Amanah -->
+                            <div class="mb-3">
                                 <div class="bg-teal-50 p-2 rounded border border-teal-100 text-center flex flex-col justify-center">
                                     <p class="text-[9px] text-teal-600 uppercase font-bold tracking-wider mb-0.5">Amanah Struktural</p>
                                     <p class="font-bold text-teal-900 text-xs truncate" id="mdl-amanah">-</p>
                                 </div>
+                            </div>
+                            
+                            <!-- BAGIAN BARU: AKTIVITAS BERKANTOR -->
+                            <h5 class="font-bold text-teal-800 text-xs uppercase mb-2 pb-1 border-b"><i class="fas fa-building text-blue-500 mr-1"></i> Aktivitas Berkantor</h5>
+                            <div class="grid grid-cols-2 gap-2 mb-3">
                                 <div class="bg-blue-50 p-2 rounded border border-blue-100 text-center flex flex-col justify-center">
-                                    <p class="text-[9px] text-blue-600 uppercase font-bold tracking-wider mb-0.5"><i class="far fa-clock"></i> Waktu Berkantor</p>
+                                    <p class="text-[9px] text-blue-600 uppercase font-bold tracking-wider mb-0.5"><i class="far fa-clock"></i> Jml Jam Berkantor</p>
                                     <p class="font-bold text-blue-900 text-sm" id="mdl-waktu-berkantor">0 <span class="text-[10px] font-normal">Jam</span></p>
+                                </div>
+                                <div class="flex flex-col justify-center" id="mdl-sharing-inspirasi">
+                                    <!-- Diinjeksi via JS -->
                                 </div>
                             </div>
 
                             <!-- Data Halaqah -->
-                            <div class="mb-3">
+                            <div class="mb-3 mt-1 border-t pt-2">
                                 <table class="w-full text-[10px] border rounded overflow-hidden border-collapse text-center">
                                     <tr class="bg-gray-100 border-b">
                                         <td class="p-1 font-bold text-left border-r">Jenis</td>
@@ -469,28 +477,54 @@
             return yr * 100 + idx; // Contoh: 202607
         }
 
-        // URL Image Parser untuk Google Drive Bypass Preview (Resolusi Tinggi & Fast Load)
+        // URL Image Parser untuk Google Drive Bypass Preview
         function getHighResImgUrl(url) {
             let match = url.match(/id=([^&]+)/);
-            if(match) return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000`; // sz=w1000 memaksa ukuran asli max 1000px tanpa memuat UI preview drive
+            if(match) return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000`; 
             return url;
         }
 
-        window.onload = () => {
+        function loadData() {
             showLoading('Sinkronisasi Database...');
-            fetch(SCRIPT_URL, {
-                method: 'POST', body: JSON.stringify({ action: 'getAllData' })
-            })
-            .then(res => res.json())
-            .then(res => {
-                if(res.success) {
-                    db = res.data;
-                    initLogin();
-                    hideLoading();
-                } else { hideLoading(); Swal.fire('Error', res.message, 'error'); }
-            })
-            .catch(err => { hideLoading(); Swal.fire('Error', 'Kesalahan koneksi internet.', 'error'); });
-        };
+            
+            // DUKUNGAN SIMULATION MODE GEMINI CANVAS
+            if (typeof google === 'undefined' && (window.location.hostname === 'preview.gemini.com' || window.location.hostname === '127.0.0.1' || !SCRIPT_URL)) {
+                console.log("Menjalankan Simulasi dari Gemini Canvas...");
+                db = {
+                    config: { akses_kode: "lajnah1404" },
+                    verifikator: [{ id_verifikator: "V-01", nama_verifikator: "Simulasi Admin", daftar_id_dai: "DAI-001, DAI-002" }],
+                    users: [
+                        { dai_id: "DAI-001", nama_dai: "Ahmad Dai", penempatan: "Makassar", provinsi: "Sulsel" },
+                        { dai_id: "DAI-002", nama_dai: "Budi Dai", penempatan: "Gowa", provinsi: "Sulsel" }
+                    ],
+                    laporan: [
+                        { id_laporan: "LAP-01", bulan_laporan: "Oktober 2026", id_pengguna: "DAI-001", timestamp: "29/10/2026 08:00:00", amanah: "Ketua DPW", waktu_berkantor_jam: "10", sharing_dai_jml: "2", sharing_dai_rincian: "Ahmad - Semangat berdakwah\nSiti - Kendala transport" }
+                    ],
+                    riwayat: [], bulans: ["Oktober 2026"]
+                };
+                initLogin();
+                hideLoading();
+            } else if (typeof google !== 'undefined') {
+                // Berjalan Langsung di Google Apps Script (Production WebApp)
+                google.script.run
+                .withSuccessHandler(res => { db = res; initLogin(); hideLoading(); })
+                .withFailureHandler(err => { hideLoading(); Swal.fire('Error', err.toString(), 'error'); })
+                .getAllData();
+            } else {
+                // EXTERNAL FETCH MODE (KODE ASLI)
+                fetch(SCRIPT_URL, {
+                    method: 'POST', body: JSON.stringify({ action: 'getAllData' })
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if(res.success) { db = res.data; initLogin(); hideLoading(); } 
+                    else { hideLoading(); Swal.fire('Error', res.message, 'error'); }
+                })
+                .catch(err => { hideLoading(); Swal.fire('Error', 'Kesalahan koneksi internet.', 'error'); });
+            }
+        }
+        
+        window.onload = loadData;
 
         function initLogin() {
             let sel = document.getElementById('select-verifikator');
@@ -676,7 +710,7 @@
             document.getElementById('table-body').innerHTML = html;
         }
 
-        // GRAFIK BAR ALL MONTHS, MENYESUAIKAN 5 METRICS SEPERTI CARD
+        // GRAFIK BAR ALL MONTHS
         function updateChart(myUsers) {
             let labels = [...db.bulans].sort((a,b) => getBulanWeight(a) - getBulanWeight(b)); 
             let dataTotal = [], dataBelum = [], dataWait = [], dataAcc = [], dataRej = [];
@@ -792,10 +826,10 @@
         // ==========================================
         function createRincianButton(label, count, rincianText) {
             let c = parseInt(count) || 0;
-            if(c === 0) return `<div class="bg-gray-50 border border-gray-200 text-gray-400 px-3 py-2 rounded text-[11px] font-bold flex items-center justify-between shadow-sm"><span class="flex items-center gap-1.5"><i class="fas fa-minus-circle opacity-50"></i> ${label}</span> <span>${c}</span></div>`;
+            if(c === 0) return `<div class="bg-gray-50 border border-gray-200 text-gray-400 px-3 py-2 rounded text-[11px] font-bold flex items-center justify-between shadow-sm h-full"><span class="flex items-center gap-1.5"><i class="fas fa-minus-circle opacity-50"></i> ${label}</span> <span>${c}</span></div>`;
             
             let safeText = encodeURIComponent(rincianText || '-');
-            return `<button onclick="showRincianAlert('${label}', '${safeText}')" class="bg-teal-50 border border-teal-200 text-teal-700 hover:bg-teal-100 hover:border-teal-300 px-3 py-2 rounded text-[11px] font-bold transition flex items-center justify-between shadow-sm"><span class="flex items-center gap-1.5"><i class="fas fa-list-ul opacity-70"></i> ${label}</span> <span class="bg-teal-600 text-white px-2 rounded-full">${c}</span></button>`;
+            return `<button onclick="showRincianAlert('${label}', '${safeText}')" class="bg-teal-50 border border-teal-200 text-teal-700 hover:bg-teal-100 hover:border-teal-300 px-3 py-2 rounded text-[11px] font-bold transition flex items-center justify-between shadow-sm h-full"><span class="flex items-center gap-1.5"><i class="fas fa-list-ul opacity-70"></i> ${label}</span> <span class="bg-teal-600 text-white px-2 rounded-full">${c}</span></button>`;
         }
 
         function showRincianAlert(label, encodedText) {
@@ -828,8 +862,12 @@
             document.getElementById('v-id-laporan').value = lap.id_laporan;
 
             document.getElementById('mdl-penempatan').innerText = `${usr.penempatan} (${usr.provinsi})`;
+            
+            // Kolom Kinerja & Aktivitas Berkantor
             document.getElementById('mdl-amanah').innerText = lap.amanah || '-';
             document.getElementById('mdl-waktu-berkantor').innerHTML = `${lap.waktu_berkantor_jam||0} <span class="text-[10px] font-normal">Jam</span>`;
+            document.getElementById('mdl-sharing-inspirasi').innerHTML = createRincianButton('Sharing Inspirasi', lap.sharing_dai_jml, lap.sharing_dai_rincian);
+            
             document.getElementById('mdl-pimpinan').innerText = `${lap.nama_pimpinan || '-'} (${lap.jabatan_pimpinan || '-'})`;
             
             let kuHtml = '';
@@ -970,10 +1008,14 @@
                 showConfirmButton: false
             });
             
-            // Lakukan ping ke server di latar belakang (tanpa loader nge-block layar)
-            fetch(SCRIPT_URL, {
-                method: 'POST', body: JSON.stringify({ action: 'saveVerification', data: payload })
-            }).catch(e => console.error("Gagal simpan ke server:", e));
+            // Lakukan ping ke server (support external API fetch ATAU native GAS deployment)
+            if (typeof google === 'undefined' && SCRIPT_URL !== '') {
+                fetch(SCRIPT_URL, {
+                    method: 'POST', body: JSON.stringify({ action: 'saveVerification', data: payload })
+                }).catch(e => console.error("Gagal simpan ke server:", e));
+            } else if (typeof google !== 'undefined') {
+                google.script.run.saveData(payload);
+            }
         }
     </script>
 </body>
