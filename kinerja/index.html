@@ -690,10 +690,12 @@
                 }
             }
         
-            // Menggunakan tag input dengan fitur list (Datalist) bawaan HTML
             let html = `
                 <div class="flex flex-col md:flex-row gap-2 items-start md:items-center sharing-row mb-2 border-b pb-2">
-                    <input type="text" list="list_dai_options" placeholder="-- Ketik & Pilih Nama Dai --" class="w-full md:w-1/3 p-2 border rounded text-sm sh-dai bg-white focus:ring-1 focus:ring-teal-500" value="${initDai}" required autocomplete="off">
+                    <div class="relative w-full md:w-1/3">
+                        <input type="text" placeholder="-- Ketik Nama Dai --" class="w-full p-2 border rounded text-sm sh-dai bg-white focus:ring-1 focus:ring-teal-500" value="${initDai}" oninput="filterDai(this)" onfocus="filterDai(this)" required autocomplete="off">
+                        <div class="dai-dropdown hidden absolute z-50 w-full bg-white border border-gray-200 mt-1 rounded-md shadow-xl max-h-48 overflow-y-auto"></div>
+                    </div>
                     <input type="text" placeholder="Hasil Sharing Singkat" class="w-full md:flex-1 p-2 border rounded text-sm sh-hasil" value="${initHasil}" required>
                     <button type="button" onclick="this.parentElement.remove()" class="text-red-500 bg-red-50 p-2 rounded hover:bg-red-500 hover:text-white transition w-full md:w-auto"><i class="fas fa-trash"></i> Hapus</button>
                 </div>`;
@@ -843,6 +845,42 @@
             return { jml: rows.length, rincian: arr.join("\n") };
         }
 
+        function filterDai(input) {
+    let val = input.value.toLowerCase();
+    let dropdown = input.nextElementSibling;
+    dropdown.innerHTML = '';
+    
+    // Filter data berdasarkan ketikan & pastikan ID tidak kosong
+    let filtered = initDaiList.filter(d => 
+        d.id && d.id.trim() !== '' && 
+        (d.nama.toLowerCase().includes(val) || d.id.toLowerCase().includes(val))
+    );
+    
+    if (filtered.length === 0) {
+        dropdown.innerHTML = '<div class="p-2 text-sm text-gray-500 text-center italic bg-gray-50">Dai tidak ditemukan</div>';
+    } else {
+        filtered.forEach(d => {
+            let div = document.createElement('div');
+            div.className = 'p-2.5 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-800 cursor-pointer border-b border-gray-100 last:border-0 font-medium';
+            div.innerText = `${d.id} - ${d.nama}`;
+            div.onclick = () => {
+                input.value = `${d.id} - ${d.nama}`;
+                dropdown.classList.add('hidden');
+                input.classList.remove('input-error'); 
+            };
+            dropdown.appendChild(div);
+        });
+    }
+    dropdown.classList.remove('hidden');
+}
+
+// Menutup dropdown otomatis jika klik di luar elemen input
+document.addEventListener('click', function(e) {
+    if (!e.target.classList.contains('sh-dai')) {
+        document.querySelectorAll('.dai-dropdown').forEach(dd => dd.classList.add('hidden'));
+    }
+});
+        
         function submitLaporan() {
             let form = document.getElementById('laporan-form');
             if(!form.checkValidity()) {
