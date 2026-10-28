@@ -9,7 +9,6 @@
     <link rel="icon" type="image/png" href="https://muhrasul523.github.io/sapadai/logo_sapadai_1.png">
     <meta property="og:title" content="Laporan Kinerja Dai Utusan">
     <meta property="og:description" content="Aplikasi penginputan laporan kinerja bulanan Dai Utusan Wahdah Islamiyah.">
-    <!-- Meta tag image diperkuat untuk menjamin cache WhatsApp membaca gambar dengan baik -->
     <meta property="og:image" itemprop="image" content="https://muhrasul523.github.io/sapadai/logo_sapadai_2.png">
     <meta property="og:image:secure_url" itemprop="image" content="https://muhrasul523.github.io/sapadai/logo_sapadai_2.png">
     <meta property="og:image:type" content="image/png">
@@ -161,12 +160,13 @@
                 <i class="fas fa-info-circle text-teal-600 mt-1 mr-3 text-lg"></i>
                 <div>
                     <p class="text-sm text-teal-800">Ahlan wa sahlan, <strong id="lbl_nama">Dai</strong>.</p>
-                    <p class="text-xs text-teal-700 mt-1">Mengisi Laporan Bulan: <strong id="lbl_bulan" class="uppercase"></strong></p>
+                    <p class="text-xs text-teal-700 mt-1"><i class="fas fa-map-marker-alt mr-1"></i> Penempatan: <strong id="lbl_penempatan"></strong></p>
+                    <p class="text-xs text-teal-700 mt-1"><i class="far fa-calendar-alt mr-1"></i> Mengisi Laporan Bulan: <strong id="lbl_bulan" class="uppercase"></strong></p>
                 </div>
             </div>
 
             <form id="laporan-form" class="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-gray-100 space-y-8" novalidate>
-                <input type="hidden" id="id_laporan">
+                <!-- Menghilangkan id_laporan karena sudah digenerate dinamis di backend -->
                 <input type="hidden" id="existing_file_urls">
 
                 <!-- UPLOAD FOTO -->
@@ -347,10 +347,10 @@
         let currentUser = null;
         let uploadedFilesBase64 = [];
         let initAmanahList = [];
-        let initDaiList = []; // Daftar Nama Dai yang akan dipanggil
+        let initDaiList = []; 
         let appConfig = {};
         
-        let serverTimeOffsetMs = 0; // Selisih waktu device (HP) dan server waktu Makassar
+        let serverTimeOffsetMs = 0; 
         let countdownInterval;
 
         function callBackend(action, data, onSuccess, onFail) {
@@ -377,13 +377,11 @@
         function showLoading(txt) { document.getElementById('loading-text').innerText = txt; document.getElementById('loading-overlay').style.display = 'flex'; }
         function hideLoading() { document.getElementById('loading-overlay').style.display = 'none'; }
 
-        // STRICT NUMERICS, MAX VALUES, & TEXT ONLY
         document.addEventListener('input', e => {
             if(e.target.classList.contains('numeric-only')) {
                 e.target.value = e.target.value.replace(/[^0-9]/g, '');
             }
             if(e.target.classList.contains('text-only')) {
-                // Memblokir angka pada kolom nama
                 e.target.value = e.target.value.replace(/[0-9]/g, '');
             }
             if(e.target.classList.contains('max-5')) {
@@ -395,14 +393,12 @@
             if(e.target.classList.contains('input-error') && e.target.checkValidity()) e.target.classList.remove('input-error');
         });
 
-        // PARSER WAKTU DARI FORMAT "d/m/yyyy hh:mm:ss" KE TIME MS (WITA GMT+8)
         function parseWaktuMakassar(dateStr) {
             if (!dateStr) return 0;
             try {
                 let parts = dateStr.trim().split(' ');
                 let dateParts = parts[0].split('/');
                 let timeParts = parts[1] || "00:00:00";
-                // Standarisasi ISO YYYY-MM-DDTHH:mm:ss+08:00
                 let isoStr = `${dateParts[2]}-${dateParts[1].padStart(2, '0')}-${dateParts[0].padStart(2, '0')}T${timeParts}+08:00`;
                 return new Date(isoStr).getTime();
             } catch(e) {
@@ -415,8 +411,6 @@
             callBackend('getInitData', {}, res => {
                 hideLoading();
                 if(res && res.success) {
-                    
-                    // Kalibrasi Waktu dengan Server
                     if(res.serverTimeWita) {
                         let serverMs = new Date(res.serverTimeWita).getTime();
                         let clientMs = new Date().getTime();
@@ -424,17 +418,14 @@
                     }
 
                     if(res.config) appConfig = res.config;
-                    if(res.daiList) initDaiList = res.daiList; // Ambil Data Dai
+                    if(res.daiList) initDaiList = res.daiList; 
 
-                    // Cek Jadwal
                     let nowWita = new Date().getTime() + serverTimeOffsetMs;
                     let isOpen = false;
                     let jadwal1Buka = 0;
 
                     if (appConfig.jadwal && appConfig.jadwal.length > 0) {
                         jadwal1Buka = parseWaktuMakassar(appConfig.jadwal[0].buka);
-                        
-                        // Periksa apakah waktu saat ini berada di dalam salah satu jadwal
                         for (let i = 0; i < appConfig.jadwal.length; i++) {
                             let b = parseWaktuMakassar(appConfig.jadwal[i].buka);
                             let t = parseWaktuMakassar(appConfig.jadwal[i].tutup);
@@ -444,26 +435,21 @@
                             }
                         }
                     } else {
-                        // Jika tidak ada jadwal disetel di sheet, anggap terbuka terus
                         isOpen = true; 
                     }
 
                     if (isOpen) {
-                        // TAMPILKAN LOGIN JIKA DALAM JADWAL BUKA
                         document.getElementById('login-page').style.display = 'flex';
                     } else {
-                        // JIKA TIDAK BUKA, CEK APAKAH 1 PEKAN SEBELUM JADWAL 1
                         const satuPekanMs = 7 * 24 * 60 * 60 * 1000;
                         if (jadwal1Buka > 0 && nowWita < jadwal1Buka && (jadwal1Buka - nowWita) <= satuPekanMs) {
                             document.getElementById('countdown-page').style.display = 'flex';
                             mulaiCountdown(jadwal1Buka);
                         } else {
-                            // JIKA LEWAT, ATAU BELUM MASUK 1 PEKAN JADWAL 1
                             document.getElementById('closed-page').style.display = 'flex';
                         }
                     }
 
-                    // Setup Data Dropdown
                     let sel = document.getElementById('select-bulan');
                     sel.innerHTML = '<option value="">-- Pilih Bulan Laporan --</option>';
                     if(res.bulan && res.bulan.length > 0) {
@@ -545,14 +531,13 @@
                 hideLoading();
                 document.getElementById('month-page').style.display = 'none';
                 document.getElementById('dashboard-page').style.display = 'block';
-                // Parameter ditambahkan untuk menerima latest_karya dari backend
                 setupForm(bln, res.found ? res.data : null, res.latest_karya);
             });
         }
 
-        // Fungsi Setup Form diubah sedikit argumennya untuk menangani Karya Unggulan Terbaru
         function setupForm(bulan, histData, latestKarya) {
             document.getElementById('lbl_nama').innerText = currentUser.nama_dai;
+            document.getElementById('lbl_penempatan').innerText = currentUser.penempatan || '-';
             document.getElementById('lbl_bulan').innerText = bulan;
             
             document.getElementById('laporan-form').reset();
@@ -578,7 +563,7 @@
 
             if(histData) {
                 Swal.fire({title: 'Data Ditemukan', text: 'Riwayat form bulan ini dimuat.', icon: 'info', timer: 1500});
-                document.getElementById('id_laporan').value = histData.id_laporan || '';
+                
                 if(histData.upload_persetujuan) {
                     document.getElementById('existing_file_urls').value = histData.upload_persetujuan;
                     document.getElementById('file_exist_notice').classList.remove('hidden');
@@ -600,9 +585,7 @@
                 if(histData.sharing_dai_rincian) rebuildSharing('sharing_dai_container', histData.sharing_dai_rincian);
             }
 
-            // MENGISI OTOMATIS 5 KARYA UNGGULAN DENGAN DATA TERAKHIR
             let sourceKarya = latestKarya || histData || null; 
-            
             if(sourceKarya) {
                 rebuildKarya('karya_quran', sourceKarya.a1_rincian);
                 rebuildKarya('karya_murabbi', sourceKarya.a2_rincian);
@@ -843,10 +826,9 @@
             let d_quran = getListData('karya_quran'); let d_murabbi = getListData('karya_murabbi');
             let d_pengurus = getListData('karya_pengurus'); let d_stiba = getListData('karya_stiba'); let d_dai = getListData('karya_dai');
             let d_sila_in = getListData('silaturahmi_internal', true); let d_sila_ex = getListData('silaturahmi_eksternal', true);
-            let d_sharing = getSharingData('sharing_dai_container'); // Tambahan Data Sharing
+            let d_sharing = getSharingData('sharing_dai_container'); 
 
             let payload = {
-                id_laporan: document.getElementById('id_laporan').value,
                 id_pengguna: currentUser.dai_id,
                 nama_dai: currentUser.nama_dai,
                 bulan_laporan: document.getElementById('lbl_bulan').innerText,
@@ -858,8 +840,8 @@
                 a3_jml: d_pengurus.jml, a3_rincian: d_pengurus.rincian, a4_jml: d_stiba.jml, a4_rincian: d_stiba.rincian, a5_jml: d_dai.jml, a5_rincian: d_dai.rincian,
                 
                 waktu_berkantor_jam: document.getElementById('waktu_berkantor_jam').value,
-                sharing_dai_jml: d_sharing.jml,            // Payload Data Sharing
-                sharing_dai_rincian: d_sharing.rincian,    // Payload Data Sharing
+                sharing_dai_jml: d_sharing.jml,            
+                sharing_dai_rincian: d_sharing.rincian,    
 
                 c1_halaqah: document.getElementById('c1_halaqah').value, c1_peserta: document.getElementById('c1_peserta').value, c1_aktif: document.getElementById('c1_aktif').value,
                 c2_dirosa_halaqah: document.getElementById('c2_dirosa_halaqah').value, c2_dirosa_peserta: document.getElementById('c2_dirosa_peserta').value, c2_dirosa_aktif: document.getElementById('c2_dirosa_aktif').value,
@@ -883,11 +865,9 @@
                     callBackend('saveLaporan', { data: payload }, res => {
                         hideLoading();
                         if(res && res.success) {
-                            // Tampilkan Halaman Sukses
                             document.getElementById('dashboard-page').style.display = 'none';
                             document.getElementById('success-page').style.display = 'flex';
                             
-                            // Eksekusi Logika Timer & Redirect
                             let btnRedirect = document.getElementById('btn-redirect');
                             let textCountdown = document.getElementById('text-countdown');
                             let spanDetik = document.getElementById('span-detik');
