@@ -227,12 +227,20 @@
                     </div>
                 </div>
 
-                <!-- WAKTU BERKANTOR -->
+                <!-- AKTIVITAS BERKANTOR -->
                 <div class="border-b-2 pb-6 border-teal-100">
-                    <h3 class="text-xl font-bold mb-4 text-teal-800"><i class="fas fa-building mr-2"></i>Waktu Berkantor</h3>
-                    <div class="w-full md:w-1/3">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Total Jam *</label>
-                        <input type="text" inputmode="numeric" id="waktu_berkantor_jam" required class="w-full p-2.5 border rounded-lg focus:ring-1 focus:ring-teal-500 border-teal-400 numeric-only">
+                    <h3 class="text-xl font-bold mb-4 text-teal-800"><i class="fas fa-building mr-2"></i>Aktivitas Berkantor</h3>
+                    <div class="space-y-6">
+                        <div class="w-full md:w-1/3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Jumlah Jam Berkantor *</label>
+                            <input type="text" inputmode="numeric" id="waktu_berkantor_jam" required class="w-full p-2.5 border rounded-lg focus:ring-1 focus:ring-teal-500 border-teal-400 numeric-only">
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-lg border">
+                            <h4 class="font-bold text-teal-800 mb-3 border-b pb-1">Sharing Inspirasi Bersama Dai Lainnya</h4>
+                            <div id="sharing_dai_container" class="space-y-2"></div>
+                            <button type="button" onclick="addSharingRow('sharing_dai_container')" class="text-xs font-bold text-teal-600 mt-2"><i class="fas fa-plus"></i> Tambah Sharing</button>
+                        </div>
                     </div>
                 </div>
 
@@ -339,6 +347,7 @@
         let currentUser = null;
         let uploadedFilesBase64 = [];
         let initAmanahList = [];
+        let initDaiList = []; // Daftar Nama Dai yang akan dipanggil
         let appConfig = {};
         
         let serverTimeOffsetMs = 0; // Selisih waktu device (HP) dan server waktu Makassar
@@ -415,6 +424,7 @@
                     }
 
                     if(res.config) appConfig = res.config;
+                    if(res.daiList) initDaiList = res.daiList; // Ambil Data Dai
 
                     // Cek Jadwal
                     let nowWita = new Date().getTime() + serverTimeOffsetMs;
@@ -560,7 +570,10 @@
 
             ['karya_quran', 'karya_murabbi', 'karya_pengurus', 'karya_stiba', 'karya_dai', 
              'halaqah_tarbiyah_container', 'halaqah_quran_container', 
-             'silaturahmi_internal', 'silaturahmi_eksternal'].forEach(id => document.getElementById(id).innerHTML = '');
+             'silaturahmi_internal', 'silaturahmi_eksternal', 'sharing_dai_container'].forEach(id => {
+                let el = document.getElementById(id);
+                if (el) el.innerHTML = '';
+             });
             calcHalaqahTarb(); calcHalaqahQuran();
 
             if(histData) {
@@ -583,10 +596,11 @@
 
                 rebuildSilaturahmi('silaturahmi_internal', histData.silaturahmi_internal_rincian);
                 rebuildSilaturahmi('silaturahmi_eksternal', histData.silaturahmi_eksternal_rincian);
+                
+                if(histData.sharing_dai_rincian) rebuildSharing('sharing_dai_container', histData.sharing_dai_rincian);
             }
 
             // MENGISI OTOMATIS 5 KARYA UNGGULAN DENGAN DATA TERAKHIR
-            // Fallback: Jika latestKarya ada, gunakan. Jika belum pernah mengisi sebelumnya sama sekali, cek histData (walau jarang).
             let sourceKarya = latestKarya || histData || null; 
             
             if(sourceKarya) {
@@ -610,6 +624,21 @@
                 if(line.trim()){ let p = line.split(' - '); addSilaRow(containerId, p[0]||'', p.slice(1).join(' - ')||''); }
             });
         }
+        function rebuildSharing(containerId, text) {
+            if(!text || text === '-') return;
+            text.split('\n').forEach(line => {
+                if(line.trim()){ 
+                    let p = line.split(' - '); 
+                    if(p.length >= 3) {
+                        let idNama = p[0] + ' - ' + p[1];
+                        let hasil = p.slice(2).join(' - ');
+                        addSharingRow(containerId, idNama, hasil);
+                    } else if (p.length === 2) {
+                        addSharingRow(containerId, p[0], p[1]);
+                    }
+                }
+            });
+        }
 
         function addKaryaRow(containerId, initNama='', initWa='') {
             let container = document.getElementById(containerId);
@@ -622,7 +651,6 @@
             }
             let html = `
                 <div class="flex gap-2 items-center karya-row mb-1">
-                    <!-- Ditambahkan class text-only untuk blokir angka -->
                     <input type="text" placeholder="Nama Lengkap" class="w-1/2 p-2 border rounded text-sm uppercase k-nama text-only" value="${initNama}" required>
                     <input type="text" inputmode="numeric" placeholder="No WA (08...)" class="w-1/2 p-2 border rounded text-sm wa-validate numeric-only k-wa" value="${initWa}" required>
                     <button type="button" onclick="this.parentElement.remove()" class="text-red-500 px-2 hover:text-red-700"><i class="fas fa-times"></i></button>
@@ -643,6 +671,34 @@
                 <div class="flex flex-col md:flex-row gap-2 items-start md:items-center sila-row mb-2 border-b pb-2">
                     <input type="text" placeholder="Nama Tokoh/Instansi" class="w-full md:w-1/3 p-2 border rounded text-sm uppercase s-nama text-only" value="${initNama}" required>
                     <input type="text" placeholder="Hasil Singkat" class="w-full md:flex-1 p-2 border rounded text-sm s-hasil" value="${initHasil}" required>
+                    <button type="button" onclick="this.parentElement.remove()" class="text-red-500 bg-red-50 p-2 rounded hover:bg-red-500 hover:text-white transition w-full md:w-auto"><i class="fas fa-trash"></i> Hapus</button>
+                </div>`;
+            container.insertAdjacentHTML('beforeend', html);
+        }
+
+        function addSharingRow(containerId, initDai='', initHasil='') {
+            let container = document.getElementById(containerId);
+            let rows = container.querySelectorAll('.sharing-row');
+            if (rows.length > 0 && !initDai) {
+                let last = rows[rows.length - 1];
+                if (!last.querySelector('.sh-dai').value.trim() || !last.querySelector('.sh-hasil').value.trim()) {
+                    Swal.fire('Perhatian', 'Isi Dai dan Hasil pada baris sebelumnya terlebih dahulu.', 'warning'); return;
+                }
+            }
+            
+            let optionsHtml = '<option value="">-- Pilih Dai --</option>';
+            initDaiList.forEach(d => {
+                let val = d.id + ' - ' + d.nama;
+                let selected = (val === initDai) ? 'selected' : '';
+                optionsHtml += `<option value="${val}" ${selected}>${d.nama}</option>`;
+            });
+
+            let html = `
+                <div class="flex flex-col md:flex-row gap-2 items-start md:items-center sharing-row mb-2 border-b pb-2">
+                    <select class="w-full md:w-1/3 p-2 border rounded text-sm sh-dai" required>
+                        ${optionsHtml}
+                    </select>
+                    <input type="text" placeholder="Hasil Sharing Singkat" class="w-full md:flex-1 p-2 border rounded text-sm sh-hasil" value="${initHasil}" required>
                     <button type="button" onclick="this.parentElement.remove()" class="text-red-500 bg-red-50 p-2 rounded hover:bg-red-500 hover:text-white transition w-full md:w-auto"><i class="fas fa-trash"></i> Hapus</button>
                 </div>`;
             container.insertAdjacentHTML('beforeend', html);
@@ -763,6 +819,16 @@
             return { jml: rows.length, rincian: arr.join("\n") };
         }
 
+        function getSharingData(containerId) {
+            let rows = document.getElementById(containerId).querySelectorAll('.sharing-row');
+            if(rows.length === 0) return { jml: 0, rincian: "-" };
+            let arr = [];
+            rows.forEach(r => {
+                arr.push(r.querySelector('.sh-dai').value.trim() + " - " + r.querySelector('.sh-hasil').value.trim());
+            });
+            return { jml: rows.length, rincian: arr.join("\n") };
+        }
+
         function submitLaporan() {
             let form = document.getElementById('laporan-form');
             if(!form.checkValidity()) {
@@ -777,6 +843,7 @@
             let d_quran = getListData('karya_quran'); let d_murabbi = getListData('karya_murabbi');
             let d_pengurus = getListData('karya_pengurus'); let d_stiba = getListData('karya_stiba'); let d_dai = getListData('karya_dai');
             let d_sila_in = getListData('silaturahmi_internal', true); let d_sila_ex = getListData('silaturahmi_eksternal', true);
+            let d_sharing = getSharingData('sharing_dai_container'); // Tambahan Data Sharing
 
             let payload = {
                 id_laporan: document.getElementById('id_laporan').value,
@@ -789,8 +856,11 @@
                 
                 a1_jml: d_quran.jml, a1_rincian: d_quran.rincian, a2_jml: d_murabbi.jml, a2_rincian: d_murabbi.rincian,
                 a3_jml: d_pengurus.jml, a3_rincian: d_pengurus.rincian, a4_jml: d_stiba.jml, a4_rincian: d_stiba.rincian, a5_jml: d_dai.jml, a5_rincian: d_dai.rincian,
-                waktu_berkantor_jam: document.getElementById('waktu_berkantor_jam').value,
                 
+                waktu_berkantor_jam: document.getElementById('waktu_berkantor_jam').value,
+                sharing_dai_jml: d_sharing.jml,            // Payload Data Sharing
+                sharing_dai_rincian: d_sharing.rincian,    // Payload Data Sharing
+
                 c1_halaqah: document.getElementById('c1_halaqah').value, c1_peserta: document.getElementById('c1_peserta').value, c1_aktif: document.getElementById('c1_aktif').value,
                 c2_dirosa_halaqah: document.getElementById('c2_dirosa_halaqah').value, c2_dirosa_peserta: document.getElementById('c2_dirosa_peserta').value, c2_dirosa_aktif: document.getElementById('c2_dirosa_aktif').value,
                 c2_tahsin_halaqah: document.getElementById('c2_tahsin_halaqah').value, c2_tahsin_peserta: document.getElementById('c2_tahsin_peserta').value, c2_tahsin_aktif: document.getElementById('c2_tahsin_aktif').value,
