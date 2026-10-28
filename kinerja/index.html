@@ -683,17 +683,26 @@
             let container = document.getElementById(containerId);
             let rows = container.querySelectorAll('.sharing-row');
             
+            // Pengecekan baris sebelumnya menggunakan data-val (nilai yang mengandung ID)
             if (rows.length > 0 && !initDai) {
                 let last = rows[rows.length - 1];
-                if (!last.querySelector('.sh-dai').value.trim() || !last.querySelector('.sh-hasil').value.trim()) {
+                if (!last.querySelector('.sh-dai').dataset.val || !last.querySelector('.sh-hasil').value.trim()) {
                     Swal.fire('Perhatian', 'Isi Dai dan Hasil pada baris sebelumnya terlebih dahulu.', 'warning'); return;
                 }
+            }
+        
+            // Jika load data riwayat (initDai berisi "ID - Nama"), ambil Namanya saja untuk ditampilkan
+            let displayName = '';
+            if (initDai) {
+                let parts = initDai.split(' - ');
+                displayName = parts.length > 1 ? parts.slice(1).join(' - ') : initDai;
             }
         
             let html = `
                 <div class="flex flex-col md:flex-row gap-2 items-start md:items-center sharing-row mb-2 border-b pb-2">
                     <div class="relative w-full md:w-1/3">
-                        <input type="text" placeholder="-- Ketik Nama Dai --" class="w-full p-2 border rounded text-sm sh-dai bg-white focus:ring-1 focus:ring-teal-500" value="${initDai}" oninput="filterDai(this)" onfocus="filterDai(this)" required autocomplete="off">
+                        <!-- Atribut data-val digunakan untuk menyimpan ID - NAMA secara tersembunyi -->
+                        <input type="text" placeholder="-- Ketik Nama Dai --" class="w-full p-2 border rounded text-sm sh-dai bg-white focus:ring-1 focus:ring-teal-500" value="${displayName}" data-val="${initDai}" oninput="filterDai(this)" onfocus="filterDai(this)" required autocomplete="off">
                         <div class="dai-dropdown hidden absolute z-50 w-full bg-white border border-gray-200 mt-1 rounded-md shadow-xl max-h-48 overflow-y-auto"></div>
                     </div>
                     <input type="text" placeholder="Hasil Sharing Singkat" class="w-full md:flex-1 p-2 border rounded text-sm sh-hasil" value="${initHasil}" required>
@@ -825,61 +834,68 @@
             
             rows.forEach(r => {
                 let elDai = r.querySelector('.sh-dai');
-                let valDai = elDai.value.trim();
+                // Ambil data utuh dari atribut tersembunyi
+                let valDai = elDai.dataset.val || ""; 
                 
-                // Validasi: Pastikan mengandung ' - ' (berarti ID terbawa saat diplih)
+                // Pastikan nilainya ada dan valid (mengandung ' - ')
                 if (!valDai.includes(' - ')) {
                     elDai.classList.add('input-error');
                     isValid = false;
                 } else {
                     elDai.classList.remove('input-error');
                 }
+                
                 arr.push(valDai + " - " + r.querySelector('.sh-hasil').value.trim());
             });
             
-            // Jika ada yang diketik sembarangan, tolak pengiriman
             if (!isValid) {
-                throw new Error("Input Dai tidak valid. Silakan ketik sebagian nama, lalu KLIK/PILIH dari daftar yang muncul (agar ID-nya tercatat).");
+                throw new Error("Terdapat pilihan Dai yang belum sempurna. Silakan ketik nama Dai, lalu WAJIB KLIK namanya pada daftar yang muncul agar ID tersimpan.");
             }
             
             return { jml: rows.length, rincian: arr.join("\n") };
         }
 
         function filterDai(input) {
-    let val = input.value.toLowerCase();
-    let dropdown = input.nextElementSibling;
-    dropdown.innerHTML = '';
-    
-    // Filter data berdasarkan ketikan & pastikan ID tidak kosong
-    let filtered = initDaiList.filter(d => 
-        d.id && d.id.trim() !== '' && 
-        (d.nama.toLowerCase().includes(val) || d.id.toLowerCase().includes(val))
-    );
-    
-    if (filtered.length === 0) {
-        dropdown.innerHTML = '<div class="p-2 text-sm text-gray-500 text-center italic bg-gray-50">Dai tidak ditemukan</div>';
-    } else {
-        filtered.forEach(d => {
-            let div = document.createElement('div');
-            div.className = 'p-2.5 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-800 cursor-pointer border-b border-gray-100 last:border-0 font-medium';
-            div.innerText = `${d.id} - ${d.nama}`;
-            div.onclick = () => {
-                input.value = `${d.id} - ${d.nama}`;
-                dropdown.classList.add('hidden');
-                input.classList.remove('input-error'); 
-            };
-            dropdown.appendChild(div);
+            let val = input.value.toLowerCase();
+            let dropdown = input.nextElementSibling;
+            dropdown.innerHTML = '';
+            
+            // Hapus data tersembunyi jika user mengubah teks (memaksa user untuk memilih ulang dari list)
+            input.dataset.val = "";
+        
+            // Pencarian hanya menampilkan yang punya ID
+            let filtered = initDaiList.filter(d => 
+                d.id && d.id.trim() !== '' && 
+                d.nama.toLowerCase().includes(val)
+            );
+            
+            if (filtered.length === 0) {
+                dropdown.innerHTML = '<div class="p-2 text-sm text-gray-500 text-center italic bg-gray-50">Dai tidak ditemukan</div>';
+            } else {
+                filtered.forEach(d => {
+                    let div = document.createElement('div');
+                    div.className = 'p-2.5 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-800 cursor-pointer border-b border-gray-100 last:border-0 font-medium';
+                    // Hanya tampilkan Nama saja di dropdown
+                    div.innerText = d.nama; 
+                    
+                    div.onclick = () => {
+                        input.value = d.nama; // Tampilan input hanya Nama
+                        input.dataset.val = `${d.id} - ${d.nama}`; // Data utuh (termasuk ID) disimpan sembunyi
+                        dropdown.classList.add('hidden');
+                        input.classList.remove('input-error'); 
+                    };
+                    dropdown.appendChild(div);
+                });
+            }
+            dropdown.classList.remove('hidden');
+        }
+        
+        // Skrip penutup dropdown jika area luar diklik tetap sama
+        document.addEventListener('click', function(e) {
+            if (!e.target.classList.contains('sh-dai')) {
+                document.querySelectorAll('.dai-dropdown').forEach(dd => dd.classList.add('hidden'));
+            }
         });
-    }
-    dropdown.classList.remove('hidden');
-}
-
-// Menutup dropdown otomatis jika klik di luar elemen input
-document.addEventListener('click', function(e) {
-    if (!e.target.classList.contains('sh-dai')) {
-        document.querySelectorAll('.dai-dropdown').forEach(dd => dd.classList.add('hidden'));
-    }
-});
         
         function submitLaporan() {
             let form = document.getElementById('laporan-form');
