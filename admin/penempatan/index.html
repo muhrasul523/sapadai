@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -5,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SAPADAI - Manajemen Penempatan Dai Utusan</title>
     
-    <!-- Premium Meta Tags -->
     <meta name="description" content="Sistem Manajemen Penempatan Dai Utusan">
     <link rel="icon" href="../../logo_sapadai_1.png">
     <meta property="og:title" content="SAPADAI Dashboard">
@@ -17,6 +17,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Choices.js (Auto Search Dropdown) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
     
     <style>
         /* === PREMIUM UI/UX CSS === */
@@ -31,6 +33,7 @@
             --text-main: #2d3748;
             --text-muted: #718096;
             --border-color: rgba(226, 232, 240, 0.8);
+            --gold: #d4af37;
         }
 
         body {
@@ -46,106 +49,85 @@
         /* Top Progress Bar */
         #topProgress {
             position: fixed; top: 0; left: 0; height: 4px;
-            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            background: linear-gradient(90deg, var(--gold), var(--secondary));
             width: 0%; z-index: 99999;
-            transition: width 0.4s ease-out, opacity 0.4s ease-in;
-            box-shadow: 0 2px 4px rgba(32, 178, 170, 0.4);
+            transition: width 0.3s ease-out, opacity 0.3s ease-in;
+            box-shadow: 0 2px 4px rgba(212, 175, 55, 0.4);
         }
 
-        /* Loading Overlay with Glassmorphism */
+        /* Loading Overlay */
         #loadingOverlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            z-index: 9999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(8px);
+            z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center;
             opacity: 1; transition: opacity 0.5s ease;
         }
         #loadingOverlay.fade-out { opacity: 0; pointer-events: none; }
         
         .spinner-custom {
-            width: 3.5rem; height: 3.5rem;
-            border: 0.25rem solid var(--primary-light);
-            border-top: 0.25rem solid var(--primary);
-            border-radius: 50%;
+            width: 3.5rem; height: 3.5rem; border: 0.25rem solid var(--primary-light);
+            border-top: 0.25rem solid var(--primary); border-radius: 50%;
             animation: spin 1s linear infinite;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Premium Cards */
-        .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            padding: 1.5rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .glass-card:hover { box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08); transform: translateY(-2px); }
-
-        /* Login Wrapper */
+        /* Login Wrapper & Gold Anim */
         .login-wrapper {
             height: 100vh; display: flex; align-items: center; justify-content: center;
             background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
             position: relative; overflow: hidden;
         }
-        /* Geometric Background Elements for Login */
-        .login-wrapper::before {
-            content: ''; position: absolute; width: 400px; height: 400px;
-            background: rgba(255,255,255,0.05); border-radius: 50%;
-            top: -100px; left: -100px;
-        }
-        .login-wrapper::after {
-            content: ''; position: absolute; width: 300px; height: 300px;
-            background: rgba(32, 178, 170, 0.1); border-radius: 50%;
-            bottom: -50px; right: -50px;
-        }
         .login-card { 
             max-width: 420px; width: 90%; text-align: center; padding: 2.5rem; 
-            background: rgba(255, 255, 255, 0.95); z-index: 2;
+            background: rgba(255, 255, 255, 0.95); z-index: 2; border-radius: 16px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
         }
-
-        /* App Logo Styling */
         .app-logo { width: 90px; height: 90px; object-fit: contain; margin-bottom: 1rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
-        .nav-logo { width: 35px; height: 35px; object-fit: contain; margin-right: 10px; }
+        
+        .gold-animated-text {
+            color: var(--gold); font-weight: 800; letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+            position: relative; display: inline-block; padding: 10px 25px; margin-bottom: 5px;
+        }
+        .gold-animated-text::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            border: 2px solid var(--gold); border-radius: 12px;
+            animation: borderGlow 1.5s infinite alternate;
+        }
+        @keyframes borderGlow {
+            from { box-shadow: 0 0 5px rgba(212,175,55,0.4), inset 0 0 5px rgba(212,175,55,0.4); }
+            to { box-shadow: 0 0 15px rgba(212,175,55,0.8), inset 0 0 15px rgba(212,175,55,0.8); }
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: var(--card-bg); backdrop-filter: blur(10px);
+            border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); padding: 1.5rem;
+        }
 
         /* Metrics */
-        .metric-icon {
-            width: 56px; height: 56px; border-radius: 14px;
-            display: flex; align-items: center; justify-content: center; font-size: 1.8rem;
-        }
+        .metric-icon { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; }
         .metric-blue { background: var(--primary-light); color: var(--primary); }
         .metric-green { background: var(--secondary-light); color: var(--secondary); }
         .metric-red { background: #ffebee; color: #d32f2f; }
 
-        /* Table Premium Styling */
+        /* Tables */
         .table-wrapper { max-height: 600px; overflow-y: auto; border-radius: 12px; }
-        .table { margin-bottom: 0; border-collapse: separate; border-spacing: 0; }
         .table thead th {
-            position: sticky; top: 0; background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(5px); z-index: 2;
-            color: var(--primary); font-weight: 700; font-size: 0.85rem;
-            text-transform: uppercase; letter-spacing: 0.5px;
-            border-bottom: 2px solid var(--primary-light);
-            cursor: pointer; transition: color 0.2s;
+            position: sticky; top: 0; background: rgba(255, 255, 255, 0.98); z-index: 2;
+            color: var(--primary); font-weight: 700; font-size: 0.85rem; text-transform: uppercase;
+            border-bottom: 2px solid var(--primary-light); cursor: pointer; transition: color 0.2s;
         }
-        .table thead th:hover { color: var(--secondary); }
-        .table tbody tr { transition: background-color 0.2s; font-size: 0.9rem; }
-        
-        /* Soft Zebra Striping */
-        .table tbody tr:nth-child(even) { background-color: rgba(230, 240, 250, 0.3); }
-        .table tbody tr:hover { background-color: rgba(32, 178, 170, 0.05); }
+        .table tbody tr:nth-child(even) { background-color: rgba(240, 248, 255, 0.4); } /* Soft contrast */
+        .table tbody tr:hover { background-color: rgba(32, 178, 170, 0.08); }
         .table td { border-bottom: 1px solid var(--border-color); vertical-align: middle; padding: 1rem 0.75rem; }
 
-        /* Badges */
-        .badge-status { padding: 0.5em 1em; border-radius: 8px; font-weight: 600; letter-spacing: 0.3px; display: inline-block;}
+        /* Reduced Badge Status Size */
+        .badge-status { padding: 0.35em 0.7em; border-radius: 6px; font-weight: 600; font-size: 0.75rem; letter-spacing: 0.3px; display: inline-block; }
         .bg-aktif { background-color: var(--secondary-light); color: var(--secondary); border: 1px solid rgba(32,178,170,0.3); }
         .bg-nonaktif { background-color: #ffebee; color: #d32f2f; border: 1px solid rgba(211,47,47,0.3); }
         
-        /* SK Badge */
         .sk-badge {
             cursor: pointer; transition: all 0.2s; font-weight: 600;
             background: linear-gradient(45deg, var(--primary), var(--secondary));
@@ -154,32 +136,24 @@
         }
         .sk-badge:hover { transform: scale(1.1); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
 
-        /* Form Controls */
-        .form-control, .form-select { border-radius: 8px; border: 1px solid #cbd5e1; padding: 0.6rem 1rem; }
-        .form-control:focus, .form-select:focus { border-color: var(--secondary); box-shadow: 0 0 0 0.25rem rgba(32, 178, 170, 0.25); }
-        
-        /* Custom Radio Buttons */
+        /* Custom Radio Buttons aligned */
+        .custom-radio-group { background: #fff; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color); }
         .custom-radio-group .form-check-input:checked[value="Aktif"] { background-color: var(--secondary); border-color: var(--secondary); }
         .custom-radio-group .form-check-input:checked[value="Tidak Aktif"] { background-color: #d32f2f; border-color: #d32f2f; }
-        .custom-radio-group .form-check-label { cursor: pointer; }
+
+        /* Choices JS Overrides for modern look */
+        .choices__inner { border-radius: 8px; border: 1px solid #cbd5e1; background-color: #fff; min-height: 42px; padding: 4.5px 7.5px; }
+        .choices.is-focused .choices__inner { border-color: var(--secondary); box-shadow: 0 0 0 0.25rem rgba(32, 178, 170, 0.25); }
 
         /* Modal */
-        .modal-content { border-radius: 16px; border: none; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
-        .modal-header { border-bottom: 1px solid var(--border-color); background: rgba(244, 247, 246, 0.9); backdrop-filter: blur(5px); }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .modal-content { border-radius: 16px; border: none; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .modal-header { border-bottom: 1px solid var(--border-color); background: rgba(244, 247, 246, 0.9); }
     </style>
 </head>
 <body>
 
-    <!-- TOP PROGRESS BAR -->
     <div id="topProgress"></div>
 
-    <!-- LOADING OVERLAY -->
     <div id="loadingOverlay">
         <div class="spinner-custom mb-3"></div>
         <h5 class="fw-bold text-primary tracking-wide" id="loadingText">Mempersiapkan Ruang Kerja...</h5>
@@ -188,10 +162,12 @@
 
     <!-- VIEW: LOGIN -->
     <div id="viewLogin" class="login-wrapper d-none">
-        <div class="glass-card login-card">
+        <div class="login-card">
             <img src="../../logo_sapadai_1.png" alt="SAPADAI Logo" class="app-logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgZmlsbD0iIzBmMNGM4MSIvPjwvc3ZnPg=='">
-            <h3 class="fw-bold text-primary mb-1">SAPADAI</h3>
-            <p class="text-muted small mb-4">Manajemen Penempatan Dai Utusan</p>
+            <div>
+                <h3 class="gold-animated-text">SAPADAI</h3>
+            </div>
+            <p class="text-muted small mb-4 mt-2">Manajemen Penempatan Dai Utusan</p>
             <form id="formLogin" onsubmit="handleLogin(event)">
                 <div class="mb-4">
                     <input type="text" class="form-control form-control-lg text-center fw-bold" id="kodeAkses" placeholder="Masukkan Kode Akses" required autocomplete="off" style="letter-spacing: 2px;">
@@ -203,11 +179,10 @@
 
     <!-- VIEW: DASHBOARD -->
     <div id="viewDashboard" class="d-none">
-        <!-- Navbar -->
         <nav class="navbar navbar-expand-lg px-4 py-3 bg-white sticky-top shadow-sm">
             <div class="container-fluid">
                 <a class="navbar-brand fw-bold text-primary d-flex align-items-center" href="#">
-                    <img src="../../logo_sapadai_1.png" alt="Logo" class="nav-logo" onerror="this.style.display='none'">
+                    <img src="../../logo_sapadai_1.png" alt="Logo" style="width:35px; margin-right:10px;" onerror="this.style.display='none'">
                     SAPADAI
                 </a>
                 <button class="btn btn-light text-danger fw-bold rounded-pill px-4" onclick="handleLogout()">
@@ -222,62 +197,59 @@
                 <div class="col-md-4">
                     <div class="glass-card d-flex align-items-center">
                         <div class="metric-icon metric-blue me-3"><i class="bi bi-people-fill"></i></div>
-                        <div>
-                            <p class="text-muted mb-0 small fw-bold text-uppercase">Total Dai</p>
-                            <h2 class="fw-bold mb-0 text-primary" id="metrikTotal">0</h2>
-                        </div>
+                        <div><p class="text-muted mb-0 small fw-bold text-uppercase">Total Dai</p><h2 class="fw-bold mb-0 text-primary" id="metrikTotal">0</h2></div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="glass-card d-flex align-items-center">
                         <div class="metric-icon metric-green me-3"><i class="bi bi-person-check-fill"></i></div>
-                        <div>
-                            <p class="text-muted mb-0 small fw-bold text-uppercase">Dai Aktif</p>
-                            <h2 class="fw-bold mb-0 text-secondary" id="metrikAktif">0</h2>
-                        </div>
+                        <div><p class="text-muted mb-0 small fw-bold text-uppercase">Dai Aktif</p><h2 class="fw-bold mb-0 text-secondary" id="metrikAktif">0</h2></div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="glass-card d-flex align-items-center">
                         <div class="metric-icon metric-red me-3"><i class="bi bi-person-dash-fill"></i></div>
-                        <div>
-                            <p class="text-muted mb-0 small fw-bold text-uppercase">Tidak Aktif</p>
-                            <h2 class="fw-bold mb-0 text-danger" id="metrikNonaktif">0</h2>
-                        </div>
+                        <div><p class="text-muted mb-0 small fw-bold text-uppercase">Tidak Aktif</p><h2 class="fw-bold mb-0 text-danger" id="metrikNonaktif">0</h2></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Main Data Card -->
+            <!-- Toolbar & Filters -->
             <div class="glass-card">
-                <!-- Toolbar -->
-                <div class="row g-3 mb-4 align-items-center">
-                    <div class="col-md-4">
+                <div class="row g-3 mb-4 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label small text-muted fw-bold mb-1">Cari Data</label>
                         <div class="input-group">
-                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
-                            <input type="text" class="form-control border-start-0 ps-0" id="searchData" placeholder="Cari Nama, ID, atau Lokasi..." oninput="applyFilters()">
+                            <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+                            <input type="text" class="form-control border-start-0 ps-0" id="searchData" placeholder="Nama, ID, SK..." oninput="applyFilters()">
                         </div>
                     </div>
                     <div class="col-md-2">
+                        <label class="form-label small text-muted fw-bold mb-1">Status</label>
                         <select class="form-select" id="filterStatus" onchange="applyFilters()">
-                            <option value="">Status: Semua</option>
+                            <option value="">Semua Status</option>
                             <option value="Aktif">Aktif</option>
                             <option value="Tidak Aktif">Tidak Aktif</option>
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
+                        <label class="form-label small text-muted fw-bold mb-1">Filter Pulau</label>
+                        <select class="form-select" id="filterPulau" onchange="updateFilterProvinsi(); applyFilters();">
+                            <option value="">Semua Pulau</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small text-muted fw-bold mb-1">Filter Provinsi</label>
                         <select class="form-select" id="filterProvinsi" onchange="applyFilters()">
-                            <option value="">Provinsi: Semua</option>
-                            <!-- Populated dynamically -->
+                            <option value="">Semua Provinsi</option>
                         </select>
                     </div>
                     <div class="col-md-3 text-end">
-                        <button class="btn btn-outline-success rounded-pill px-3 me-2" onclick="exportExcel()">
-                            <i class="bi bi-file-earmark-excel me-1"></i> Excel
+                        <button class="btn btn-primary rounded-pill px-3 me-2 fw-bold" onclick="openRekapModal()" style="background:var(--primary); border:none;">
+                            <i class="bi bi-bar-chart-fill me-1"></i> Rekap Data
                         </button>
-                        <button class="btn btn-outline-danger rounded-pill px-3" onclick="exportPDF()">
-                            <i class="bi bi-file-earmark-pdf me-1"></i> PDF
-                        </button>
+                        <button class="btn btn-outline-success rounded-circle" title="Export Excel" onclick="exportExcel()"><i class="bi bi-file-earmark-excel"></i></button>
+                        <button class="btn btn-outline-danger rounded-circle ms-1" title="Export PDF" onclick="exportPDF()"><i class="bi bi-file-earmark-pdf"></i></button>
                     </div>
                 </div>
 
@@ -287,18 +259,14 @@
                         <thead>
                             <tr>
                                 <th class="text-center" width="60">No</th>
-                                <th onclick="handleSort('ID_Dai')" width="100">ID Dai <i class="bi bi-arrow-down-up ms-1 opacity-50"></i></th>
-                                <th onclick="handleSort('Nama')">Nama <i class="bi bi-arrow-down-up ms-1 opacity-50"></i></th>
-                                <th onclick="handleSort('Status')" class="text-center">Status <i class="bi bi-arrow-down-up ms-1 opacity-50"></i></th>
-                                <th onclick="handleSort('ID_Wilayah')">Kode & Prov/Kab <i class="bi bi-arrow-down-up ms-1 opacity-50"></i></th>
-                                <th>Kec/Kel</th>
+                                <th onclick="handleSort('Nama')" width="280">Nama & Status <i class="bi bi-arrow-down-up ms-1 opacity-50"></i></th>
+                                <th onclick="handleSort('Pulau')">Pulau & Provinsi <i class="bi bi-arrow-down-up ms-1 opacity-50"></i></th>
+                                <th onclick="handleSort('Kabupaten')">Kabupaten <i class="bi bi-arrow-down-up ms-1 opacity-50"></i></th>
                                 <th>SK Penempatan</th>
                                 <th class="text-center" width="80">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody id="tableBody">
-                            <!-- Data populated here -->
-                        </tbody>
+                        <tbody id="tableBody"></tbody>
                     </table>
                 </div>
             </div>
@@ -310,9 +278,7 @@
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-bold text-primary">
-                        <i class="bi bi-pencil-square me-2"></i> Update Penempatan Dai
-                    </h5>
+                    <h5 class="modal-title fw-bold text-primary"><i class="bi bi-pencil-square me-2"></i> Update Penempatan Dai</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
@@ -320,27 +286,22 @@
                         <input type="hidden" id="mutasiIdDai">
                         <input type="hidden" id="mutasiIdWilayah"> 
                         
-                        <!-- NEW LAYOUT: NAMA, ID & STATUS -->
-                        <div class="row bg-light p-3 rounded mb-4 mx-0 align-items-center shadow-sm" style="border: 1px solid rgba(0,0,0,0.05);">
-                            <div class="col-md-7 mb-3 mb-md-0 border-end">
-                                <label class="form-label text-muted small fw-bold mb-1">Nama & ID Dai</label>
-                                <div class="fw-bold text-primary fs-5 mb-1" id="mutasiNamaDisplay">Ahmad Baihaqi</div>
-                                <div class="text-muted small font-monospace bg-white d-inline-block px-2 py-1 rounded border" id="mutasiIdDisplay">DAI-001</div>
+                        <div class="row mb-4 align-items-center">
+                            <div class="col-md-6 border-end">
+                                <label class="form-label text-muted small fw-bold mb-1">Identitas Dai</label>
+                                <div class="fw-bold text-primary fs-5" id="mutasiNamaDisplay">Nama Dai</div>
+                                <div class="text-muted small font-monospace" id="mutasiIdDisplay">ID-000</div>
                             </div>
-                            <div class="col-md-5 ps-md-4">
-                                <label class="form-label text-muted small fw-bold mb-2">Status Keaktifan</label>
+                            <div class="col-md-6 ps-md-4">
+                                <label class="form-label text-muted small fw-bold mb-1">Status Keaktifan</label>
                                 <div class="d-flex gap-3 custom-radio-group">
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="mutasiStatus" id="statusAktif" value="Aktif" required>
-                                        <label class="form-check-label fw-bold text-secondary" for="statusAktif">
-                                            Aktif
-                                        </label>
+                                        <label class="form-check-label fw-bold text-secondary" for="statusAktif">Aktif</label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="mutasiStatus" id="statusTidakAktif" value="Tidak Aktif" required>
-                                        <label class="form-check-label fw-bold text-danger" for="statusTidakAktif">
-                                            Tidak Aktif
-                                        </label>
+                                        <label class="form-check-label fw-bold text-danger" for="statusTidakAktif">Tidak Aktif</label>
                                     </div>
                                 </div>
                             </div>
@@ -349,41 +310,29 @@
                         <h6 class="fw-bold mb-3 text-secondary border-bottom pb-2">Lokasi & Dokumen Baru</h6>
                         
                         <div class="row g-3 mb-3">
-                            <div class="col-md-5">
+                            <div class="col-md-4">
                                 <label class="form-label text-muted small fw-bold">Tanggal SK/Mutasi</label>
                                 <input type="date" class="form-control" id="inputTanggalMutasi" required>
                             </div>
-                            <div class="col-md-7">
+                            <div class="col-md-8">
                                 <label class="form-label text-muted small fw-bold">SK Penempatan (Instansi/Teks)</label>
                                 <input type="text" class="form-control" id="inputSKPenempatan" placeholder="Cth: DPD Wahdah Islamiyah..." required autocomplete="off">
                             </div>
                         </div>
 
-                        <!-- Cascade Dropdowns (From External Sheet) -->
+                        <!-- Auto Search Dropdowns (Choices.js) -->
                         <div class="row g-3 mb-2">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <label class="form-label text-muted small fw-bold">Pulau</label>
+                                <select class="form-select" id="inputPulau" required onchange="populateFormProvinsi()"><option value="">Pilih Pulau...</option></select>
+                            </div>
+                            <div class="col-md-4">
                                 <label class="form-label text-muted small fw-bold">Provinsi</label>
-                                <select class="form-select" id="inputProvinsi" required onchange="fetchKabupaten()">
-                                    <option value="" disabled selected>Memuat Provinsi...</option>
-                                </select>
+                                <select class="form-select" id="inputProvinsi" required onchange="populateFormKabupaten()"><option value="">Pilih Provinsi...</option></select>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label class="form-label text-muted small fw-bold">Kabupaten/Kota</label>
-                                <select class="form-select" id="inputKabupaten" required onchange="fetchKecamatan()" disabled>
-                                    <option value="" disabled selected>Pilih Provinsi Dahulu...</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label text-muted small fw-bold">Kecamatan</label>
-                                <select class="form-select" id="inputKecamatan" required onchange="fetchKelurahan()" disabled>
-                                    <option value="" disabled selected>Pilih Kabupaten Dahulu...</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label text-muted small fw-bold">Kelurahan/Desa</label>
-                                <select class="form-select" id="inputKelurahan" required onchange="setKodeWilayah()" disabled>
-                                    <option value="" disabled selected>Pilih Kecamatan Dahulu...</option>
-                                </select>
+                                <select class="form-select" id="inputKabupaten" required onchange="setKodeWilayah()"><option value="">Pilih Kabupaten...</option></select>
                             </div>
                         </div>
                         <div class="text-end text-muted small fst-italic mb-4 mt-2">
@@ -400,31 +349,52 @@
         </div>
     </div>
 
-    <!-- MODAL RIWAYAT -->
-    <div class="modal fade" id="modalRiwayat" tabindex="-1">
-        <div class="modal-dialog modal-xl modal-dialog-centered">
+    <!-- MODAL REKAP -->
+    <div class="modal fade" id="modalRekap" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-bold text-primary">
-                        <i class="bi bi-clock-history me-2"></i>Riwayat Mutasi: <span id="riwayatNama" class="text-secondary"></span>
-                    </h5>
+                    <h5 class="modal-title fw-bold text-primary"><i class="bi bi-bar-chart-fill me-2"></i> Rekapitulasi Data Dai</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <ul class="nav nav-tabs bg-light pt-2 px-3" id="rekapTabs" role="tablist">
+                        <li class="nav-item" role="presentation"><button class="nav-link active fw-bold" data-bs-toggle="tab" data-bs-target="#tabPulau" type="button">Pulau</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#tabProv" type="button">Provinsi</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#tabKab" type="button">Kabupaten</button></li>
+                    </ul>
+                    <div class="tab-content p-3" id="rekapTabsContent">
+                        <div class="tab-pane fade show active" id="tabPulau">
+                            <table class="table table-bordered text-center"><thead class="table-light"><tr><th>Pulau</th><th>Aktif</th><th>Tidak Aktif</th><th>Total</th></tr></thead><tbody id="bodyRekapPulau"></tbody></table>
+                        </div>
+                        <div class="tab-pane fade" id="tabProv">
+                            <table class="table table-bordered text-center"><thead class="table-light"><tr><th>Provinsi</th><th>Aktif</th><th>Tidak Aktif</th><th>Total</th></tr></thead><tbody id="bodyRekapProv"></tbody></table>
+                        </div>
+                        <div class="tab-pane fade" id="tabKab">
+                            <div class="mb-3">
+                                <select class="form-select w-50" id="rekapFilterProv" onchange="generateRekapKabupaten()"><option value="">-- Pilih Provinsi Dahulu --</option></select>
+                            </div>
+                            <table class="table table-bordered text-center"><thead class="table-light"><tr><th>Kabupaten</th><th>Aktif</th><th>Tidak Aktif</th><th>Total</th></tr></thead><tbody id="bodyRekapKab"></tbody></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL RIWAYAT -->
+    <div class="modal fade" id="modalRiwayat" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold text-primary"><i class="bi bi-clock-history me-2"></i>Riwayat SK: <span id="riwayatNama" class="text-secondary"></span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-0">
                     <div class="table-responsive m-0">
-                        <table class="table table-hover mb-0">
-                            <thead class="bg-light">
-                                <tr>
-                                    <th class="px-4">Tanggal SK</th>
-                                    <th>SK Penempatan</th>
-                                    <th>Provinsi & Kab</th>
-                                    <th>Kec & Kel</th>
-                                    <th>Kode Wilayah</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tableRiwayatBody">
-                                <!-- Populated dynamically -->
-                            </tbody>
+                        <table class="table table-hover mb-0 text-sm">
+                            <thead class="bg-light"><tr><th class="px-4">Tanggal SK</th><th>SK Penempatan</th><th>Pulau, Prov & Kab</th></tr></thead>
+                            <tbody id="tableRiwayatBody"></tbody>
                         </table>
                     </div>
                 </div>
@@ -432,24 +402,25 @@
         </div>
     </div>
 
-    <!-- EXTERNAL LIBRARIES -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Export Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
-    <!-- MAIN APP LOGIC -->
     <script>
         // === CONFIGURATION ===
-        // The Live WebApp URL for Backend Integration
         const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzfH_gckgItEaqehF5higjawYmU0aUq1LuEPsLJBTYV_MJwgDMYp8LyAfDv4MieUnc9vg/exec"; 
 
         // === GLOBAL STATE ===
         let db = { akses: [], dai: [], riwayat: [] };
+        let wilayahMaster = []; // Compressed Wilayah Data (~500 items)
         let currentFilteredData = [];
         let sortConfig = { key: 'Nama', asc: true };
+        
+        // Choices Instances
+        let choiceFilterPulau, choiceFilterProv, choiceFormPulau, choiceFormProv, choiceFormKab;
 
         // === UI HELPERS ===
         const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true });
@@ -458,129 +429,142 @@
         function simulateProgress(duration = 2000) {
             const pb = document.getElementById('topProgress');
             pb.style.opacity = '1'; pb.style.width = '0%';
-            let width = 0;
-            clearInterval(progressInterval);
+            let width = 0; clearInterval(progressInterval);
             progressInterval = setInterval(() => {
-                width += Math.random() * 10;
-                if (width > 90) width = 90;
-                pb.style.width = width + '%';
+                width += Math.random() * 15;
+                if (width > 90) width = 90; pb.style.width = width + '%';
             }, duration / 10);
         }
-
         function endProgress() {
             clearInterval(progressInterval);
             const pb = document.getElementById('topProgress');
             pb.style.width = '100%';
-            setTimeout(() => { pb.style.opacity = '0'; setTimeout(() => { pb.style.width = '0%'; }, 400); }, 500);
+            setTimeout(() => { pb.style.opacity = '0'; setTimeout(() => pb.style.width = '0%', 300); }, 400);
         }
-
         function toggleOverlay(show, text = "Memuat...") {
             const overlay = document.getElementById('loadingOverlay');
-            if (show) {
-                document.getElementById('loadingText').innerText = text;
-                overlay.classList.remove('fade-out');
-                simulateProgress();
-            } else {
-                overlay.classList.add('fade-out');
-                endProgress();
-            }
+            if (show) { document.getElementById('loadingText').innerText = text; overlay.classList.remove('fade-out'); simulateProgress(); } 
+            else { overlay.classList.add('fade-out'); endProgress(); }
         }
 
         // === INITIALIZATION ===
         document.addEventListener("DOMContentLoaded", () => {
+            initChoicesWidgets();
             const isLogged = sessionStorage.getItem('sapadai_auth');
-            if (isLogged) loadData();
+            if (isLogged) loadMainData();
             else { toggleOverlay(false); document.getElementById('viewLogin').classList.remove('d-none'); }
         });
 
-        // === API CALL WRAPPER (Handles GAS native & Fetch) ===
+        function initChoicesWidgets() {
+            const opts = { searchEnabled: true, itemSelectText: '', shouldSort: false };
+            choiceFilterPulau = new Choices('#filterPulau', opts);
+            choiceFilterProv = new Choices('#filterProvinsi', opts);
+            choiceFormPulau = new Choices('#inputPulau', opts);
+            choiceFormProv = new Choices('#inputProvinsi', opts);
+            choiceFormKab = new Choices('#inputKabupaten', opts);
+        }
+
         async function callBackend(action, payload = null) {
             return new Promise(async (resolve, reject) => {
-                if (typeof google !== 'undefined' && google.script) {
-                    // Running native inside Google Apps Script
-                    if(action === 'getAllData') {
-                        google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).getAllData();
-                    } else if (action === 'getWilayah') {
-                        google.script.run.withSuccessHandler(res => resolve({data:res})).withFailureHandler(reject).getWilayahOptions(payload.type, payload.prov, payload.kab, payload.kec);
-                    } else if (action === 'saveMutasi') {
-                        google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).saveMutasi(payload);
+                try {
+                    const url = (action === 'getAllData' || action === 'getWilayah') ? `${WEBAPP_URL}?api=true&action=${action}` : WEBAPP_URL;
+                    const reqOptions = { method: (action === 'getAllData' || action === 'getWilayah') ? 'GET' : 'POST' };
+                    if(reqOptions.method === 'POST') {
+                        reqOptions.body = JSON.stringify({ action: action, data: payload });
+                        reqOptions.headers = { "Content-Type": "text/plain;charset=utf-8" }; // Prevents CORS preflight
                     }
-                } else if (WEBAPP_URL) {
-                    // Running externally (e.g. Github Pages) using fetch
-                    try {
-                        const url = action === 'getAllData' ? `${WEBAPP_URL}?api=true` : WEBAPP_URL;
-                        const reqOptions = { method: action === 'getAllData' ? 'GET' : 'POST' };
-                        
-                        // Using text/plain prevents CORS preflight issues on POST requests to GAS WebApps
-                        if(action !== 'getAllData') {
-                            reqOptions.body = JSON.stringify({ action: action, data: payload, ...payload });
-                            reqOptions.headers = { "Content-Type": "text/plain;charset=utf-8" };
-                        }
-                        
-                        const req = await fetch(url, reqOptions);
-                        const res = await req.json();
-                        if (res.status === 'success' || res.data) resolve(res); else reject(res.message || "Error");
-                    } catch (e) { reject(e); }
-                } else {
-                    reject("No Connection setup.");
-                }
+                    const req = await fetch(url, reqOptions);
+                    const res = await req.json();
+                    if (res.status === 'success' || res.data) resolve(res); else reject(res.message);
+                } catch (e) { reject(e); }
             });
         }
 
-        // === AUTH & LOAD DATA ===
-        function handleLogin(e) {
+        async function handleLogin(e) {
             e.preventDefault();
-            const btn = document.getElementById('btnLogin');
             const code = document.getElementById('kodeAkses').value.trim();
-            btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memverifikasi...';
-
-            setTimeout(() => {
-                if (code === "ADMIN123") {
+            document.getElementById('btnLogin').innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memverifikasi...';
+            toggleOverlay(true, "Memverifikasi Akses...");
+            
+            try {
+                // Fetch Main Data to check Access Sheet
+                const res = await callBackend('getAllData');
+                const aksesList = res.data.akses || [];
+                const isValid = aksesList.find(a => a.KodeAkses === code && a.Status === 'Aktif');
+                
+                if (isValid) {
                     sessionStorage.setItem('sapadai_auth', 'true');
+                    db = res.data;
                     Toast.fire({ icon: 'success', title: 'Akses Diterima' });
-                    loadData();
+                    renderDashboard();
                 } else {
-                    Swal.fire({icon: 'error', title: 'Akses Ditolak', text: 'Kode akses tidak valid.', confirmButtonColor: '#0f4c81'});
-                    btn.disabled = false; btn.innerText = 'Masuk Aplikasi';
+                    throw new Error("Kode akses tidak valid atau tidak aktif.");
                 }
-            }, 800);
+            } catch (err) {
+                Swal.fire({icon: 'error', title: 'Akses Ditolak', text: err.message || err, confirmButtonColor: '#0f4c81'});
+                document.getElementById('btnLogin').innerText = 'Masuk Aplikasi';
+                toggleOverlay(false);
+            }
         }
 
         function handleLogout() { sessionStorage.removeItem('sapadai_auth'); location.reload(); }
 
-        async function loadData() {
+        async function loadMainData() {
             toggleOverlay(true, "Mengambil Data Server...");
             document.getElementById('viewLogin').classList.add('d-none');
             document.getElementById('viewDashboard').classList.remove('d-none');
             try {
                 const res = await callBackend('getAllData');
-                db = res.data || res;
-                populateFilterProvinsi();
-                applyFilters();
+                db = res.data;
+                renderDashboard();
                 Toast.fire({ icon: 'success', title: 'Data berhasil dimuat' });
-            } catch (e) { Swal.fire("Error", "Gagal memuat data. Pastikan koneksi atau WebApp URL valid.", "error"); }
+            } catch (e) { Swal.fire("Error", "Gagal memuat data. Periksa koneksi.", "error"); }
             toggleOverlay(false);
         }
 
-        // === RENDER & LOGIC ===
-        function populateFilterProvinsi() {
-            const select = document.getElementById('filterProvinsi');
-            const provs = [...new Set(db.dai.map(d => d.Provinsi))].filter(Boolean).sort();
-            select.innerHTML = '<option value="">Provinsi: Semua</option>';
-            provs.forEach(p => select.innerHTML += `<option value="${p}">${p}</option>`);
+        async function renderDashboard() {
+            applyFilters(); // Renders Table & Metrics based on current state
+            
+            // Background fetch Wilayah Master for Instant Dropdowns (No Lag for user)
+            if(wilayahMaster.length === 0) {
+                try {
+                    const res = await callBackend('getWilayah');
+                    wilayahMaster = res.data;
+                    populateFilterPulau();
+                } catch(e) { console.error("Gagal load wilayah:", e); }
+            }
+        }
+
+        // === FILTERS & CASCADES ===
+        function populateFilterPulau() {
+            const pulaus = [...new Set(wilayahMaster.map(w => w.pulau))].sort();
+            choiceFilterPulau.clearChoices();
+            choiceFilterPulau.setChoices([{value: '', label: 'Semua Pulau'}].concat(pulaus.map(p => ({value: p, label: p}))));
+        }
+
+        function updateFilterProvinsi() {
+            const selPulau = document.getElementById('filterPulau').value;
+            let provs = [];
+            if(selPulau) provs = [...new Set(wilayahMaster.filter(w => w.pulau === selPulau).map(w => w.prov))].sort();
+            else provs = [...new Set(wilayahMaster.map(w => w.prov))].sort();
+            
+            choiceFilterProv.clearChoices();
+            choiceFilterProv.setChoices([{value: '', label: 'Semua Provinsi'}].concat(provs.map(p => ({value: p, label: p}))));
         }
 
         function applyFilters() {
             const search = document.getElementById('searchData').value.toLowerCase();
             const status = document.getElementById('filterStatus').value;
+            const pulau = document.getElementById('filterPulau').value;
             const prov = document.getElementById('filterProvinsi').value;
 
             currentFilteredData = db.dai.filter(row => {
                 const matchSearch = row.Nama.toLowerCase().includes(search) || row.ID_Dai.toLowerCase().includes(search) || 
                                     row.Kabupaten.toLowerCase().includes(search) || row.SK_Penempatan.toLowerCase().includes(search);
                 const matchStatus = status === "" || row.Status === status;
+                const matchPulau = pulau === "" || row.Pulau === pulau;
                 const matchProv = prov === "" || row.Provinsi === prov;
-                return matchSearch && matchStatus && matchProv;
+                return matchSearch && matchStatus && matchPulau && matchProv;
             });
 
             currentFilteredData.sort((a, b) => {
@@ -592,45 +576,35 @@
             renderTable(); updateMetrics();
         }
 
-        function handleSort(key) {
-            sortConfig.asc = sortConfig.key === key ? !sortConfig.asc : true;
-            sortConfig.key = key;
-            applyFilters();
-        }
+        function handleSort(key) { sortConfig.asc = sortConfig.key === key ? !sortConfig.asc : true; sortConfig.key = key; applyFilters(); }
 
         function renderTable() {
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
+            const tbody = document.getElementById('tableBody'); tbody.innerHTML = '';
             if (currentFilteredData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="text-center py-5 text-muted"><i class="bi bi-inbox mb-3 d-block" style="font-size: 3rem; opacity:0.5;"></i>Belum ada data yang ditemukan.</td></tr>`;
-                return;
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-5 text-muted"><i class="bi bi-inbox mb-3 d-block" style="font-size: 3rem; opacity:0.5;"></i>Belum ada data.</td></tr>`; return;
             }
-
             currentFilteredData.forEach((row, index) => {
                 const isAktif = row.Status === 'Aktif';
                 const badgeStatus = `<span class="badge-status ${isAktif ? 'bg-aktif' : 'bg-nonaktif'}"><i class="bi ${isAktif ? 'bi-check-circle-fill' : 'bi-x-circle-fill'} me-1"></i>${row.Status}</span>`;
                 
-                // SK with Badge Logic (Only show if > 1)
                 let skHtml = `<span class="fw-bold text-dark">${row.SK_Penempatan}</span>`;
-                if (row.Jumlah_Riwayat > 1) {
-                    skHtml += ` <button class="badge rounded-pill sk-badge ms-2" title="Lihat Riwayat" onclick="openRiwayat('${row.ID_Dai}', '${row.Nama}')">${row.Jumlah_Riwayat} <i class="bi bi-clock-history ms-1"></i></button>`;
-                }
+                if (row.Jumlah_Riwayat > 1) skHtml += ` <button class="badge rounded-pill sk-badge ms-2" title="Lihat Riwayat" onclick="openRiwayat('${row.ID_Dai}', '${row.Nama}')">${row.Jumlah_Riwayat} <i class="bi bi-clock-history ms-1"></i></button>`;
 
                 tbody.innerHTML += `
                     <tr>
                         <td class="text-center text-muted fw-bold">${index + 1}</td>
-                        <td class="text-primary fw-bold font-monospace small">${row.ID_Dai}</td>
-                        <td class="fw-bold text-dark fs-6">${row.Nama}</td>
-                        <td class="text-center">${badgeStatus}</td>
                         <td>
-                            <div class="small text-muted font-monospace">${row.ID_Wilayah}</div>
-                            <div class="fw-bold text-primary">${row.Kabupaten}</div>
-                            <div class="small text-muted">${row.Provinsi}</div>
+                            <div class="fw-bold text-dark fs-6 mb-1">${row.Nama}</div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="text-primary fw-bold font-monospace small">${row.ID_Dai}</span>
+                                ${badgeStatus}
+                            </div>
                         </td>
-                        <td><span class="d-block text-dark fw-semibold">${row.Kecamatan}</span><span class="small text-muted">${row.Kelurahan}</span></td>
+                        <td><div class="fw-bold text-primary">${row.Provinsi}</div><div class="small text-muted">${row.Pulau}</div></td>
+                        <td class="fw-semibold text-dark">${row.Kabupaten}</td>
                         <td>${skHtml}</td>
                         <td class="text-center">
-                            <button class="btn btn-sm btn-light border rounded-circle shadow-sm" title="Edit Mutasi & Update SK" onclick='openModalMutasi(${JSON.stringify(row).replace(/'/g, "&#39;")})'>
+                            <button class="btn btn-sm btn-light border rounded-circle shadow-sm" title="Edit Data" onclick='openModalMutasi(${JSON.stringify(row).replace(/'/g, "&#39;")})'>
                                 <i class="bi bi-pencil-fill text-primary"></i>
                             </button>
                         </td>
@@ -639,194 +613,162 @@
         }
 
         function updateMetrics() {
-            const total = db.dai.length;
-            const aktif = db.dai.filter(d => d.Status === 'Aktif').length;
+            const total = db.dai.length; const aktif = db.dai.filter(d => d.Status === 'Aktif').length;
             document.getElementById('metrikTotal').innerText = total;
             document.getElementById('metrikAktif').innerText = aktif;
             document.getElementById('metrikNonaktif').innerText = total - aktif;
         }
 
-        // === DYNAMIC CASCADE WILAYAH FETCHING ===
-        function setSelectLoading(id, text) {
-            const el = document.getElementById(id);
-            el.innerHTML = `<option value="" disabled selected>${text}...</option>`; el.disabled = true;
+        // === MUTASI FORM LOGIC (INSTANT CASCADING) ===
+        function openModalMutasi(row) {
+            document.getElementById('mutasiIdDai').value = row.ID_Dai;
+            document.getElementById('mutasiNamaDisplay').innerText = row.Nama;
+            document.getElementById('mutasiIdDisplay').innerText = row.ID_Dai;
+            document.getElementById('statusAktif').checked = row.Status === 'Aktif';
+            document.getElementById('statusTidakAktif').checked = row.Status !== 'Aktif';
+            document.getElementById('inputSKPenempatan').value = "";
+            document.getElementById('inputTanggalMutasi').value = new Date().toISOString().split('T')[0];
+            document.getElementById('mutasiIdWilayah').value = "";
+            document.getElementById('displayIdWilayah').innerText = "-";
+
+            // Init Form Selects with Data
+            const pulaus = [...new Set(wilayahMaster.map(w => w.pulau))].sort();
+            choiceFormPulau.clearChoices(); choiceFormProv.clearChoices(); choiceFormKab.clearChoices();
+            choiceFormPulau.setChoices([{value: '', label: 'Pilih Pulau...'}].concat(pulaus.map(p => ({value: p, label: p}))));
+            choiceFormProv.setChoices([{value: '', label: 'Pilih Provinsi...'}]);
+            choiceFormKab.setChoices([{value: '', label: 'Pilih Kabupaten...'}]);
+            
+            new bootstrap.Modal(document.getElementById('modalMutasi')).show();
         }
 
-        async function fetchProvinces() {
-            setSelectLoading('inputProvinsi', 'Memuat Provinsi');
-            try {
-                const res = await callBackend('getWilayah', {type: 'provinsi'});
-                const el = document.getElementById('inputProvinsi');
-                el.innerHTML = '<option value="" disabled selected>Pilih Provinsi...</option>';
-                res.data.forEach(p => el.innerHTML += `<option value="${p}">${p}</option>`);
-                el.disabled = false;
-            } catch (e) { Toast.fire({icon:'error', title:'Gagal memuat wilayah'}); }
+        function populateFormProvinsi() {
+            const selPulau = document.getElementById('inputPulau').value;
+            const provs = [...new Set(wilayahMaster.filter(w => w.pulau === selPulau).map(w => w.prov))].sort();
+            choiceFormProv.clearChoices(); choiceFormKab.clearChoices();
+            choiceFormProv.setChoices([{value: '', label: 'Pilih Provinsi...'}].concat(provs.map(p => ({value: p, label: p}))));
+            choiceFormKab.setChoices([{value: '', label: 'Pilih Kabupaten...'}]);
+            setKodeWilayah();
         }
 
-        async function fetchKabupaten() {
-            const prov = document.getElementById('inputProvinsi').value;
-            setSelectLoading('inputKabupaten', 'Memuat Kab/Kota');
-            document.getElementById('inputKecamatan').disabled = true; document.getElementById('inputKelurahan').disabled = true;
-            try {
-                const res = await callBackend('getWilayah', {type: 'kabupaten', prov: prov});
-                const el = document.getElementById('inputKabupaten');
-                el.innerHTML = '<option value="" disabled selected>Pilih Kabupaten...</option>';
-                res.data.forEach(k => el.innerHTML += `<option value="${k}">${k}</option>`);
-                el.disabled = false;
-            } catch(e){}
-        }
-
-        async function fetchKecamatan() {
-            const prov = document.getElementById('inputProvinsi').value; const kab = document.getElementById('inputKabupaten').value;
-            setSelectLoading('inputKecamatan', 'Memuat Kecamatan'); document.getElementById('inputKelurahan').disabled = true;
-            try {
-                const res = await callBackend('getWilayah', {type: 'kecamatan', prov: prov, kab: kab});
-                const el = document.getElementById('inputKecamatan');
-                el.innerHTML = '<option value="" disabled selected>Pilih Kecamatan...</option>';
-                res.data.forEach(k => el.innerHTML += `<option value="${k}">${k}</option>`);
-                el.disabled = false;
-            } catch(e){}
-        }
-
-        async function fetchKelurahan() {
-            const prov = document.getElementById('inputProvinsi').value; const kab = document.getElementById('inputKabupaten').value; const kec = document.getElementById('inputKecamatan').value;
-            setSelectLoading('inputKelurahan', 'Memuat Kelurahan');
-            try {
-                const res = await callBackend('getWilayah', {type: 'kelurahan', prov: prov, kab: kab, kec: kec});
-                const el = document.getElementById('inputKelurahan');
-                el.innerHTML = '<option value="" disabled selected>Pilih Kelurahan...</option>';
-                res.data.forEach(k => el.innerHTML += `<option value="${k.id}">${k.nama}</option>`); // Value is ID here!
-                el.disabled = false;
-            } catch(e){}
+        function populateFormKabupaten() {
+            const selProv = document.getElementById('inputProvinsi').value;
+            const kabs = wilayahMaster.filter(w => w.prov === selProv).sort((a,b)=>a.kab.localeCompare(b.kab));
+            choiceFormKab.clearChoices();
+            choiceFormKab.setChoices([{value: '', label: 'Pilih Kabupaten...'}].concat(kabs.map(k => ({value: k.kab, label: k.kab, customProperties: {id: k.id} }))));
+            setKodeWilayah();
         }
 
         function setKodeWilayah() {
-            const el = document.getElementById('inputKelurahan');
-            const id = el.value;
+            // Choices JS stores extra data in choice element if provided. For simpler approach, manual lookup:
+            const kab = document.getElementById('inputKabupaten').value;
+            const found = wilayahMaster.find(w => w.kab === kab);
+            const id = found ? found.id : "";
             document.getElementById('mutasiIdWilayah').value = id;
             document.getElementById('displayIdWilayah').innerText = id || "-";
-        }
-
-        // === MODALS & CRUD ===
-        function openModalMutasi(dataRow) {
-            // Setup Text displays
-            document.getElementById('mutasiIdDai').value = dataRow.ID_Dai;
-            document.getElementById('mutasiNamaDisplay').innerText = dataRow.Nama;
-            document.getElementById('mutasiIdDisplay').innerText = dataRow.ID_Dai;
-            
-            // Setup Radio Status
-            if(dataRow.Status === 'Aktif') document.getElementById('statusAktif').checked = true;
-            else document.getElementById('statusTidakAktif').checked = true;
-
-            document.getElementById('inputSKPenempatan').value = "";
-            document.getElementById('inputTanggalMutasi').value = new Date().toISOString().split('T')[0]; // Default today
-            
-            document.getElementById('mutasiIdWilayah').value = "";
-            document.getElementById('displayIdWilayah').innerText = "-";
-            setSelectLoading('inputKabupaten', 'Pilih Provinsi Dahulu');
-            setSelectLoading('inputKecamatan', 'Pilih Kabupaten Dahulu');
-            setSelectLoading('inputKelurahan', 'Pilih Kecamatan Dahulu');
-            
-            fetchProvinces(); // Load fresh provinces from DB via API
-            new bootstrap.Modal(document.getElementById('modalMutasi')).show();
         }
 
         async function submitMutasi(e) {
             e.preventDefault();
             const idWilayah = document.getElementById('mutasiIdWilayah').value;
-            if(!idWilayah) return Swal.fire("Peringatan", "Pilih Kelurahan yang valid sampai ke tingkat akhir.", "warning");
+            if(!idWilayah) return Swal.fire("Peringatan", "Pilih Kabupaten/Kota yang valid.", "warning");
 
             const btn = document.getElementById('btnSimpanMutasi');
             btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Menyimpan...';
             simulateProgress();
 
-            const kelSelect = document.getElementById('inputKelurahan');
-            const namaKel = kelSelect.options[kelSelect.selectedIndex].text;
-            const statusChecked = document.getElementById('statusAktif').checked ? 'Aktif' : 'Tidak Aktif';
-
             const payload = {
                 idDai: document.getElementById('mutasiIdDai').value,
                 nama: document.getElementById('mutasiNamaDisplay').innerText,
-                status: statusChecked,
+                status: document.getElementById('statusAktif').checked ? 'Aktif' : 'Tidak Aktif',
                 idWilayah: idWilayah,
+                pulau: document.getElementById('inputPulau').value,
                 provinsi: document.getElementById('inputProvinsi').value,
                 kabupaten: document.getElementById('inputKabupaten').value,
-                kecamatan: document.getElementById('inputKecamatan').value,
-                kelurahan: namaKel,
                 skPenempatan: document.getElementById('inputSKPenempatan').value,
                 tanggalMutasi: document.getElementById('inputTanggalMutasi').value
             };
 
             try {
                 await callBackend('saveMutasi', payload);
-                // Reload Data
-                const res = await callBackend('getAllData');
-                db = res.data || res;
-                applyFilters();
+                const res = await callBackend('getAllData'); // Refresh Local state
+                db = res.data; applyFilters();
                 bootstrap.Modal.getInstance(document.getElementById('modalMutasi')).hide();
-                Toast.fire({ icon: 'success', title: 'Mutasi Berhasil Disimpan & Dicatat!' });
-            } catch (err) { Swal.fire("Error", "Gagal menyimpan data: " + err.toString(), "error"); }
+                Toast.fire({ icon: 'success', title: 'Mutasi Berhasil Disimpan!' });
+            } catch (err) { Swal.fire("Error", "Gagal menyimpan: " + err, "error"); }
             
-            btn.disabled = false; btn.innerText = 'Simpan Perubahan';
-            endProgress();
+            btn.disabled = false; btn.innerText = 'Simpan Perubahan'; endProgress();
         }
 
         function openRiwayat(idDai, nama) {
             document.getElementById('riwayatNama').innerText = nama;
-            const tbody = document.getElementById('tableRiwayatBody');
-            tbody.innerHTML = '';
-            
+            const tbody = document.getElementById('tableRiwayatBody'); tbody.innerHTML = '';
             const logs = db.riwayat.filter(r => r.ID_Dai === idDai).sort((a,b) => (a.TanggalMutasi < b.TanggalMutasi ? 1 : -1));
             
-            if (logs.length === 0) tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4">Belum ada riwayat mutasi.</td></tr>';
+            if (logs.length === 0) tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted py-4">Belum ada riwayat.</td></tr>';
             else {
                 logs.forEach(log => {
-                    tbody.innerHTML += `
-                        <tr>
-                            <td class="fw-bold px-4 text-primary">${log.TanggalMutasi}</td>
-                            <td class="fw-bold text-dark">${log.SK_Penempatan}</td>
-                            <td class="small">${log.Provinsi}<br><span class="fw-bold text-primary">${log.Kabupaten}</span></td>
-                            <td class="small text-dark">${log.Kecamatan}, ${log.Kelurahan}</td>
-                            <td class="small font-monospace text-muted">${log.ID_Wilayah}</td>
-                        </tr>`;
+                    tbody.innerHTML += `<tr>
+                        <td class="fw-bold px-4 text-primary">${log.TanggalMutasi}</td>
+                        <td class="fw-bold text-dark">${log.SK_Penempatan}</td>
+                        <td class="small">${log.Pulau} > ${log.Provinsi} > <span class="fw-bold text-primary">${log.Kabupaten}</span><br><span class="font-monospace text-muted" style="font-size:0.7rem">${log.ID_Wilayah}</span></td>
+                    </tr>`;
                 });
             }
             new bootstrap.Modal(document.getElementById('modalRiwayat')).show();
         }
 
-        // === EXPORT ===
-        function exportExcel() {
-            if(currentFilteredData.length === 0) return Toast.fire({icon: 'info', title: 'Tidak ada data diexport'});
-            simulateProgress(1000);
-            const dataToExport = currentFilteredData.map((d, i) => ({
-                "No": i+1, "ID Dai": d.ID_Dai, "Nama": d.Nama, "Status": d.Status, "Kode Wilayah": d.ID_Wilayah,
-                "Provinsi": d.Provinsi, "Kabupaten": d.Kabupaten, "Kecamatan": d.Kecamatan, "Kelurahan": d.Kelurahan,
-                "SK Penempatan": d.SK_Penempatan, "Total Log Riwayat": d.Jumlah_Riwayat
-            }));
-            const ws = XLSX.utils.json_to_sheet(dataToExport);
-            const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Data_Penempatan");
-            XLSX.writeFile(wb, "SAPADAI_Data_Penempatan.xlsx");
-            endProgress();
+        // === REKAP DATA LOGIC ===
+        function openRekapModal() {
+            generateRekap('Pulau', 'bodyRekapPulau');
+            generateRekap('Provinsi', 'bodyRekapProv');
+            // Populate Dropdown Prov for Tab Kab
+            const provs = [...new Set(db.dai.map(d => d.Provinsi))].filter(Boolean).sort();
+            const sel = document.getElementById('rekapFilterProv');
+            sel.innerHTML = '<option value="">-- Pilih Provinsi Dahulu --</option>';
+            provs.forEach(p => sel.innerHTML += `<option value="${p}">${p}</option>`);
+            document.getElementById('bodyRekapKab').innerHTML = '<tr><td colspan="4" class="text-muted py-3">Pilih provinsi untuk melihat rekap kabupaten.</td></tr>';
+            new bootstrap.Modal(document.getElementById('modalRekap')).show();
         }
 
+        function generateRekap(groupKey, targetId, filterKey = null, filterValue = null) {
+            const dataToProcess = filterKey ? db.dai.filter(d => d[filterKey] === filterValue) : db.dai;
+            const map = {};
+            dataToProcess.forEach(d => {
+                const key = d[groupKey] || "Belum Ditentukan";
+                if(!map[key]) map[key] = { aktif: 0, tidakAktif: 0, total: 0 };
+                map[key].total++;
+                if(d.Status === 'Aktif') map[key].aktif++; else map[key].tidakAktif++;
+            });
+            const tbody = document.getElementById(targetId); tbody.innerHTML = '';
+            Object.keys(map).sort().forEach(k => {
+                tbody.innerHTML += `<tr><td class="fw-bold text-start ps-3">${k}</td><td>${map[k].aktif}</td><td>${map[k].tidakAktif}</td><td class="fw-bold text-primary">${map[k].total}</td></tr>`;
+            });
+        }
+        function generateRekapKabupaten() {
+            const prov = document.getElementById('rekapFilterProv').value;
+            if(prov) generateRekap('Kabupaten', 'bodyRekapKab', 'Provinsi', prov);
+            else document.getElementById('bodyRekapKab').innerHTML = '<tr><td colspan="4" class="text-muted py-3">Pilih provinsi.</td></tr>';
+        }
+
+        // === EXPORTS ===
+        function exportExcel() {
+            if(currentFilteredData.length===0) return Toast.fire({icon:'info', title:'Tidak ada data'});
+            simulateProgress(1000);
+            const dataToExport = currentFilteredData.map((d, i) => ({"No": i+1, "ID Dai": d.ID_Dai, "Nama": d.Nama, "Status": d.Status, "Pulau": d.Pulau, "Provinsi": d.Provinsi, "Kabupaten": d.Kabupaten, "Kode Wilayah": d.ID_Wilayah, "SK Penempatan": d.SK_Penempatan}));
+            const ws = XLSX.utils.json_to_sheet(dataToExport); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Penempatan");
+            XLSX.writeFile(wb, "SAPADAI_Penempatan.xlsx"); endProgress();
+        }
         function exportPDF() {
-            if(currentFilteredData.length === 0) return Toast.fire({icon: 'info', title: 'Tidak ada data diexport'});
+            if(currentFilteredData.length===0) return Toast.fire({icon:'info', title:'Tidak ada data'});
             simulateProgress(1000);
             const { jsPDF } = window.jspdf; const doc = new jsPDF('landscape');
             doc.setFontSize(16); doc.setTextColor(15, 76, 129); doc.text("SAPADAI - Laporan Penempatan Dai", 14, 15);
-            doc.setFontSize(10); doc.setTextColor(100, 100, 100); doc.text("Dicetak pada: " + new Date().toLocaleString('id-ID'), 14, 22);
-
-            const tableColumn = ["No", "ID", "Nama", "Status", "Lokasi", "SK Penempatan"];
-            const tableRows = currentFilteredData.map((d, i) => [
-                i+1, d.ID_Dai, d.Nama, d.Status, `${d.Kabupaten}, ${d.Provinsi}\n${d.Kecamatan}, ${d.Kelurahan}`, d.SK_Penempatan
-            ]);
-
             doc.autoTable({
-                head: [tableColumn], body: tableRows, startY: 28,
-                theme: 'grid', styles: { fontSize: 8, cellPadding: 3 }, headStyles: { fillColor: [15, 76, 129] }
+                head: [["No", "ID", "Nama", "Status", "Lokasi (Pulau - Prov - Kab)", "SK Penempatan"]],
+                body: currentFilteredData.map((d, i) => [i+1, d.ID_Dai, d.Nama, d.Status, `${d.Pulau} - ${d.Provinsi} - ${d.Kabupaten}`, d.SK_Penempatan]),
+                startY: 25, theme: 'grid', styles: { fontSize: 9 }, headStyles: { fillColor: [15, 76, 129] }
             });
-            doc.save('SAPADAI_Laporan.pdf');
-            endProgress();
+            doc.save('SAPADAI_Laporan.pdf'); endProgress();
         }
     </script>
 </body>
