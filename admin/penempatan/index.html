@@ -24,7 +24,6 @@
             --secondary-light: #e0f7f6;
             --bg-body: #f4f7f6;
             --gold: #d4af37;
-            --row-even: rgba(32, 178, 170, 0.04); /* Soft zebra styling */
         }
 
         body { background-color: var(--bg-body); font-family: 'Inter', system-ui, sans-serif; color: #2d3748; }
@@ -52,12 +51,12 @@
         }
         @keyframes borderGlow { from { box-shadow: 0 0 5px rgba(212,175,55,0.3); } to { box-shadow: 0 0 15px rgba(212,175,55,0.7); } }
 
-        /* Table Design */
+        /* Table Design - Zebra Striping Enhanced */
         .table-wrapper { max-height: 600px; overflow-y: auto; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); background:#fff; }
         .table thead th { position: sticky; top: 0; background: var(--primary) !important; color: white !important; z-index: 2; font-weight: 600; font-size: 0.85rem; border-bottom: none; cursor: pointer; }
-        .table tbody tr:nth-child(odd) { background-color: #ffffff; }
-        .table tbody tr:nth-child(even) { background-color: var(--row-even); }
-        .table tbody tr:hover { background-color: rgba(15, 76, 129, 0.06); }
+        .table tbody tr:nth-child(odd) { background-color: #ffffff !important; }
+        .table tbody tr:nth-child(even) { background-color: #f0f7fd !important; } /* Biru muda transparan yang kontras */
+        .table tbody tr:hover { background-color: rgba(15, 76, 129, 0.08) !important; }
         .table td { vertical-align: middle; padding: 1rem 0.75rem; border-bottom: 1px solid rgba(0,0,0,0.05); }
 
         /* Badges */
@@ -90,7 +89,7 @@
         <h5 class="fw-bold text-primary" id="loadingText">Mempersiapkan Ruang Kerja...</h5>
     </div>
 
-    <!-- VIEW: LOGIN (TAMPIL PERTAMA) -->
+    <!-- VIEW: LOGIN -->
     <div id="viewLogin" class="login-wrapper">
         <div class="login-card">
             <img src="../../logo_sapadai_1.png" alt="Logo" class="app-logo" onerror="this.style.display='none'">
@@ -105,7 +104,7 @@
         </div>
     </div>
 
-    <!-- VIEW: DASHBOARD (SEMBUNYI SAMPAI LOGIN) -->
+    <!-- VIEW: DASHBOARD -->
     <div id="viewDashboard" class="d-none">
         <nav class="navbar px-4 py-3 bg-white sticky-top shadow-sm">
             <div class="container-fluid">
@@ -182,7 +181,9 @@
                 </div>
                 <div class="modal-body p-4">
                     <form id="formMutasi" onsubmit="submitMutasi(event)">
-                        <input type="hidden" id="mutasiIdDai"><input type="hidden" id="mutasiIdWilayah"> 
+                        <input type="hidden" id="mutasiIdDai">
+                        <input type="hidden" id="mutasiIdWilayah"> 
+                        <input type="hidden" id="mutasiIdPenempatan"> 
                         
                         <div class="row bg-light p-3 rounded mb-4 mx-0 align-items-center border">
                             <div class="col-md-6 border-end">
@@ -205,18 +206,33 @@
                             <div class="col-md-8"><label class="form-label text-muted small fw-bold">Teks SK Penempatan</label><input type="text" class="form-control" id="inputSKPenempatan" required></div>
                         </div>
 
-                        <!-- Direct Kabupaten Select (Auto-fills Prov/Pulau) -->
+                        <!-- Area Pilihan Dinamis -->
                         <div class="row g-3 mb-2">
-                            <div class="col-md-12 choices-container">
-                                <label class="form-label text-muted small fw-bold">Cari & Pilih Kabupaten/Kota</label>
-                                <select class="form-select" id="inputKabupaten" required onchange="autoFillRegion()"><option value="">Ketik nama kabupaten...</option></select>
+                            <div class="col-md-12 choices-container" style="z-index: 12;">
+                                <label class="form-label text-muted small fw-bold">Pilih Unit Penempatan</label>
+                                <select class="form-select" id="inputUnit" required onchange="handleUnitChange()"><option value="">Pilih Unit...</option></select>
                             </div>
-                            <div class="col-md-6"><label class="form-label text-muted small fw-bold">Provinsi (Otomatis)</label><input type="text" class="form-control bg-light text-muted" id="inputProvinsi" readonly required></div>
-                            <div class="col-md-6"><label class="form-label text-muted small fw-bold">Pulau (Otomatis)</label><input type="text" class="form-control bg-light text-muted" id="inputPulau" readonly required></div>
-                        </div>
-                        <div class="text-end text-muted small fst-italic mb-4 mt-2">Kode Wilayah: <span id="displayIdWilayah" class="fw-bold text-primary">-</span></div>
 
-                        <div class="text-end border-top pt-3">
+                            <div class="col-md-12 choices-container" id="wrapKabupaten">
+                                <label class="form-label text-muted small fw-bold">Cari & Pilih Kabupaten/Kota</label>
+                                <select class="form-select" id="inputKabupaten" onchange="autoFillRegion()"><option value="">Ketik nama kabupaten...</option></select>
+                            </div>
+
+                            <div class="col-md-12 choices-container d-none" id="wrapProvinsi">
+                                <label class="form-label text-muted small fw-bold">Cari & Pilih Provinsi</label>
+                                <select class="form-select" id="inputProvinsiSelect" onchange="autoFillRegionProv()"><option value="">Ketik nama provinsi...</option></select>
+                            </div>
+
+                            <div class="col-md-6" id="wrapTextProv"><label class="form-label text-muted small fw-bold">Provinsi (Otomatis)</label><input type="text" class="form-control bg-light text-muted" id="inputProvinsi" readonly></div>
+                            <div class="col-md-6" id="wrapTextPulau"><label class="form-label text-muted small fw-bold">Pulau (Otomatis)</label><input type="text" class="form-control bg-light text-muted" id="inputPulau" readonly></div>
+                        </div>
+
+                        <div class="text-end text-muted small fst-italic mb-4 mt-2 border-top pt-2">
+                            ID Penempatan: <span id="displayIdPenempatan" class="fw-bold text-primary">-</span> <br>
+                            ID Wilayah: <span id="displayIdWilayah" class="fw-bold text-secondary">-</span>
+                        </div>
+
+                        <div class="text-end pt-3">
                             <button type="button" class="btn btn-light px-4 me-2 rounded-pill fw-bold" data-bs-dismiss="modal">Batal</button>
                             <button type="submit" class="btn btn-primary px-5 rounded-pill shadow-sm fw-bold" id="btnSimpanMutasi">Simpan Perubahan</button>
                         </div>
@@ -233,13 +249,21 @@
                 <div class="modal-header"><h5 class="modal-title fw-bold text-primary"><i class="bi bi-bar-chart-fill me-2"></i> Rekapitulasi Data</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body p-0 bg-light">
                     <ul class="nav nav-tabs bg-white pt-2 px-3 shadow-sm" role="tablist">
-                        <li class="nav-item"><button class="nav-link active fw-bold" data-bs-toggle="tab" data-bs-target="#tabPulau" type="button">Pulau</button></li>
+                        <li class="nav-item"><button class="nav-link active fw-bold" data-bs-toggle="tab" data-bs-target="#tabUnit" type="button">Unit</button></li>
+                        <li class="nav-item"><button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#tabPulau" type="button">Pulau</button></li>
                         <li class="nav-item"><button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#tabProv" type="button">Provinsi</button></li>
                         <li class="nav-item"><button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#tabKab" type="button">Kabupaten</button></li>
                     </ul>
                     <div class="tab-content p-4">
+                        <!-- Unit (BARU) -->
+                        <div class="tab-pane fade show active" id="tabUnit">
+                            <div class="table-responsive rounded bg-white border"><table class="table table-hover rekap-table mb-0">
+                                <thead><tr><th onclick="sortRekap('Unit', 'originalIndex')" class="ps-4">Nama Unit <i class="bi bi-arrow-down-up ms-1"></i></th><th onclick="sortRekap('Unit', 'aktif')" class="text-center w-25">Aktif</th><th onclick="sortRekap('Unit', 'tidakAktif')" class="text-center w-25">Tdk Aktif</th><th onclick="sortRekap('Unit', 'total')" class="text-center w-25">Total</th></tr></thead>
+                                <tbody id="bodyRekapUnit"></tbody>
+                            </table></div>
+                        </div>
                         <!-- Pulau -->
-                        <div class="tab-pane fade show active" id="tabPulau">
+                        <div class="tab-pane fade" id="tabPulau">
                             <div class="table-responsive rounded bg-white border"><table class="table table-hover rekap-table mb-0">
                                 <thead><tr><th onclick="sortRekap('Pulau', 'originalIndex')" class="ps-4">Wilayah Pulau <i class="bi bi-arrow-down-up ms-1"></i></th><th onclick="sortRekap('Pulau', 'aktif')" class="text-center w-25">Aktif</th><th onclick="sortRekap('Pulau', 'tidakAktif')" class="text-center w-25">Tdk Aktif</th><th onclick="sortRekap('Pulau', 'total')" class="text-center w-25">Total</th></tr></thead>
                                 <tbody id="bodyRekapPulau"></tbody>
@@ -271,7 +295,7 @@
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header"><h5 class="modal-title fw-bold text-primary"><i class="bi bi-clock-history me-2"></i>Riwayat SK: <span id="riwayatNama" class="text-secondary"></span></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                <div class="modal-body p-0"><div class="table-responsive m-0"><table class="table mb-0 text-sm"><thead class="bg-light"><tr><th class="px-4">Tanggal SK</th><th>SK Penempatan</th><th>Lokasi</th></tr></thead><tbody id="tableRiwayatBody"></tbody></table></div></div>
+                <div class="modal-body p-0"><div class="table-responsive m-0"><table class="table mb-0 text-sm"><thead class="bg-light"><tr><th class="px-4">Tanggal SK</th><th>SK Penempatan</th><th>Lokasi & Unit</th></tr></thead><tbody id="tableRiwayatBody"></tbody></table></div></div>
             </div>
         </div>
     </div>
@@ -284,19 +308,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
     <script>
-        // === CONFIGURATION ===
-        const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzfH_gckgItEaqehF5higjawYmU0aUq1LuEPsLJBTYV_MJwgDMYp8LyAfDv4MieUnc9vg/exec"; 
-
         // === GLOBAL STATE ===
-        let db = { akses: [], dai: [], riwayat: [] };
+        let db = { akses: [], dai: [], riwayat: [], unit: [] };
         let wilayahMaster = []; 
+        let provinsiMaster = []; // Koleksi khusus id dan provinsi
         let currentFilteredData = [];
         let sortConfig = { key: 'Nama', asc: true };
-        let currentRekap = { Pulau: [], Provinsi: [], Kabupaten: [] };
+        let currentRekap = { Unit: [], Pulau: [], Provinsi: [], Kabupaten: [] };
         let rekapSortConfig = { key: 'originalIndex', asc: true };
 
         // Widgets
-        let choiceFilterPulau, choiceFilterProv, choiceFormKab;
+        let choiceFilterPulau, choiceFilterProv;
+        let choiceFormUnit, choiceFormKab, choiceFormProv;
         const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true });
 
         // PROGRESS & LOADING
@@ -316,12 +339,10 @@
             else { ol.classList.add('fade-out'); endProgress(); Toast.fire({icon:'success', title:'Selesai'}); }
         }
 
-        // INITIALIZATION
         document.addEventListener("DOMContentLoaded", () => {
             initWidgets();
             document.getElementById('viewDashboard').classList.add('d-none');
             
-            // Strict Auth Check
             if (sessionStorage.getItem('sapadai_auth') === 'true') {
                 document.getElementById('viewLogin').classList.add('d-none');
                 loadMainData();
@@ -332,25 +353,46 @@
         });
 
         function initWidgets() {
-            const opts = { searchEnabled: true, itemSelectText: '', shouldSort: false }; // NO SORTING, follow original
+            const opts = { searchEnabled: true, itemSelectText: '', shouldSort: false };
             choiceFilterPulau = new Choices('#filterPulau', opts);
             choiceFilterProv = new Choices('#filterProvinsi', opts);
+            choiceFormUnit = new Choices('#inputUnit', opts);
             choiceFormKab = new Choices('#inputKabupaten', opts);
+            choiceFormProv = new Choices('#inputProvinsiSelect', opts);
         }
 
+        // --- MODE SIMULASI & KOMUNIKASI API ---
         async function callBackend(action, payload = null) {
-            return new Promise(async (resolve, reject) => {
-                try {
-                    const url = (action === 'getAllData' || action === 'getWilayah') ? `${WEBAPP_URL}?api=true&action=${action}` : WEBAPP_URL;
-                    const reqOptions = { method: (action === 'getAllData' || action === 'getWilayah') ? 'GET' : 'POST' };
-                    if(reqOptions.method === 'POST') {
-                        reqOptions.body = JSON.stringify({ action: action, data: payload });
-                        reqOptions.headers = { "Content-Type": "text/plain;charset=utf-8" };
+            return new Promise((resolve, reject) => {
+                if (typeof google !== 'undefined' && google.script && google.script.run) {
+                    // PRODUCTION: GAS Environment
+                    if (action === 'getAllData') {
+                        google.script.run.withSuccessHandler(res => resolve({status:'success', data: res})).withFailureHandler(reject).getAllData();
+                    } else if (action === 'getWilayah') {
+                        google.script.run.withSuccessHandler(res => resolve(res)).withFailureHandler(reject).getWilayahMaster();
+                    } else if (action === 'saveMutasi') {
+                        google.script.run.withSuccessHandler(res => resolve(res)).withFailureHandler(reject).saveMutasi(payload);
                     }
-                    const req = await fetch(url, reqOptions);
-                    const res = await req.json();
-                    if (res.status === 'success' || res.data) resolve(res); else reject(res.message);
-                } catch (e) { reject(e); }
+                } else {
+                    // SIMULASI DUMMY UNTUK CANVAS / LOCAL BROWSER
+                    console.warn("[Simulasi Mode] Executing:", action);
+                    setTimeout(() => {
+                        if(action === 'getAllData') {
+                            resolve({
+                                status: 'success', data: {
+                                    akses: [{KodeAkses: 'ADMIN123', Role: 'Admin', Status: 'Aktif'}],
+                                    unit: [{Kode: 102, Unit: 'DPW'}, {Kode: 103, Unit: 'DPD'}, {Kode: 106, Unit: 'Pendidikan/Ponpes WI'}, {Kode: 191, Unit: 'STIBA'}, {Kode: 199, Unit: 'Eksternal'}],
+                                    dai: [{ID_Dai: 'DAI-001', Nama: 'Ahmad Canvas', Status: 'Aktif', ID_Penempatan: '103.73.71.00.0000', Unit: 'DPD', ID_Wilayah: '73.71.00.0000', Pulau: 'Sulawesi', Provinsi: 'Sulawesi Selatan', Kabupaten: 'Kota Makassar', SK_Penempatan: 'SK-001', TanggalMutasi: '2026-01-01', Jumlah_Riwayat: 1}],
+                                    riwayat: []
+                                }
+                            });
+                        } else if (action === 'getWilayah') {
+                            resolve({ status: 'success', data: [ {id: '73.71', pulau: 'Sulawesi', prov: 'Sulawesi Selatan', kab: 'Kota Makassar', originalIndex: 1}, {id: '73.02', pulau: 'Sulawesi', prov: 'Sulawesi Selatan', kab: 'Kab. Bulukumba', originalIndex: 2}, {id: '31.71', pulau: 'Jawa', prov: 'DKI Jakarta', kab: 'Kota Jakarta Pusat', originalIndex: 3} ] });
+                        } else if (action === 'saveMutasi') {
+                            resolve({status: 'success', message: 'Simulasi: Data berhasil disimpan.'});
+                        }
+                    }, 800);
+                }
             });
         }
 
@@ -394,51 +436,141 @@
             if(wilayahMaster.length === 0) {
                 try {
                     const res = await callBackend('getWilayah');
-                    wilayahMaster = res.data; // Ordered strictly by sheet index
+                    wilayahMaster = res.data; 
                     populateDropdowns();
                 } catch(e) { console.error("Gagal load wilayah:", e); }
             }
         }
 
         function populateDropdowns() {
-            // Filters (Unique, Original Order)
             let seenP = new Set(); let pulaus = [];
             let seenPr = new Set(); let provs = [];
+            provinsiMaster = [];
             
             wilayahMaster.forEach(w => {
                 if(!seenP.has(w.pulau)) { seenP.add(w.pulau); pulaus.push(w.pulau); }
-                if(!seenPr.has(w.prov)) { seenPr.add(w.prov); provs.push(w.prov); }
+                if(!seenPr.has(w.prov)) { 
+                    seenPr.add(w.prov); provs.push(w.prov); 
+                    const provId = w.id ? w.id.split('.')[0] : '';
+                    provinsiMaster.push({ id: provId, prov: w.prov, pulau: w.pulau });
+                }
             });
 
             choiceFilterPulau.clearChoices(); choiceFilterProv.clearChoices();
             choiceFilterPulau.setChoices([{value: '', label: 'Semua Pulau'}].concat(pulaus.map(p => ({value: p, label: p}))));
             choiceFilterProv.setChoices([{value: '', label: 'Semua Provinsi'}].concat(provs.map(p => ({value: p, label: p}))));
 
-            // Edit Modal Kabupaten list
+            // Populate Form Dropdowns
+            choiceFormUnit.clearChoices();
+            if(db.unit) {
+                choiceFormUnit.setChoices([{value: '', label: 'Pilih Unit...'}].concat(db.unit.map(u => ({value: u.Unit, label: u.Unit}))));
+            }
+
+            choiceFormProv.clearChoices();
+            choiceFormProv.setChoices([{value: '', label: 'Ketik nama provinsi...'}].concat(provinsiMaster.map(p => ({value: p.prov, label: p.prov}))));
+
             choiceFormKab.clearChoices();
             choiceFormKab.setChoices([{value: '', label: 'Ketik nama kabupaten...'}].concat(wilayahMaster.map(k => ({value: k.kab, label: k.kab}))));
         }
 
-        // AUTO-FILL Edit Region
+        // --- DYNAMIC LOCATION LOGIC ---
+        function handleUnitChange(isInit = false) {
+            const unit = document.getElementById('inputUnit').value;
+            const wrapKab = document.getElementById('wrapKabupaten');
+            const wrapProv = document.getElementById('wrapProvinsi');
+            const wrapTextProv = document.getElementById('wrapTextProv');
+            const wrapTextPulau = document.getElementById('wrapTextPulau');
+            
+            if(!isInit) {
+                if(choiceFormKab) choiceFormKab.setChoiceByValue('');
+                if(choiceFormProv) choiceFormProv.setChoiceByValue('');
+                document.getElementById('inputProvinsi').value = '';
+                document.getElementById('inputPulau').value = '';
+            }
+            
+            if (unit === 'DPW') {
+                wrapKab.classList.add('d-none');
+                wrapProv.classList.remove('d-none');
+                wrapTextProv.classList.add('d-none');
+                wrapTextPulau.classList.remove('d-none');
+                document.getElementById('inputKabupaten').removeAttribute('required');
+                document.getElementById('inputProvinsiSelect').setAttribute('required', 'required');
+            } else if (["DPD", "Pendidikan/Ponpes WI", "Internal lainnya"].includes(unit)) {
+                wrapKab.classList.remove('d-none');
+                wrapProv.classList.add('d-none');
+                wrapTextProv.classList.remove('d-none');
+                wrapTextPulau.classList.remove('d-none');
+                document.getElementById('inputProvinsiSelect').removeAttribute('required');
+                document.getElementById('inputKabupaten').setAttribute('required', 'required');
+            } else if (unit) { // Eksternal, STIBA, dll
+                wrapKab.classList.add('d-none');
+                wrapProv.classList.add('d-none');
+                wrapTextProv.classList.add('d-none');
+                wrapTextPulau.classList.add('d-none');
+                document.getElementById('inputKabupaten').removeAttribute('required');
+                document.getElementById('inputProvinsiSelect').removeAttribute('required');
+            }
+            
+            if(!isInit) calculateIDs();
+        }
+
         function autoFillRegion() {
             const kabName = document.getElementById('inputKabupaten').value;
             const found = wilayahMaster.find(w => w.kab === kabName);
             if(found) {
                 document.getElementById('inputPulau').value = found.pulau;
                 document.getElementById('inputProvinsi').value = found.prov;
-                
-                // PERBAIKAN: Format ID agar selalu menampilkan hingga kode kabupaten (XX.YY)
-                let shortId = found.id;
-                if(shortId && typeof shortId === 'string' && shortId.includes('.')) {
-                    shortId = shortId.split('.').slice(0, 2).join('.');
-                }
-                
-                document.getElementById('mutasiIdWilayah').value = shortId;
-                document.getElementById('displayIdWilayah').innerText = shortId;
             } else {
                 document.getElementById('inputPulau').value = ""; document.getElementById('inputProvinsi').value = "";
-                document.getElementById('mutasiIdWilayah').value = ""; document.getElementById('displayIdWilayah').innerText = "-";
             }
+            calculateIDs();
+        }
+
+        function autoFillRegionProv() {
+            const provName = document.getElementById('inputProvinsiSelect').value;
+            const found = provinsiMaster.find(p => p.prov === provName);
+            if(found) {
+                document.getElementById('inputPulau').value = found.pulau;
+            } else {
+                document.getElementById('inputPulau').value = "";
+            }
+            calculateIDs();
+        }
+
+        function calculateIDs() {
+            const unit = document.getElementById('inputUnit').value;
+            let idWilayah = "";
+            let idPenempatan = "";
+            
+            let unitData = db.unit ? db.unit.find(u => u.Unit === unit) : null;
+            let unitKode = unitData ? unitData.Kode : "";
+
+            if (!unit) {
+                // reset
+            } else if (unit === 'DPW') {
+                const provName = document.getElementById('inputProvinsiSelect').value;
+                const found = provinsiMaster.find(p => p.prov === provName);
+                if (found && found.id) {
+                    idWilayah = `${found.id}.00.00.0000`;
+                    idPenempatan = `${unitKode}.${idWilayah}`;
+                }
+            } else if (["DPD", "Pendidikan/Ponpes WI", "Internal lainnya"].includes(unit)) {
+                const kabName = document.getElementById('inputKabupaten').value;
+                const found = wilayahMaster.find(w => w.kab === kabName);
+                if (found && found.id) {
+                    let shortId = String(found.id).split('.').slice(0, 2).join('.');
+                    idWilayah = `${shortId}.00.0000`;
+                    idPenempatan = `${unitKode}.${idWilayah}`;
+                }
+            } else { // Eksternal, STIBA dll
+                idWilayah = `99.99.99.9999`;
+                idPenempatan = `${unitKode}.${idWilayah}`;
+            }
+
+            document.getElementById('mutasiIdWilayah').value = idWilayah;
+            document.getElementById('mutasiIdPenempatan').value = idPenempatan;
+            document.getElementById('displayIdWilayah').innerText = idWilayah || "-";
+            document.getElementById('displayIdPenempatan').innerText = idPenempatan || "-";
         }
 
         function applyFilters() {
@@ -475,8 +607,8 @@
                 tb.innerHTML += `<tr>
                     <td class="text-center text-muted fw-bold">${i + 1}</td>
                     <td><div class="fw-bold fs-6 mb-1 text-primary">${row.Nama}</div><div class="d-flex align-items-center gap-2"><span class="font-monospace small text-muted">${row.ID_Dai}</span>${badge}</div></td>
-                    <td><div class="fw-bold text-dark">${row.Provinsi}</div><div class="small text-muted">${row.Pulau}</div></td>
-                    <td class="fw-semibold text-dark">${row.Kabupaten}</td><td>${skHtml}</td>
+                    <td><div class="fw-bold text-dark">${row.Provinsi || '-'}</div><div class="small text-muted">${row.Pulau || '-'}</div></td>
+                    <td class="fw-semibold text-dark">${row.Kabupaten || '-'}</td><td>${skHtml}</td>
                     <td class="text-center"><button class="btn btn-sm btn-light border rounded-circle shadow-sm" onclick='openModalMutasi(${JSON.stringify(row).replace(/'/g, "&#39;")})'><i class="bi bi-pencil-fill text-primary"></i></button></td>
                 </tr>`;
             });
@@ -488,50 +620,91 @@
         }
 
         function openModalMutasi(row) {
-            document.getElementById('mutasiIdDai').value = row.ID_Dai; document.getElementById('mutasiNamaDisplay').innerText = row.Nama; document.getElementById('mutasiIdDisplay').innerText = row.ID_Dai;
-            document.getElementById('statusAktif').checked = row.Status === 'Aktif'; document.getElementById('statusTidakAktif').checked = row.Status !== 'Aktif';
-            document.getElementById('inputSKPenempatan').value = ""; document.getElementById('inputTanggalMutasi').value = new Date().toISOString().split('T')[0];
-            choiceFormKab.setChoiceByValue(''); autoFillRegion(); // Reset
+            document.getElementById('mutasiIdDai').value = row.ID_Dai; 
+            document.getElementById('mutasiNamaDisplay').innerText = row.Nama; 
+            document.getElementById('mutasiIdDisplay').innerText = row.ID_Dai;
+            document.getElementById('statusAktif').checked = row.Status === 'Aktif'; 
+            document.getElementById('statusTidakAktif').checked = row.Status !== 'Aktif';
+            document.getElementById('inputSKPenempatan').value = ""; 
+            document.getElementById('inputTanggalMutasi').value = new Date().toISOString().split('T')[0];
+            
+            // Set Dropdowns state
+            if(choiceFormUnit) choiceFormUnit.setChoiceByValue(row.Unit || '');
+            handleUnitChange(true); 
+            
+            if(row.Unit === 'DPW' && choiceFormProv) {
+                choiceFormProv.setChoiceByValue(row.Provinsi || '');
+                autoFillRegionProv();
+            } else if (["DPD", "Pendidikan/Ponpes WI", "Internal lainnya"].includes(row.Unit) && choiceFormKab) {
+                choiceFormKab.setChoiceByValue(row.Kabupaten || '');
+                autoFillRegion();
+            } else {
+                calculateIDs();
+            }
+
             new bootstrap.Modal(document.getElementById('modalMutasi')).show();
         }
 
         async function submitMutasi(e) {
             e.preventDefault();
-            const idWilayah = document.getElementById('mutasiIdWilayah').value;
-            if(!idWilayah) return Swal.fire("Peringatan", "Pilih Kabupaten yang valid.", "warning");
+            const unit = document.getElementById('inputUnit').value;
+            const idPenempatan = document.getElementById('mutasiIdPenempatan').value;
+            if(!unit || !idPenempatan) return Swal.fire("Peringatan", "Pastikan Unit dan Lokasi telah dipilih dengan valid.", "warning");
 
             const btn = document.getElementById('btnSimpanMutasi'); btn.disabled = true; btn.innerHTML = 'Menyimpan...';
             toggleOverlay(true, "Menyimpan Mutasi...");
             
+            let finalProv = ""; let finalKab = ""; let finalPulau = document.getElementById('inputPulau').value;
+            if(unit === 'DPW') {
+                finalProv = document.getElementById('inputProvinsiSelect').value;
+            } else if (["DPD", "Pendidikan/Ponpes WI", "Internal lainnya"].includes(unit)) {
+                finalProv = document.getElementById('inputProvinsi').value;
+                finalKab = document.getElementById('inputKabupaten').value;
+            }
+
             const payload = {
-                idDai: document.getElementById('mutasiIdDai').value, nama: document.getElementById('mutasiNamaDisplay').innerText,
+                idDai: document.getElementById('mutasiIdDai').value, 
+                nama: document.getElementById('mutasiNamaDisplay').innerText,
                 status: document.getElementById('statusAktif').checked ? 'Aktif' : 'Tidak Aktif',
-                idWilayah: idWilayah, pulau: document.getElementById('inputPulau').value, provinsi: document.getElementById('inputProvinsi').value,
-                kabupaten: document.getElementById('inputKabupaten').value, skPenempatan: document.getElementById('inputSKPenempatan').value,
+                idPenempatan: idPenempatan,
+                unit: unit,
+                idWilayah: document.getElementById('mutasiIdWilayah').value, 
+                pulau: finalPulau, provinsi: finalProv, kabupaten: finalKab, 
+                skPenempatan: document.getElementById('inputSKPenempatan').value,
                 tanggalMutasi: document.getElementById('inputTanggalMutasi').value
             };
 
             try {
                 await callBackend('saveMutasi', payload);
-                const res = await callBackend('getAllData'); db = res.data; applyFilters();
+                if (typeof google === 'undefined') {
+                    // Update memori lokal untuk simulasi
+                    const index = db.dai.findIndex(d => d.ID_Dai === payload.idDai);
+                    if(index > -1) {
+                        db.dai[index] = {...db.dai[index], ...payload};
+                    } else {
+                        db.dai.push({...payload, Jumlah_Riwayat: 1});
+                    }
+                    db.riwayat.push({...payload});
+                } else {
+                    const res = await callBackend('getAllData'); db = res.data; 
+                }
+                applyFilters();
                 bootstrap.Modal.getInstance(document.getElementById('modalMutasi')).hide();
             } catch (err) { Swal.fire("Error", err.toString(), "error"); }
             
             btn.disabled = false; btn.innerText = 'Simpan Perubahan'; toggleOverlay(false);
         }
 
-        // HISTORY HIGHLIGHT
         function openRiwayat(idDai, nama) {
             document.getElementById('riwayatNama').innerText = nama;
             const tb = document.getElementById('tableRiwayatBody'); tb.innerHTML = '';
             
-            // Sort by Date Descending
             const logs = db.riwayat.filter(r => r.ID_Dai === idDai).sort((a,b) => (a.TanggalMutasi < b.TanggalMutasi ? 1 : -1));
             
             if (logs.length === 0) tb.innerHTML = '<tr><td colspan="3" class="text-center text-muted py-4">Belum ada riwayat.</td></tr>';
             else {
                 logs.forEach((log, idx) => {
-                    const isLatest = idx === 0; // The newest because of desc sort
+                    const isLatest = idx === 0;
                     const trClass = isLatest ? 'table-primary border-primary' : '';
                     const dateStyle = isLatest ? 'text-primary fw-bold' : 'text-muted';
                     const activeBadge = isLatest ? '<span class="badge bg-success ms-2" style="font-size:0.6rem;">SK SAAT INI</span>' : '';
@@ -539,19 +712,26 @@
                     tb.innerHTML += `<tr class="${trClass}">
                         <td class="fw-bold px-4 ${dateStyle}">${log.TanggalMutasi} ${activeBadge}</td>
                         <td class="${isLatest ? 'fw-bold text-dark' : 'text-secondary'}">${log.SK_Penempatan}</td>
-                        <td class="small">${log.Pulau} > ${log.Provinsi} > <span class="fw-bold">${log.Kabupaten}</span><br><span class="font-monospace text-muted" style="font-size:0.7rem">${log.ID_Wilayah}</span></td>
+                        <td class="small">
+                            <span class="badge bg-primary mb-1">${log.Unit}</span><br>
+                            ${log.Pulau || '-'} > ${log.Provinsi || '-'} > <span class="fw-bold">${log.Kabupaten || '-'}</span><br>
+                            <span class="font-monospace text-muted" style="font-size:0.7rem">${log.ID_Penempatan || log.ID_Wilayah}</span>
+                        </td>
                     </tr>`;
                 });
             }
             new bootstrap.Modal(document.getElementById('modalRiwayat')).show();
         }
 
-        // REKAP WITH ORIGINAL SORT
+        // --- REKAP DATA (UNIT & WILAYAH) ---
         function openRekapModal() {
             rekapSortConfig = { key: 'originalIndex', asc: true }; 
-            prepareRekapData(); renderRekapData('Pulau', 'bodyRekapPulau'); renderRekapData('Provinsi', 'bodyRekapProv');
+            prepareRekapData(); 
+            renderRekapData('Unit', 'bodyRekapUnit'); 
+            renderRekapData('Pulau', 'bodyRekapPulau'); 
+            renderRekapData('Provinsi', 'bodyRekapProv');
             
-            const provs = [...new Set(wilayahMaster.map(w=>w.prov))]; // Keep original sheet order
+            const provs = [...new Set(wilayahMaster.map(w=>w.prov))]; 
             const sel = document.getElementById('rekapFilterProv');
             sel.innerHTML = '<option value="">-- Pilih Provinsi --</option>';
             provs.forEach(p => sel.innerHTML += `<option value="${p}">${p}</option>`);
@@ -561,16 +741,22 @@
         }
 
         function prepareRekapData() {
-            currentRekap = { Pulau: [], Provinsi: [], Kabupaten: [] };
+            currentRekap = { Unit: [], Pulau: [], Provinsi: [], Kabupaten: [] };
             
             const groupData = (groupKey) => {
                 const map = {};
                 db.dai.forEach(d => {
                     const key = d[groupKey] || "Belum Ditentukan";
                     if(!map[key]) {
-                        // Find original index from wilayahMaster for accurate sorting
-                        const wMatch = wilayahMaster.find(w => w[groupKey.toLowerCase().replace('i','i').replace('kabupaten','kab')] === key);
-                        map[key] = { name: key, aktif: 0, tidakAktif: 0, total: 0, originalIndex: wMatch ? wMatch.originalIndex : 999999 };
+                        let oIndex = 999999;
+                        if(groupKey === 'Unit' && db.unit) {
+                            const uMatch = db.unit.findIndex(u => u.Unit === key);
+                            if(uMatch !== -1) oIndex = uMatch;
+                        } else {
+                            const wMatch = wilayahMaster.find(w => w[groupKey.toLowerCase().replace('i','i').replace('kabupaten','kab')] === key);
+                            if(wMatch) oIndex = wMatch.originalIndex;
+                        }
+                        map[key] = { name: key, aktif: 0, tidakAktif: 0, total: 0, originalIndex: oIndex };
                     }
                     map[key].total++;
                     if(d.Status === 'Aktif') map[key].aktif++; else map[key].tidakAktif++;
@@ -578,7 +764,9 @@
                 return Object.values(map);
             };
 
-            currentRekap.Pulau = groupData('Pulau'); currentRekap.Provinsi = groupData('Provinsi');
+            currentRekap.Unit = groupData('Unit');
+            currentRekap.Pulau = groupData('Pulau'); 
+            currentRekap.Provinsi = groupData('Provinsi');
         }
 
         function generateRekapKabupaten() {
@@ -617,10 +805,9 @@
             });
         }
 
-        // EXPORT
         function exportExcel() {
             if(currentFilteredData.length===0) return; toggleOverlay(true,"Exporting...");
-            const dataToExport = currentFilteredData.map((d, i) => ({"No": i+1, "ID Dai": d.ID_Dai, "Nama": d.Nama, "Status": d.Status, "Pulau": d.Pulau, "Provinsi": d.Provinsi, "Kabupaten": d.Kabupaten, "SK Penempatan": d.SK_Penempatan}));
+            const dataToExport = currentFilteredData.map((d, i) => ({"No": i+1, "ID Dai": d.ID_Dai, "Nama": d.Nama, "Status": d.Status, "Unit": d.Unit, "Pulau": d.Pulau, "Provinsi": d.Provinsi, "Kabupaten": d.Kabupaten, "SK Penempatan": d.SK_Penempatan}));
             const ws = XLSX.utils.json_to_sheet(dataToExport); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Penempatan");
             XLSX.writeFile(wb, "SAPADAI_Penempatan.xlsx"); toggleOverlay(false);
         }
@@ -628,7 +815,7 @@
             if(currentFilteredData.length===0) return; toggleOverlay(true,"Exporting...");
             const { jsPDF } = window.jspdf; const doc = new jsPDF('landscape');
             doc.setFontSize(16); doc.setTextColor(15, 76, 129); doc.text("SAPADAI - Laporan Penempatan", 14, 15);
-            doc.autoTable({ head: [["No", "ID", "Nama", "Status", "Lokasi", "SK Penempatan"]], body: currentFilteredData.map((d, i) => [i+1, d.ID_Dai, d.Nama, d.Status, `${d.Pulau} - ${d.Provinsi} - ${d.Kabupaten}`, d.SK_Penempatan]), startY: 25, styles: { fontSize: 9 }, headStyles: { fillColor: [15, 76, 129] } });
+            doc.autoTable({ head: [["No", "ID", "Nama", "Status", "Unit", "Lokasi", "SK"]], body: currentFilteredData.map((d, i) => [i+1, d.ID_Dai, d.Nama, d.Status, d.Unit, `${d.Provinsi||'-'} - ${d.Kabupaten||'-'}`, d.SK_Penempatan]), startY: 25, styles: { fontSize: 8 }, headStyles: { fillColor: [15, 76, 129] } });
             doc.save('SAPADAI_Laporan.pdf'); toggleOverlay(false);
         }
     </script>
