@@ -426,8 +426,15 @@
             if(found) {
                 document.getElementById('inputPulau').value = found.pulau;
                 document.getElementById('inputProvinsi').value = found.prov;
-                document.getElementById('mutasiIdWilayah').value = found.id;
-                document.getElementById('displayIdWilayah').innerText = found.id;
+                
+                // PERBAIKAN: Format ID agar selalu menampilkan hingga kode kabupaten (XX.YY)
+                let shortId = found.id;
+                if(shortId && typeof shortId === 'string' && shortId.includes('.')) {
+                    shortId = shortId.split('.').slice(0, 2).join('.');
+                }
+                
+                document.getElementById('mutasiIdWilayah').value = shortId;
+                document.getElementById('displayIdWilayah').innerText = shortId;
             } else {
                 document.getElementById('inputPulau').value = ""; document.getElementById('inputProvinsi').value = "";
                 document.getElementById('mutasiIdWilayah').value = ""; document.getElementById('displayIdWilayah').innerText = "-";
