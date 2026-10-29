@@ -108,14 +108,21 @@
                     <button onclick="bukaModalGrafik()" class="bg-teal-50 border border-teal-200 text-teal-700 px-4 py-2 rounded-lg text-sm font-bold hover:bg-teal-100 transition shadow-sm"><i class="fas fa-chart-line mr-1"></i> Grafik</button>
                 </div>
                 
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-green-50 p-4 rounded-xl border border-green-100 text-center flex flex-col justify-center">
-                        <p class="text-[10px] md:text-xs text-green-600 font-bold uppercase tracking-wide mb-1">Rata-Rata Kinerja</p>
-                        <p class="text-3xl md:text-4xl font-black text-green-800" id="stat-avg-kinerja">0</p>
+                <div class="grid grid-cols-3 gap-2 md:gap-4">
+                    <!-- Penambahan Card 1: Total Laporan Diterima -->
+                    <div class="bg-purple-50 p-2 md:p-4 rounded-xl border border-purple-100 text-center flex flex-col justify-center">
+                        <p class="text-[9px] md:text-xs text-purple-600 font-bold uppercase tracking-wide mb-1">Total Laporan Diterima</p>
+                        <p class="text-2xl md:text-4xl font-black text-purple-800" id="stat-total-laporan">0</p>
                     </div>
-                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 text-center flex flex-col justify-center">
-                        <p class="text-[10px] md:text-xs text-blue-600 font-bold uppercase tracking-wide mb-1">Rata-Rata Kafalah</p>
-                        <p class="text-xl md:text-3xl font-black text-blue-800 mt-2 truncate" id="stat-avg-kafalah">Rp 0</p>
+                    <!-- Card 2: Rata-rata Kinerja -->
+                    <div class="bg-green-50 p-2 md:p-4 rounded-xl border border-green-100 text-center flex flex-col justify-center">
+                        <p class="text-[9px] md:text-xs text-green-600 font-bold uppercase tracking-wide mb-1">Rata-Rata Kinerja</p>
+                        <p class="text-2xl md:text-4xl font-black text-green-800" id="stat-avg-kinerja">0</p>
+                    </div>
+                    <!-- Card 3: Rata-rata Kafalah -->
+                    <div class="bg-blue-50 p-2 md:p-4 rounded-xl border border-blue-100 text-center flex flex-col justify-center overflow-hidden">
+                        <p class="text-[9px] md:text-xs text-blue-600 font-bold uppercase tracking-wide mb-1">Rata-Rata Kafalah</p>
+                        <p class="text-base md:text-2xl font-black text-blue-800 mt-1 truncate" id="stat-avg-kafalah">Rp 0</p>
                     </div>
                 </div>
             </div>
@@ -167,6 +174,27 @@
         // =====================================
         const GITHUB_API_URL = "https://script.google.com/macros/s/AKfycbyGku6EvIXtUTHJ2zMD8KB6AspwE8KJU-uFwnQTXumRZCQdtFCLR59CqBwcuTcE2MGx/exec";
 
+        // =====================================
+        // PENGATURAN TAMPILAN RINCIAN KAFALAH (TRUE / FALSE)
+        // =====================================
+        const KAFALAH_CONFIG = {
+            showPendapatan: false,        // Menampilkan blok KOMPONEN PENDAPATAN
+            showPotongan: false,          // Menampilkan blok KOMPONEN POTONGAN
+            rincian: {
+                // Pendapatan
+                kafalahPokok: true,
+                kafalahKinerja: true,
+                tunjanganAmanah: true,
+                tunjanganWilayah: true,
+                tunjanganKeluarga: true,
+                bonusKaryaUnggulan: true,
+                penambahLainnya: true,
+                // Potongan
+                izin: true,
+                pengurangLainnya: true
+            }
+        };
+
         let db = { user: null, laporan: [], listBulan: [] };
         let laporanDiterima = []; 
         let currentLoginType = 'wa';
@@ -207,7 +235,6 @@
             else { pwd.type = 'password'; icon.classList.replace('fa-eye-slash', 'fa-eye'); }
         }
 
-        // Format Rupiah yang tangguh
         function formatRupiah(angka) {
             if(angka === 0 || angka === '0') return 'Rp 0';
             if(!angka || angka === '-' || angka === '') return '-';
@@ -229,7 +256,6 @@
             return Number(clean) || 0; 
         }
 
-        // Memperbaiki format pembacaan tanggal (Menghandle format DD/MM/YYYY HH:mm:ss dari Google Sheets)
         function formatTanggalWITA(dateStr) {
             if(!dateStr || dateStr.trim() === '-' || dateStr.trim() === '') return '-';
             try {
@@ -309,6 +335,8 @@
             let avgKinerja = (totalKinerja / jumlahBulanSistem).toFixed(1);
             let avgKafalah = (totalKafalah / jumlahBulanSistem);
             
+            // Render 3 Card
+            document.getElementById('stat-total-laporan').innerText = laporanDiterima.length;
             document.getElementById('stat-avg-kinerja').innerText = avgKinerja;
             document.getElementById('stat-avg-kafalah').innerText = formatRupiah(avgKafalah);
 
@@ -421,8 +449,25 @@
                 }
             });
 
+            // AKTIVITAS BERKANTOR (Pisah dari Dakwah Umum & ditambahkan Sharing Dai)
+            let berkantorHtml = `
+            <div class="border rounded-xl bg-white overflow-hidden shadow-sm md:col-span-2">
+                <div class="card-header-custom uppercase"><i class="fas fa-building text-indigo-500"></i> AKTIVITAS BERKANTOR</div>
+                <div class="p-4 text-sm divide-y divide-gray-100">
+                    <div class="py-2.5 flex justify-between items-center"><span class="text-gray-600 font-medium">Waktu Berkantor</span> <span class="font-bold text-gray-800 text-right">${d.waktu_berkantor_jam||0} Jam</span></div>
+                    <div class="py-2.5 flex justify-between items-center"><span class="text-gray-600 font-medium">Sharing Dai</span> <span class="font-bold text-gray-800 text-right">${d.sharing_dai_jml||0} Kali</span></div>
+                </div>
+                ${(d.sharing_dai_rincian && d.sharing_dai_rincian.trim() !== '' && d.sharing_dai_rincian.trim() !== '-') ? `
+                <div class="p-4 pt-0">
+                    <p class="font-bold text-teal-700 text-xs mb-2 uppercase">Rincian Sharing Dai:</p>
+                    <div class="bg-gray-50 border border-gray-100 p-3 rounded-lg text-sm shadow-inner text-gray-700">
+                        ${renderList(d.sharing_dai_rincian)}
+                    </div>
+                </div>` : ''}
+            </div>`;
+
             return `
-            <!-- Tata letak nilai kinerja CENTER Kiri-Kanan Atas-Bawah -->
+            <!-- Tata letak nilai kinerja CENTER Kiri-Kanan Atas-Bawah (Diperbaiki Ukuran Font Sama) -->
             <div class="flex flex-row items-center justify-center p-8 bg-white border border-gray-200 rounded-xl shadow-sm mb-6 max-w-lg mx-auto divide-x divide-gray-300">
                 <div class="flex-1 flex flex-col items-center justify-center px-4 py-2">
                     <p class="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 text-center">TOTAL NILAI KINERJA</p>
@@ -430,13 +475,23 @@
                 </div>
                 <div class="flex-1 flex flex-col items-center justify-center px-4 py-2">
                     <p class="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 text-center">PREDIKAT LEVEL</p>
-                    <p class="text-2xl md:text-3xl font-black ${colorLevel} uppercase tracking-wide text-center">${d.level || '-'}</p>
+                    <p class="text-5xl md:text-6xl font-black ${colorLevel} uppercase tracking-wide text-center">${d.level || '-'}</p>
                 </div>
             </div>
 
+            <!-- URUTAN DIPERBARUI SESUAI PERMINTAAN -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 
-                <!-- DAKWAH KHUSUS (HALAQAH) DI ATAS -->
+                <!-- 1. KARYA UNGGULAN -->
+                <div class="border rounded-xl bg-white overflow-hidden shadow-sm md:col-span-2">
+                    <div class="card-header-custom uppercase"><i class="fas fa-star text-yellow-500"></i> KARYA UNGGULAN</div>
+                    <div class="p-5">${karyaHtml}</div>
+                </div>
+
+                <!-- 2. AKTIVITAS BERKANTOR -->
+                ${berkantorHtml}
+
+                <!-- 3. DAKWAH KHUSUS -->
                 <div class="border rounded-xl bg-white overflow-hidden shadow-sm md:col-span-2">
                     <div class="card-header-custom uppercase"><i class="fas fa-users text-blue-500"></i> DAKWAH KHUSUS</div>
                     <div class="p-4 text-sm divide-y divide-gray-100">
@@ -455,17 +510,16 @@
                     </div>
                 </div>
 
-                <!-- DAKWAH UMUM & BERKANTOR -->
+                <!-- 4. DAKWAH UMUM (Tanpa Berkantor) -->
                 <div class="border rounded-xl bg-white overflow-hidden shadow-sm">
-                    <div class="card-header-custom uppercase"><i class="fas fa-bullhorn text-orange-500"></i> DAKWAH UMUM & BERKANTOR</div>
+                    <div class="card-header-custom uppercase"><i class="fas fa-bullhorn text-orange-500"></i> DAKWAH UMUM</div>
                     <div class="p-4 text-sm divide-y divide-gray-100">
-                        <div class="py-2.5 flex justify-between items-center"><span class="text-gray-600 font-medium">Waktu Berkantor</span> <span class="font-bold text-gray-800 text-right">${d.waktu_berkantor_jam||0} Jam</span></div>
                         <div class="py-2.5 flex justify-between items-center"><span class="text-gray-600 font-medium">Khotbah Jumat</span> <span class="font-bold text-gray-800 text-right">${d.khotbah_jumat||0} Kali</span></div>
                         <div class="py-2.5 flex justify-between items-center"><span class="text-gray-600 font-medium">Taklim / Tablig Akbar</span> <span class="font-bold text-gray-800 text-right">${d.taklim_tablig||0} Kali</span></div>
                     </div>
                 </div>
 
-                <!-- SILATURAHMI & LAINNYA -->
+                <!-- 5. SILATURAHMI & LAINNYA -->
                 <div class="border rounded-xl bg-white overflow-hidden shadow-sm">
                     <div class="card-header-custom uppercase"><i class="fas fa-handshake text-green-500"></i> SILATURAHMI & LAINNYA</div>
                     <div class="p-4 text-sm divide-y divide-gray-100">
@@ -474,12 +528,6 @@
                         <div class="py-2.5 flex justify-between items-center"><span class="text-gray-600 font-medium">Alpa Tarbiyah</span> <span class="font-bold text-gray-800 text-right">${d.ketidakhadiran_tarbiyah||0} Kali</span></div>
                         <div class="py-2.5 flex justify-between items-center"><span class="text-gray-600 font-medium">Izin</span> <span class="font-bold text-gray-800 text-right">${d.izin||d.hari_izin||0} Hari</span></div>
                     </div>
-                </div>
-
-                <!-- KARYA UNGGULAN -->
-                <div class="border rounded-xl bg-white overflow-hidden shadow-sm md:col-span-2">
-                    <div class="card-header-custom uppercase"><i class="fas fa-star text-yellow-500"></i> KARYA UNGGULAN</div>
-                    <div class="p-5">${karyaHtml}</div>
                 </div>
 
             </div>`;
@@ -495,23 +543,36 @@
                     <tbody class="divide-y divide-gray-100">`;
 
             if(!isKhusus) {
-                // HIJAU - PENDAPATAN
-                html += `
-                        <tr class="bg-green-50 border-b border-green-100"><td colspan="2" class="px-4 py-3 font-bold text-xs text-green-700 uppercase"><i class="fas fa-plus-circle mr-1"></i> KOMPONEN PENDAPATAN</td></tr>
-                        <tr class="border-b border-gray-50 hover:bg-gray-50 transition"><td class="p-4 pl-8 font-medium">Kafalah Pokok</td><td class="p-4 font-bold text-right text-gray-800">${formatRupiah(d.kafalah_pokok)}</td></tr>
-                        <tr class="border-b border-gray-50 hover:bg-gray-50 transition"><td class="p-4 pl-8 font-medium">Kafalah Kinerja</td><td class="p-4 font-bold text-right text-gray-800">${formatRupiah(d.kafalah_kinerja)}</td></tr>
-                        <tr class="border-b border-gray-50 hover:bg-gray-50 transition"><td class="p-4 pl-8 font-medium">Tunjangan Amanah</td><td class="p-4 font-bold text-right text-gray-800">${formatRupiah(d.tunjangan_amanah)}</td></tr>
-                        <tr class="border-b border-gray-50 hover:bg-gray-50 transition"><td class="p-4 pl-8 font-medium">Tunjangan Wilayah</td><td class="p-4 font-bold text-right text-gray-800">${formatRupiah(d.tunjangan_wilayah)}</td></tr>
-                        <tr class="border-b border-gray-50 hover:bg-gray-50 transition"><td class="p-4 pl-8 font-medium">Tunjangan Keluarga</td><td class="p-4 font-bold text-right text-gray-800">${formatRupiah(d.tunjangan_keluarga)}</td></tr>
-                        <tr class="border-b border-gray-50 hover:bg-gray-50 transition"><td class="p-4 pl-8 font-medium">Bonus Karya Unggulan</td><td class="p-4 font-bold text-right text-gray-800">${formatRupiah(d.bonus_karya_unggulan)}</td></tr>
-                        <tr class="border-b border-gray-50 hover:bg-gray-50 transition"><td class="p-4 pl-8 font-medium">Penambah Lainnya</td><td class="p-4 font-bold text-right text-gray-800">${formatRupiah(d.penambah)}</td></tr>
-                `;
-                // MERAH - POTONGAN
-                html += `
-                        <tr class="bg-red-50 border-b border-red-100"><td colspan="2" class="px-4 py-3 font-bold text-xs text-red-600 uppercase"><i class="fas fa-minus-circle mr-1"></i> KOMPONEN POTONGAN</td></tr>
-                        <tr class="border-b border-gray-50 hover:bg-gray-50 transition"><td class="p-4 pl-8 font-medium">Izin</td><td class="p-4 font-bold text-right text-red-600">- ${formatRupiah(d.izin || d.hari_izin)}</td></tr>
-                        <tr class="border-b border-gray-50 hover:bg-gray-50 transition"><td class="p-4 pl-8 font-medium">Pengurang Lainnya</td><td class="p-4 font-bold text-right text-red-600">- ${formatRupiah(d.pengurang)}</td></tr>
-                `;
+                // HIJAU - PENDAPATAN (Berdasarkan KAFALAH_CONFIG)
+                if(KAFALAH_CONFIG.showPendapatan) {
+                    html += `<tr class="bg-green-50 border-b border-green-100"><td colspan="2" class="px-4 py-3 font-bold text-xs text-green-700 uppercase"><i class="fas fa-plus-circle mr-1"></i> KOMPONEN PENDAPATAN</td></tr>`;
+                    
+                    if(KAFALAH_CONFIG.rincian.kafalahPokok) 
+                        html += `<tr class="border-b border-gray-50 hover:bg-gray-50 transition"><td class="p-4 pl-8 font-medium">Kafalah Pokok</td><td class="p-4 font-bold text-right text-gray-800">${formatRupiah(d.kafalah_pokok)}</td></tr>`;
+                    if(KAFALAH_CONFIG.rincian.kafalahKinerja)
+                        html += `<tr class="border-b border-gray-50 hover:bg-gray-50 transition"><td class="p-4 pl-8 font-medium">Kafalah Kinerja</td><td class="p-4 font-bold text-right text-gray-800">${formatRupiah(d.kafalah_kinerja)}</td></tr>`;
+                    if(KAFALAH_CONFIG.rincian.tunjanganAmanah)
+                        html += `<tr class="border-b border-gray-50 hover:bg-gray-50 transition"><td class="p-4 pl-8 font-medium">Tunjangan Amanah</td><td class="p-4 font-bold text-right text-gray-800">${formatRupiah(d.tunjangan_amanah)}</td></tr>`;
+                    if(KAFALAH_CONFIG.rincian.tunjanganWilayah)
+                        html += `<tr class="border-b border-gray-50 hover:bg-gray-50 transition"><td class="p-4 pl-8 font-medium">Tunjangan Wilayah</td><td class="p-4 font-bold text-right text-gray-800">${formatRupiah(d.tunjangan_wilayah)}</td></tr>`;
+                    if(KAFALAH_CONFIG.rincian.tunjanganKeluarga)
+                        html += `<tr class="border-b border-gray-50 hover:bg-gray-50 transition"><td class="p-4 pl-8 font-medium">Tunjangan Keluarga</td><td class="p-4 font-bold text-right text-gray-800">${formatRupiah(d.tunjangan_keluarga)}</td></tr>`;
+                    if(KAFALAH_CONFIG.rincian.bonusKaryaUnggulan)
+                        html += `<tr class="border-b border-gray-50 hover:bg-gray-50 transition"><td class="p-4 pl-8 font-medium">Bonus Karya Unggulan</td><td class="p-4 font-bold text-right text-gray-800">${formatRupiah(d.bonus_karya_unggulan)}</td></tr>`;
+                    if(KAFALAH_CONFIG.rincian.penambahLainnya)
+                        html += `<tr class="border-b border-gray-50 hover:bg-gray-50 transition"><td class="p-4 pl-8 font-medium">Penambah Lainnya</td><td class="p-4 font-bold text-right text-gray-800">${formatRupiah(d.penambah)}</td></tr>`;
+                }
+
+                // MERAH - POTONGAN (Berdasarkan KAFALAH_CONFIG)
+                if(KAFALAH_CONFIG.showPotongan) {
+                    html += `<tr class="bg-red-50 border-b border-red-100"><td colspan="2" class="px-4 py-3 font-bold text-xs text-red-600 uppercase"><i class="fas fa-minus-circle mr-1"></i> KOMPONEN POTONGAN</td></tr>`;
+                    
+                    if(KAFALAH_CONFIG.rincian.izin)
+                        html += `<tr class="border-b border-gray-50 hover:bg-gray-50 transition"><td class="p-4 pl-8 font-medium">Izin</td><td class="p-4 font-bold text-right text-red-600">- ${formatRupiah(d.izin || d.hari_izin)}</td></tr>`;
+                    if(KAFALAH_CONFIG.rincian.pengurangLainnya)
+                        html += `<tr class="border-b border-gray-50 hover:bg-gray-50 transition"><td class="p-4 pl-8 font-medium">Pengurang Lainnya</td><td class="p-4 font-bold text-right text-red-600">- ${formatRupiah(d.pengurang)}</td></tr>`;
+                }
+
             } else {
                 html += `<tr><td colspan="2" class="p-6 text-center text-gray-500 italic border-b bg-gray-50 font-medium"><i class="fas fa-info-circle text-gray-400 mr-1"></i> Rincian komponen disembunyikan karena terdapat kondisi khusus/batasan.</td></tr>`;
             }
