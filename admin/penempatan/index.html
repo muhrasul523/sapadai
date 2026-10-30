@@ -426,7 +426,7 @@
 
                         <!-- Area Pilihan Dinamis Berdasarkan Unit -->
                         <div class="row g-3 mb-2">
-                            <div class="col-md-12 choices-container" style="z-index: 12;">
+                            <div class="col-md-12 choices-container" style="z-index: 105;">
                                 <label class="form-label text-muted small fw-bold">Pilih Unit Penempatan</label>
                                 <select class="form-select" id="inputUnit" required onchange="handleUnitChange()">
                                     <option value="">Pilih Unit...</option>
@@ -434,7 +434,7 @@
                             </div>
 
                             <!-- Pilihan Kabupaten (Untuk DPD / Pendidikan) -->
-                            <div class="col-md-12 choices-container" id="wrapKabupaten">
+                            <div class="col-md-12 choices-container" id="wrapKabupaten" style="z-index: 104;">
                                 <label class="form-label text-muted small fw-bold">Cari & Pilih Kabupaten/Kota</label>
                                 <select class="form-select" id="inputKabupaten" onchange="autoFillRegion()">
                                     <option value="">Ketik nama kabupaten...</option>
@@ -442,7 +442,7 @@
                             </div>
 
                             <!-- Pilihan Provinsi (Untuk DPW) -->
-                            <div class="col-md-12 choices-container d-none" id="wrapProvinsi">
+                            <div class="col-md-12 choices-container d-none" id="wrapProvinsi" style="z-index: 103;">
                                 <label class="form-label text-muted small fw-bold">Cari & Pilih Provinsi</label>
                                 <select class="form-select" id="inputProvinsiSelect" onchange="autoFillRegionProv()">
                                     <option value="">Ketik nama provinsi...</option>
@@ -952,7 +952,7 @@
                 document.getElementById('inputKabupaten').removeAttribute('required');
                 document.getElementById('inputProvinsiSelect').setAttribute('required', 'required');
                 
-            } else if (["DPD", "Pendidikan/Ponpes WI", "Internal lainnya"].includes(unit)) {
+            } else if (["DPD", "DPC", "DPR", "Pendidikan/Ponpes WI", "Internal lainnya"].includes(unit)) {
                 wrapKab.classList.remove('d-none');
                 wrapProv.classList.add('d-none');
                 wrapTextProv.classList.remove('d-none');
@@ -1025,7 +1025,7 @@
                     // Menjadi '102.73.00.00.0000'
                     idPenempatan = `${unitKode}.${idWilayah}`; 
                 }
-            } else if (["DPD", "Pendidikan/Ponpes WI", "Internal lainnya"].includes(unit)) {
+            } else if (["DPD", "DPC", "DPR", "Pendidikan/Ponpes WI", "Internal lainnya"].includes(unit)) {
                 const kabName = document.getElementById('inputKabupaten').value;
                 const found = wilayahMaster.find(w => w.kab === kabName);
                 
@@ -1164,7 +1164,7 @@
             if (row.Unit === 'DPW' && choiceFormProv) {
                 choiceFormProv.setChoiceByValue(row.Provinsi || '');
                 autoFillRegionProv();
-            } else if (["DPD", "Pendidikan/Ponpes WI", "Internal lainnya"].includes(row.Unit) && choiceFormKab) {
+            } else if (["DPD", "DPC", "DPR", "Pendidikan/Ponpes WI", "Internal lainnya"].includes(row.Unit) && choiceFormKab) {
                 choiceFormKab.setChoiceByValue(row.Kabupaten || '');
                 autoFillRegion();
             } else {
@@ -1196,7 +1196,7 @@
             
             if (unit === 'DPW') { 
                 finalProv = document.getElementById('inputProvinsiSelect').value; 
-            } else if (["DPD", "Pendidikan/Ponpes WI", "Internal lainnya"].includes(unit)) {
+            } else if (["DPD", "DPC", "DPR", "Pendidikan/Ponpes WI", "Internal lainnya"].includes(unit)) {
                 finalProv = document.getElementById('inputProvinsi').value; 
                 finalKab = document.getElementById('inputKabupaten').value;
             }
