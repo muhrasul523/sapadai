@@ -26,58 +26,233 @@
             --gold: #d4af37;
         }
 
-        body { background-color: var(--bg-body); font-family: 'Inter', system-ui, sans-serif; color: #2d3748; }
+        body { 
+            background-color: var(--bg-body); 
+            font-family: 'Inter', system-ui, sans-serif; 
+            color: #2d3748; 
+        }
 
         /* Loading */
-        #topProgress { position: fixed; top: 0; left: 0; height: 4px; background: linear-gradient(90deg, var(--gold), var(--secondary)); width: 0%; z-index: 99999; transition: width 0.3s ease-out; }
-        #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(8px); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
-        #loadingOverlay.fade-out { opacity: 0; pointer-events: none; }
-        .spinner-custom { width: 3.5rem; height: 3.5rem; border: 0.25rem solid var(--primary-light); border-top: 0.25rem solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #topProgress { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            height: 4px; 
+            background: linear-gradient(90deg, var(--gold), var(--secondary)); 
+            width: 0%; 
+            z-index: 99999; 
+            transition: width 0.3s ease-out; 
+        }
+
+        #loadingOverlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(8px); 
+            z-index: 9999; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            transition: opacity 0.5s ease; 
+        }
+
+        #loadingOverlay.fade-out { 
+            opacity: 0; 
+            pointer-events: none; 
+        }
+
+        .spinner-custom { 
+            width: 3.5rem; 
+            height: 3.5rem; 
+            border: 0.25rem solid var(--primary-light); 
+            border-top: 0.25rem solid var(--primary); 
+            border-radius: 50%; 
+            animation: spin 1s linear infinite; 
+        }
+
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
 
         /* Login Screen */
-        .login-wrapper { height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0a2e52 0%, var(--primary) 100%); position: relative; }
-        .login-card { max-width: 420px; width: 90%; text-align: center; padding: 2.5rem; background: rgba(255, 255, 255, 0.98); border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-        .app-logo { width: 90px; height: 90px; object-fit: contain; margin-bottom: 1rem; }
+        .login-wrapper { 
+            height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background: linear-gradient(135deg, #0a2e52 0%, var(--primary) 100%); 
+            position: relative; 
+        }
+
+        .login-card { 
+            max-width: 420px; 
+            width: 90%; 
+            text-align: center; 
+            padding: 2.5rem; 
+            background: rgba(255, 255, 255, 0.98); 
+            border-radius: 16px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3); 
+        }
+
+        .app-logo { 
+            width: 90px; 
+            height: 90px; 
+            object-fit: contain; 
+            margin-bottom: 1rem; 
+        }
         
         .gold-animated-text {
-            color: var(--gold); font-weight: 800; letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.3); position: relative; display: inline-block; padding: 10px 25px;
+            color: var(--gold); 
+            font-weight: 800; 
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.3); 
+            position: relative; 
+            display: inline-block; 
+            padding: 10px 25px;
         }
+
         .gold-animated-text::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            border: 2px solid var(--gold); border-radius: 12px;
+            content: ''; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0;
+            border: 2px solid var(--gold); 
+            border-radius: 12px;
             animation: borderGlow 1.5s infinite alternate;
         }
-        @keyframes borderGlow { from { box-shadow: 0 0 5px rgba(212,175,55,0.3); } to { box-shadow: 0 0 15px rgba(212,175,55,0.7); } }
+
+        @keyframes borderGlow { 
+            from { box-shadow: 0 0 5px rgba(212,175,55,0.3); } 
+            to { box-shadow: 0 0 15px rgba(212,175,55,0.7); } 
+        }
 
         /* Table Design - Zebra Striping Enhanced */
-        .table-wrapper { max-height: 600px; overflow-y: auto; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); background:#fff; }
-        .table thead th { position: sticky; top: 0; background: var(--primary) !important; color: white !important; z-index: 2; font-weight: 600; font-size: 0.85rem; border-bottom: none; cursor: pointer; }
-        .table tbody tr:nth-child(odd) { background-color: #ffffff !important; }
-        .table tbody tr:nth-child(even) { background-color: #f0f7fd !important; } /* Biru muda transparan yang kontras */
-        .table tbody tr:hover { background-color: rgba(15, 76, 129, 0.08) !important; }
-        .table td { vertical-align: middle; padding: 1rem 0.75rem; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .table-wrapper { 
+            max-height: 600px; 
+            overflow-y: auto; 
+            border-radius: 12px; 
+            border: 1px solid rgba(0,0,0,0.1); 
+            background:#fff; 
+        }
+
+        .table thead th { 
+            position: sticky; 
+            top: 0; 
+            background: var(--primary) !important; 
+            color: white !important; 
+            z-index: 2; 
+            font-weight: 600; 
+            font-size: 0.85rem; 
+            border-bottom: none; 
+            cursor: pointer; 
+        }
+
+        .table tbody tr:nth-child(odd) { 
+            background-color: #ffffff !important; 
+        }
+
+        .table tbody tr:nth-child(even) { 
+            background-color: #f0f7fd !important; /* Biru muda transparan yang kontras */
+        } 
+
+        .table tbody tr:hover { 
+            background-color: rgba(15, 76, 129, 0.08) !important; 
+        }
+
+        .table td { 
+            vertical-align: middle; 
+            padding: 1rem 0.75rem; 
+            border-bottom: 1px solid rgba(0,0,0,0.05); 
+        }
 
         /* Badges */
-        .badge-status { padding: 0.35em 0.7em; border-radius: 6px; font-weight: 600; font-size: 0.75rem; display: inline-block; }
-        .bg-aktif { background-color: var(--secondary-light); color: var(--secondary); border: 1px solid rgba(32,178,170,0.3); }
-        .bg-nonaktif { background-color: #ffebee; color: #d32f2f; border: 1px solid rgba(211,47,47,0.3); }
-        .sk-badge { cursor: pointer; background: linear-gradient(45deg, var(--primary), var(--secondary)); color: white; border: none; font-size: 0.75rem; padding: 0.35em 0.65em; }
+        .badge-status { 
+            padding: 0.35em 0.7em; 
+            border-radius: 6px; 
+            font-weight: 600; 
+            font-size: 0.75rem; 
+            display: inline-block; 
+        }
+
+        .bg-aktif { 
+            background-color: var(--secondary-light); 
+            color: var(--secondary); 
+            border: 1px solid rgba(32,178,170,0.3); 
+        }
+
+        .bg-nonaktif { 
+            background-color: #ffebee; 
+            color: #d32f2f; 
+            border: 1px solid rgba(211,47,47,0.3); 
+        }
+
+        .sk-badge { 
+            cursor: pointer; 
+            background: linear-gradient(45deg, var(--primary), var(--secondary)); 
+            color: white; 
+            border: none; 
+            font-size: 0.75rem; 
+            padding: 0.35em 0.65em; 
+        }
 
         /* Choices Dropdown Z-Index Fix */
-        .choices-container { position: relative; z-index: 10; }
-        .choices[data-type*="select-one"] { z-index: 4; }
-        .choices.is-open { z-index: 99 !important; }
-        .choices__inner { border-radius: 8px; border: 1px solid #cbd5e1; background-color: #fff; min-height: 42px; padding: 4.5px 7.5px; }
+        .choices-container { 
+            position: relative; 
+            z-index: 10; 
+        }
+
+        .choices[data-type*="select-one"] { 
+            z-index: 4; 
+        }
+
+        .choices.is-open { 
+            z-index: 99 !important; 
+        }
+
+        .choices__inner { 
+            border-radius: 8px; 
+            border: 1px solid #cbd5e1; 
+            background-color: #fff; 
+            min-height: 42px; 
+            padding: 4.5px 7.5px; 
+        }
 
         /* Forms */
-        .custom-radio-group { background: #fff; padding: 0.5rem; border-radius: 8px; border: 1px solid #e2e8f0; }
-        .form-check-input:checked[value="Aktif"] { background-color: var(--secondary); border-color: var(--secondary); }
-        .form-check-input:checked[value="Tidak Aktif"] { background-color: #d32f2f; border-color: #d32f2f; }
+        .custom-radio-group { 
+            background: #fff; 
+            padding: 0.5rem; 
+            border-radius: 8px; 
+            border: 1px solid #e2e8f0; 
+        }
+
+        .form-check-input:checked[value="Aktif"] { 
+            background-color: var(--secondary); 
+            border-color: var(--secondary); 
+        }
+
+        .form-check-input:checked[value="Tidak Aktif"] { 
+            background-color: #d32f2f; 
+            border-color: #d32f2f; 
+        }
         
-        .modal-content { border-radius: 16px; border: none; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
-        .rekap-table th { background: var(--primary-light) !important; color: var(--primary) !important; cursor: pointer; }
+        .modal-content { 
+            border-radius: 16px; 
+            border: none; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2); 
+        }
+
+        .rekap-table th { 
+            background: var(--primary-light) !important; 
+            color: var(--primary) !important; 
+            cursor: pointer; 
+        }
     </style>
 </head>
 <body>
@@ -111,16 +286,33 @@
                 <a class="navbar-brand fw-bold text-primary d-flex align-items-center" href="#">
                     <img src="../../logo_sapadai_1.png" style="width:35px; margin-right:10px;" onerror="this.style.display='none'">SAPADAI
                 </a>
-                <button class="btn btn-light text-danger fw-bold rounded-pill px-4 shadow-sm" onclick="handleLogout()"><i class="bi bi-box-arrow-right me-2"></i>Keluar</button>
+                <button class="btn btn-light text-danger fw-bold rounded-pill px-4 shadow-sm" onclick="handleLogout()">
+                    <i class="bi bi-box-arrow-right me-2"></i>Keluar
+                </button>
             </div>
         </nav>
 
         <div class="container-fluid px-4 py-4">
             <!-- Metrics -->
             <div class="row g-4 mb-4">
-                <div class="col-md-4"><div class="bg-white p-3 rounded shadow-sm d-flex align-items-center border-start border-primary border-4"><h2 class="text-primary fw-bold mb-0 me-3" id="metrikTotal">0</h2><div><h6 class="mb-0 fw-bold">Total Dai</h6></div></div></div>
-                <div class="col-md-4"><div class="bg-white p-3 rounded shadow-sm d-flex align-items-center border-start border-success border-4"><h2 class="text-success fw-bold mb-0 me-3" id="metrikAktif">0</h2><div><h6 class="mb-0 fw-bold">Dai Aktif</h6></div></div></div>
-                <div class="col-md-4"><div class="bg-white p-3 rounded shadow-sm d-flex align-items-center border-start border-danger border-4"><h2 class="text-danger fw-bold mb-0 me-3" id="metrikNonaktif">0</h2><div><h6 class="mb-0 fw-bold">Tidak Aktif</h6></div></div></div>
+                <div class="col-md-4">
+                    <div class="bg-white p-3 rounded shadow-sm d-flex align-items-center border-start border-primary border-4">
+                        <h2 class="text-primary fw-bold mb-0 me-3" id="metrikTotal">0</h2>
+                        <div><h6 class="mb-0 fw-bold">Total Dai</h6></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="bg-white p-3 rounded shadow-sm d-flex align-items-center border-start border-success border-4">
+                        <h2 class="text-success fw-bold mb-0 me-3" id="metrikAktif">0</h2>
+                        <div><h6 class="mb-0 fw-bold">Dai Aktif</h6></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="bg-white p-3 rounded shadow-sm d-flex align-items-center border-start border-danger border-4">
+                        <h2 class="text-danger fw-bold mb-0 me-3" id="metrikNonaktif">0</h2>
+                        <div><h6 class="mb-0 fw-bold">Tidak Aktif</h6></div>
+                    </div>
+                </div>
             </div>
 
             <!-- Toolbar & Filters -->
@@ -133,21 +325,33 @@
                     <div class="col-md-2">
                         <label class="form-label small text-muted fw-bold">Status</label>
                         <select class="form-select" id="filterStatus" onchange="applyFilters()">
-                            <option value="">Semua Status</option><option value="Aktif">Aktif</option><option value="Tidak Aktif">Tidak Aktif</option>
+                            <option value="">Semua Status</option>
+                            <option value="Aktif">Aktif</option>
+                            <option value="Tidak Aktif">Tidak Aktif</option>
                         </select>
                     </div>
                     <div class="col-md-2">
                         <label class="form-label small text-muted fw-bold">Filter Pulau</label>
-                        <select class="form-select" id="filterPulau" onchange="applyFilters()"><option value="">Semua Pulau</option></select>
+                        <select class="form-select" id="filterPulau" onchange="applyFilters()">
+                            <option value="">Semua Pulau</option>
+                        </select>
                     </div>
                     <div class="col-md-2">
                         <label class="form-label small text-muted fw-bold">Filter Provinsi</label>
-                        <select class="form-select" id="filterProvinsi" onchange="applyFilters()"><option value="">Semua Provinsi</option></select>
+                        <select class="form-select" id="filterProvinsi" onchange="applyFilters()">
+                            <option value="">Semua Provinsi</option>
+                        </select>
                     </div>
                     <div class="col-md-3 text-end">
-                        <button class="btn btn-primary rounded-pill px-3 shadow-sm me-1" onclick="openRekapModal()"><i class="bi bi-bar-chart-fill me-1"></i> Rekap Data</button>
-                        <button class="btn btn-outline-success rounded-circle" title="Export Excel" onclick="exportExcel()"><i class="bi bi-file-earmark-excel"></i></button>
-                        <button class="btn btn-outline-danger rounded-circle" title="Export PDF" onclick="exportPDF()"><i class="bi bi-file-earmark-pdf"></i></button>
+                        <button class="btn btn-primary rounded-pill px-3 shadow-sm me-1" onclick="openRekapModal()">
+                            <i class="bi bi-bar-chart-fill me-1"></i> Rekap Data
+                        </button>
+                        <button class="btn btn-outline-success rounded-circle" title="Export Excel" onclick="exportExcel()">
+                            <i class="bi bi-file-earmark-excel"></i>
+                        </button>
+                        <button class="btn btn-outline-danger rounded-circle" title="Export PDF" onclick="exportPDF()">
+                            <i class="bi bi-file-earmark-pdf"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -176,7 +380,9 @@
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-bold text-primary"><i class="bi bi-pencil-square me-2"></i> Update Penempatan</h5>
+                    <h5 class="modal-title fw-bold text-primary">
+                        <i class="bi bi-pencil-square me-2"></i> Update Penempatan
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
@@ -194,37 +400,64 @@
                             <div class="col-md-6 ps-md-4">
                                 <label class="form-label text-muted small fw-bold mb-2">Status Keaktifan</label>
                                 <div class="d-flex gap-3 custom-radio-group">
-                                    <div class="form-check"><input class="form-check-input" type="radio" name="mutasiStatus" id="statusAktif" value="Aktif" required><label class="form-check-label fw-bold text-secondary" for="statusAktif">Aktif</label></div>
-                                    <div class="form-check"><input class="form-check-input" type="radio" name="mutasiStatus" id="statusTidakAktif" value="Tidak Aktif" required><label class="form-check-label fw-bold text-danger" for="statusTidakAktif">Tidak Aktif</label></div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="mutasiStatus" id="statusAktif" value="Aktif" required>
+                                        <label class="form-check-label fw-bold text-secondary" for="statusAktif">Aktif</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="mutasiStatus" id="statusTidakAktif" value="Tidak Aktif" required>
+                                        <label class="form-check-label fw-bold text-danger" for="statusTidakAktif">Tidak Aktif</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         
                         <h6 class="fw-bold mb-3 text-secondary border-bottom pb-2">Lokasi & SK Baru</h6>
                         <div class="row g-3 mb-3">
-                            <div class="col-md-4"><label class="form-label text-muted small fw-bold">Tgl SK/Mutasi</label><input type="date" class="form-control" id="inputTanggalMutasi" required></div>
-                            <div class="col-md-8"><label class="form-label text-muted small fw-bold">Teks SK Penempatan</label><input type="text" class="form-control" id="inputSKPenempatan" required></div>
+                            <div class="col-md-4">
+                                <label class="form-label text-muted small fw-bold">Tgl SK/Mutasi</label>
+                                <input type="date" class="form-control" id="inputTanggalMutasi" required>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label text-muted small fw-bold">Teks SK Penempatan</label>
+                                <input type="text" class="form-control" id="inputSKPenempatan" required>
+                            </div>
                         </div>
 
-                        <!-- Area Pilihan Dinamis -->
+                        <!-- Area Pilihan Dinamis Berdasarkan Unit -->
                         <div class="row g-3 mb-2">
                             <div class="col-md-12 choices-container" style="z-index: 12;">
                                 <label class="form-label text-muted small fw-bold">Pilih Unit Penempatan</label>
-                                <select class="form-select" id="inputUnit" required onchange="handleUnitChange()"><option value="">Pilih Unit...</option></select>
+                                <select class="form-select" id="inputUnit" required onchange="handleUnitChange()">
+                                    <option value="">Pilih Unit...</option>
+                                </select>
                             </div>
 
+                            <!-- Pilihan Kabupaten (Untuk DPD / Pendidikan) -->
                             <div class="col-md-12 choices-container" id="wrapKabupaten">
                                 <label class="form-label text-muted small fw-bold">Cari & Pilih Kabupaten/Kota</label>
-                                <select class="form-select" id="inputKabupaten" onchange="autoFillRegion()"><option value="">Ketik nama kabupaten...</option></select>
+                                <select class="form-select" id="inputKabupaten" onchange="autoFillRegion()">
+                                    <option value="">Ketik nama kabupaten...</option>
+                                </select>
                             </div>
 
+                            <!-- Pilihan Provinsi (Untuk DPW) -->
                             <div class="col-md-12 choices-container d-none" id="wrapProvinsi">
                                 <label class="form-label text-muted small fw-bold">Cari & Pilih Provinsi</label>
-                                <select class="form-select" id="inputProvinsiSelect" onchange="autoFillRegionProv()"><option value="">Ketik nama provinsi...</option></select>
+                                <select class="form-select" id="inputProvinsiSelect" onchange="autoFillRegionProv()">
+                                    <option value="">Ketik nama provinsi...</option>
+                                </select>
                             </div>
 
-                            <div class="col-md-6" id="wrapTextProv"><label class="form-label text-muted small fw-bold">Provinsi (Otomatis)</label><input type="text" class="form-control bg-light text-muted" id="inputProvinsi" readonly></div>
-                            <div class="col-md-6" id="wrapTextPulau"><label class="form-label text-muted small fw-bold">Pulau (Otomatis)</label><input type="text" class="form-control bg-light text-muted" id="inputPulau" readonly></div>
+                            <!-- Input Teks Otomatis -->
+                            <div class="col-md-6" id="wrapTextProv">
+                                <label class="form-label text-muted small fw-bold">Provinsi (Otomatis)</label>
+                                <input type="text" class="form-control bg-light text-muted" id="inputProvinsi" readonly>
+                            </div>
+                            <div class="col-md-6" id="wrapTextPulau">
+                                <label class="form-label text-muted small fw-bold">Pulau (Otomatis)</label>
+                                <input type="text" class="form-control bg-light text-muted" id="inputPulau" readonly>
+                            </div>
                         </div>
 
                         <div class="text-end text-muted small fst-italic mb-4 mt-2 border-top pt-2">
@@ -246,43 +479,92 @@
     <div class="modal fade" id="modalRekap" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header"><h5 class="modal-title fw-bold text-primary"><i class="bi bi-bar-chart-fill me-2"></i> Rekapitulasi Data</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold text-primary">
+                        <i class="bi bi-bar-chart-fill me-2"></i> Rekapitulasi Data
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
                 <div class="modal-body p-0 bg-light">
                     <ul class="nav nav-tabs bg-white pt-2 px-3 shadow-sm" role="tablist">
-                        <li class="nav-item"><button class="nav-link active fw-bold" data-bs-toggle="tab" data-bs-target="#tabUnit" type="button">Unit</button></li>
-                        <li class="nav-item"><button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#tabPulau" type="button">Pulau</button></li>
-                        <li class="nav-item"><button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#tabProv" type="button">Provinsi</button></li>
-                        <li class="nav-item"><button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#tabKab" type="button">Kabupaten</button></li>
+                        <li class="nav-item">
+                            <button class="nav-link active fw-bold" data-bs-toggle="tab" data-bs-target="#tabUnit" type="button">Unit</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#tabPulau" type="button">Pulau</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#tabProv" type="button">Provinsi</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#tabKab" type="button">Kabupaten</button>
+                        </li>
                     </ul>
                     <div class="tab-content p-4">
-                        <!-- Unit (BARU) -->
                         <div class="tab-pane fade show active" id="tabUnit">
-                            <div class="table-responsive rounded bg-white border"><table class="table table-hover rekap-table mb-0">
-                                <thead><tr><th onclick="sortRekap('Unit', 'originalIndex')" class="ps-4">Nama Unit <i class="bi bi-arrow-down-up ms-1"></i></th><th onclick="sortRekap('Unit', 'aktif')" class="text-center w-25">Aktif</th><th onclick="sortRekap('Unit', 'tidakAktif')" class="text-center w-25">Tdk Aktif</th><th onclick="sortRekap('Unit', 'total')" class="text-center w-25">Total</th></tr></thead>
-                                <tbody id="bodyRekapUnit"></tbody>
-                            </table></div>
+                            <div class="table-responsive rounded bg-white border">
+                                <table class="table table-hover rekap-table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th onclick="sortRekap('Unit', 'originalIndex')" class="ps-4">Nama Unit <i class="bi bi-arrow-down-up ms-1"></i></th>
+                                            <th onclick="sortRekap('Unit', 'aktif')" class="text-center w-25">Aktif</th>
+                                            <th onclick="sortRekap('Unit', 'tidakAktif')" class="text-center w-25">Tdk Aktif</th>
+                                            <th onclick="sortRekap('Unit', 'total')" class="text-center w-25">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bodyRekapUnit"></tbody>
+                                </table>
+                            </div>
                         </div>
-                        <!-- Pulau -->
                         <div class="tab-pane fade" id="tabPulau">
-                            <div class="table-responsive rounded bg-white border"><table class="table table-hover rekap-table mb-0">
-                                <thead><tr><th onclick="sortRekap('Pulau', 'originalIndex')" class="ps-4">Wilayah Pulau <i class="bi bi-arrow-down-up ms-1"></i></th><th onclick="sortRekap('Pulau', 'aktif')" class="text-center w-25">Aktif</th><th onclick="sortRekap('Pulau', 'tidakAktif')" class="text-center w-25">Tdk Aktif</th><th onclick="sortRekap('Pulau', 'total')" class="text-center w-25">Total</th></tr></thead>
-                                <tbody id="bodyRekapPulau"></tbody>
-                            </table></div>
+                            <div class="table-responsive rounded bg-white border">
+                                <table class="table table-hover rekap-table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th onclick="sortRekap('Pulau', 'originalIndex')" class="ps-4">Wilayah Pulau <i class="bi bi-arrow-down-up ms-1"></i></th>
+                                            <th onclick="sortRekap('Pulau', 'aktif')" class="text-center w-25">Aktif</th>
+                                            <th onclick="sortRekap('Pulau', 'tidakAktif')" class="text-center w-25">Tdk Aktif</th>
+                                            <th onclick="sortRekap('Pulau', 'total')" class="text-center w-25">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bodyRekapPulau"></tbody>
+                                </table>
+                            </div>
                         </div>
-                        <!-- Provinsi -->
                         <div class="tab-pane fade" id="tabProv">
-                            <div class="table-responsive rounded bg-white border"><table class="table table-hover rekap-table mb-0">
-                                <thead><tr><th onclick="sortRekap('Provinsi', 'originalIndex')" class="ps-4">Provinsi <i class="bi bi-arrow-down-up ms-1"></i></th><th onclick="sortRekap('Provinsi', 'aktif')" class="text-center w-25">Aktif</th><th onclick="sortRekap('Provinsi', 'tidakAktif')" class="text-center w-25">Tdk Aktif</th><th onclick="sortRekap('Provinsi', 'total')" class="text-center w-25">Total</th></tr></thead>
-                                <tbody id="bodyRekapProv"></tbody>
-                            </table></div>
+                            <div class="table-responsive rounded bg-white border">
+                                <table class="table table-hover rekap-table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th onclick="sortRekap('Provinsi', 'originalIndex')" class="ps-4">Provinsi <i class="bi bi-arrow-down-up ms-1"></i></th>
+                                            <th onclick="sortRekap('Provinsi', 'aktif')" class="text-center w-25">Aktif</th>
+                                            <th onclick="sortRekap('Provinsi', 'tidakAktif')" class="text-center w-25">Tdk Aktif</th>
+                                            <th onclick="sortRekap('Provinsi', 'total')" class="text-center w-25">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bodyRekapProv"></tbody>
+                                </table>
+                            </div>
                         </div>
-                        <!-- Kabupaten -->
                         <div class="tab-pane fade" id="tabKab">
-                            <div class="mb-3"><select class="form-select shadow-sm w-50" id="rekapFilterProv" onchange="generateRekapKabupaten()"><option value="">-- Pilih Provinsi --</option></select></div>
-                            <div class="table-responsive rounded bg-white border"><table class="table table-hover rekap-table mb-0">
-                                <thead><tr><th onclick="sortRekap('Kabupaten', 'originalIndex')" class="ps-4">Kabupaten <i class="bi bi-arrow-down-up ms-1"></i></th><th onclick="sortRekap('Kabupaten', 'aktif')" class="text-center w-25">Aktif</th><th onclick="sortRekap('Kabupaten', 'tidakAktif')" class="text-center w-25">Tdk Aktif</th><th onclick="sortRekap('Kabupaten', 'total')" class="text-center w-25">Total</th></tr></thead>
-                                <tbody id="bodyRekapKab"></tbody>
-                            </table></div>
+                            <div class="mb-3">
+                                <select class="form-select shadow-sm w-50" id="rekapFilterProv" onchange="generateRekapKabupaten()">
+                                    <option value="">-- Pilih Provinsi --</option>
+                                </select>
+                            </div>
+                            <div class="table-responsive rounded bg-white border">
+                                <table class="table table-hover rekap-table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th onclick="sortRekap('Kabupaten', 'originalIndex')" class="ps-4">Kabupaten <i class="bi bi-arrow-down-up ms-1"></i></th>
+                                            <th onclick="sortRekap('Kabupaten', 'aktif')" class="text-center w-25">Aktif</th>
+                                            <th onclick="sortRekap('Kabupaten', 'tidakAktif')" class="text-center w-25">Tdk Aktif</th>
+                                            <th onclick="sortRekap('Kabupaten', 'total')" class="text-center w-25">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bodyRekapKab"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -294,8 +576,26 @@
     <div class="modal fade" id="modalRiwayat" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header"><h5 class="modal-title fw-bold text-primary"><i class="bi bi-clock-history me-2"></i>Riwayat SK: <span id="riwayatNama" class="text-secondary"></span></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                <div class="modal-body p-0"><div class="table-responsive m-0"><table class="table mb-0 text-sm"><thead class="bg-light"><tr><th class="px-4">Tanggal SK</th><th>SK Penempatan</th><th>Lokasi & Unit</th></tr></thead><tbody id="tableRiwayatBody"></tbody></table></div></div>
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold text-primary">
+                        <i class="bi bi-clock-history me-2"></i>Riwayat SK: <span id="riwayatNama" class="text-secondary"></span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="table-responsive m-0">
+                        <table class="table mb-0 text-sm">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="px-4">Tanggal SK</th>
+                                    <th>SK Penempatan</th>
+                                    <th>Lokasi & Unit</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableRiwayatBody"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -308,10 +608,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
     <script>
+        // === LINK APPSCRIPT ===
+        const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzfH_gckgItEaqehF5higjawYmU0aUq1LuEPsLJBTYV_MJwgDMYp8LyAfDv4MieUnc9vg/exec"; 
+
         // === GLOBAL STATE ===
         let db = { akses: [], dai: [], riwayat: [], unit: [] };
         let wilayahMaster = []; 
-        let provinsiMaster = []; // Koleksi khusus id dan provinsi
+        let provinsiMaster = []; 
         let currentFilteredData = [];
         let sortConfig = { key: 'Nama', asc: true };
         let currentRekap = { Unit: [], Pulau: [], Provinsi: [], Kabupaten: [] };
@@ -320,25 +623,62 @@
         // Widgets
         let choiceFilterPulau, choiceFilterProv;
         let choiceFormUnit, choiceFormKab, choiceFormProv;
-        const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true });
+        
+        const Toast = Swal.mixin({ 
+            toast: true, 
+            position: 'top-end', 
+            showConfirmButton: false, 
+            timer: 3000, 
+            timerProgressBar: true 
+        });
 
-        // PROGRESS & LOADING
+        // --- PROGRESS & LOADING ---
         let progressInterval;
+
         function simulateProgress(duration = 2000) {
-            const pb = document.getElementById('topProgress'); pb.style.opacity = '1'; pb.style.width = '0%';
-            let w = 0; clearInterval(progressInterval);
-            progressInterval = setInterval(() => { w += Math.random()*15; if (w>90) w=90; pb.style.width = w+'%'; }, duration/10);
-        }
-        function endProgress() {
-            clearInterval(progressInterval); const pb = document.getElementById('topProgress'); pb.style.width = '100%';
-            setTimeout(() => { pb.style.opacity = '0'; setTimeout(() => pb.style.width = '0%', 300); }, 400);
-        }
-        function toggleOverlay(show, text = "Memuat...") {
-            const ol = document.getElementById('loadingOverlay');
-            if(show){ document.getElementById('loadingText').innerText = text; ol.classList.remove('fade-out'); simulateProgress(); } 
-            else { ol.classList.add('fade-out'); endProgress(); Toast.fire({icon:'success', title:'Selesai'}); }
+            const pb = document.getElementById('topProgress'); 
+            pb.style.opacity = '1'; 
+            pb.style.width = '0%';
+            let w = 0; 
+            
+            clearInterval(progressInterval);
+            
+            progressInterval = setInterval(() => { 
+                w += Math.random() * 15; 
+                if (w > 90) w = 90; 
+                pb.style.width = w + '%'; 
+            }, duration / 10);
         }
 
+        function endProgress() {
+            clearInterval(progressInterval); 
+            const pb = document.getElementById('topProgress'); 
+            pb.style.width = '100%';
+            
+            setTimeout(() => { 
+                pb.style.opacity = '0'; 
+                setTimeout(() => {
+                    pb.style.width = '0%';
+                }, 300); 
+            }, 400);
+        }
+        
+        function toggleOverlay(show, text = "Memuat...", isSuccess = false) {
+            const ol = document.getElementById('loadingOverlay');
+            if (show) { 
+                document.getElementById('loadingText').innerText = text; 
+                ol.classList.remove('fade-out'); 
+                simulateProgress(); 
+            } else { 
+                ol.classList.add('fade-out'); 
+                endProgress(); 
+                if (isSuccess) { 
+                    Toast.fire({icon: 'success', title: 'Selesai'}); 
+                }
+            }
+        }
+
+        // --- INISIALISASI HALAMAN ---
         document.addEventListener("DOMContentLoaded", () => {
             initWidgets();
             document.getElementById('viewDashboard').classList.add('d-none');
@@ -348,7 +688,7 @@
                 loadMainData();
             } else { 
                 document.getElementById('viewLogin').classList.remove('d-none');
-                document.getElementById('loadingOverlay').classList.add('fade-out');
+                toggleOverlay(false); // Hilangkan overlay awalan jika belum login
             }
         });
 
@@ -361,37 +701,108 @@
             choiceFormProv = new Choices('#inputProvinsiSelect', opts);
         }
 
-        // --- MODE SIMULASI & KOMUNIKASI API ---
+        // --- HYBRID API COMMUNICATION (GAS, Fetch External, Dummy Fallback) ---
         async function callBackend(action, payload = null) {
-            return new Promise((resolve, reject) => {
+            return new Promise(async (resolve, reject) => {
+                
+                // 1. Production Mode: di dalam Google Apps Script HTML output
                 if (typeof google !== 'undefined' && google.script && google.script.run) {
-                    // PRODUCTION: GAS Environment
                     if (action === 'getAllData') {
-                        google.script.run.withSuccessHandler(res => resolve({status:'success', data: res})).withFailureHandler(reject).getAllData();
+                        google.script.run
+                            .withSuccessHandler(res => resolve({status:'success', data: res}))
+                            .withFailureHandler(reject)
+                            .getAllData();
                     } else if (action === 'getWilayah') {
-                        google.script.run.withSuccessHandler(res => resolve(res)).withFailureHandler(reject).getWilayahMaster();
+                        google.script.run
+                            .withSuccessHandler(res => resolve(res))
+                            .withFailureHandler(reject)
+                            .getWilayahMaster();
                     } else if (action === 'saveMutasi') {
-                        google.script.run.withSuccessHandler(res => resolve(res)).withFailureHandler(reject).saveMutasi(payload);
+                        google.script.run
+                            .withSuccessHandler(res => resolve(res))
+                            .withFailureHandler(reject)
+                            .saveMutasi(payload);
                     }
-                } else {
-                    // SIMULASI DUMMY UNTUK CANVAS / LOCAL BROWSER
-                    console.warn("[Simulasi Mode] Executing:", action);
-                    setTimeout(() => {
-                        if(action === 'getAllData') {
-                            resolve({
-                                status: 'success', data: {
-                                    akses: [{KodeAkses: 'ADMIN123', Role: 'Admin', Status: 'Aktif'}],
-                                    unit: [{Kode: 102, Unit: 'DPW'}, {Kode: 103, Unit: 'DPD'}, {Kode: 106, Unit: 'Pendidikan/Ponpes WI'}, {Kode: 191, Unit: 'STIBA'}, {Kode: 199, Unit: 'Eksternal'}],
-                                    dai: [{ID_Dai: 'DAI-001', Nama: 'Ahmad Canvas', Status: 'Aktif', ID_Penempatan: '103.73.71.00.0000', Unit: 'DPD', ID_Wilayah: '73.71.00.0000', Pulau: 'Sulawesi', Provinsi: 'Sulawesi Selatan', Kabupaten: 'Kota Makassar', SK_Penempatan: 'SK-001', TanggalMutasi: '2026-01-01', Jumlah_Riwayat: 1}],
-                                    riwayat: []
-                                }
-                            });
-                        } else if (action === 'getWilayah') {
-                            resolve({ status: 'success', data: [ {id: '73.71', pulau: 'Sulawesi', prov: 'Sulawesi Selatan', kab: 'Kota Makassar', originalIndex: 1}, {id: '73.02', pulau: 'Sulawesi', prov: 'Sulawesi Selatan', kab: 'Kab. Bulukumba', originalIndex: 2}, {id: '31.71', pulau: 'Jawa', prov: 'DKI Jakarta', kab: 'Kota Jakarta Pusat', originalIndex: 3} ] });
-                        } else if (action === 'saveMutasi') {
-                            resolve({status: 'success', message: 'Simulasi: Data berhasil disimpan.'});
+                } 
+                // 2. Localhost / Eksternal Browser Mode: Menggunakan fetch ke WEBAPP_URL
+                else {
+                    try {
+                        const url = (action === 'getAllData' || action === 'getWilayah') 
+                            ? `${WEBAPP_URL}?api=true&action=${action}` 
+                            : WEBAPP_URL;
+                            
+                        const reqOptions = { 
+                            method: (action === 'getAllData' || action === 'getWilayah') ? 'GET' : 'POST' 
+                        };
+                        
+                        if (reqOptions.method === 'POST') {
+                            reqOptions.body = JSON.stringify({ action: action, data: payload });
+                            reqOptions.headers = { "Content-Type": "text/plain;charset=utf-8" };
                         }
-                    }, 800);
+                        
+                        const req = await fetch(url, reqOptions);
+                        
+                        if (!req.ok) {
+                            throw new Error("Fetch koneksi gagal.");
+                        }
+                        
+                        const res = await req.json();
+                        
+                        if (res.status === 'success' || res.data) {
+                            resolve(res); 
+                        } else {
+                            reject(res.message);
+                        }
+
+                    } catch (e) {
+                        // 3. Fallback Mode Simulasi: Jika jaringan/CORS gagal (seperti di Gemini Canvas)
+                        console.warn("[Simulasi Dummy Diaktifkan] Alasan:", e.message);
+                        
+                        setTimeout(() => {
+                            if (action === 'getAllData') {
+                                resolve({
+                                    status: 'success', 
+                                    data: {
+                                        akses: [
+                                            {KodeAkses: 'ADMIN123', Role: 'Admin', Status: 'Aktif'}
+                                        ],
+                                        unit: [
+                                            {Kode: 102, Unit: 'DPW'}, 
+                                            {Kode: 103, Unit: 'DPD'}, 
+                                            {Kode: 106, Unit: 'Pendidikan/Ponpes WI'}, 
+                                            {Kode: 191, Unit: 'STIBA'}, 
+                                            {Kode: 199, Unit: 'Eksternal'}
+                                        ],
+                                        dai: [
+                                            {
+                                                ID_Dai: 'DAI-001', Nama: 'Ahmad Simulasi', Status: 'Aktif', 
+                                                ID_Penempatan: '103.73.71.00.0000', Unit: 'DPD', 
+                                                ID_Wilayah: '73.71.00.0000', Pulau: 'Sulawesi', 
+                                                Provinsi: 'Sulawesi Selatan', Kabupaten: 'Kota Makassar', 
+                                                SK_Penempatan: 'SK-Dummy', TanggalMutasi: '2026-01-01', 
+                                                Jumlah_Riwayat: 1
+                                            }
+                                        ],
+                                        riwayat: []
+                                    }
+                                });
+                            } else if (action === 'getWilayah') {
+                                resolve({ 
+                                    status: 'success', 
+                                    data: [ 
+                                        {id: '73.71', pulau: 'Sulawesi', prov: 'Sulawesi Selatan', kab: 'Kota Makassar', originalIndex: 1}, 
+                                        {id: '73.02', pulau: 'Sulawesi', prov: 'Sulawesi Selatan', kab: 'Kab. Bulukumba', originalIndex: 2}, 
+                                        {id: '31.71', pulau: 'Jawa', prov: 'DKI Jakarta', kab: 'Kota Jakarta Pusat', originalIndex: 3} 
+                                    ] 
+                                });
+                            } else if (action === 'saveMutasi') {
+                                resolve({
+                                    status: 'success', 
+                                    message: 'Mode Simulasi: Mutasi Tersimpan.'
+                                });
+                            }
+                        }, 500);
+                    }
                 }
             });
         }
@@ -399,7 +810,9 @@
         async function handleLogin(e) {
             e.preventDefault();
             const code = document.getElementById('kodeAkses').value.trim();
-            document.getElementById('btnLogin').innerHTML = 'Memverifikasi...';
+            const btn = document.getElementById('btnLogin');
+            
+            btn.innerHTML = 'Memverifikasi...';
             toggleOverlay(true, "Verifikasi Akses...");
             
             try {
@@ -412,65 +825,107 @@
                     db = res.data;
                     document.getElementById('viewLogin').classList.add('d-none');
                     document.getElementById('viewDashboard').classList.remove('d-none');
+                    
                     renderDashboard();
-                } else throw new Error("Kode akses ditolak.");
-            } catch (err) { Swal.fire({icon:'error', title:'Akses Ditolak', text:err.message}); }
+                    toggleOverlay(false, "", true); // Login Berhasil
+                } else {
+                    throw new Error("Kode Akses tidak terdaftar atau tidak aktif.");
+                }
+            } catch (err) { 
+                toggleOverlay(false); // Gagal Login, matikan overlay tanpa pesan "selesai"
+                Swal.fire({
+                    icon: 'error', 
+                    title: 'Akses Ditolak', 
+                    text: err.message
+                }); 
+            }
             
-            document.getElementById('btnLogin').innerText = 'Masuk Aplikasi'; toggleOverlay(false);
+            btn.innerText = 'Masuk Aplikasi'; 
         }
 
-        function handleLogout() { sessionStorage.removeItem('sapadai_auth'); location.reload(); }
+        function handleLogout() { 
+            sessionStorage.removeItem('sapadai_auth'); 
+            location.reload(); 
+        }
 
         async function loadMainData() {
             toggleOverlay(true, "Mengambil Data Server...");
             document.getElementById('viewDashboard').classList.remove('d-none');
+            
             try {
                 const res = await callBackend('getAllData');
-                db = res.data; renderDashboard();
-            } catch(e) { Swal.fire("Error", "Gagal memuat", "error"); }
-            toggleOverlay(false);
+                db = res.data; 
+                renderDashboard();
+                toggleOverlay(false); // Hilangkan overlay awalan tanpa toast pesan sukses yang berlebihan
+            } catch (e) { 
+                toggleOverlay(false);
+                Swal.fire("Error", "Gagal memuat data dari server.", "error"); 
+            }
         }
 
         async function renderDashboard() {
             applyFilters(); 
-            if(wilayahMaster.length === 0) {
+            
+            if (wilayahMaster.length === 0) {
                 try {
                     const res = await callBackend('getWilayah');
                     wilayahMaster = res.data; 
                     populateDropdowns();
-                } catch(e) { console.error("Gagal load wilayah:", e); }
+                } catch(e) { 
+                    console.error("Gagal meload master wilayah:", e); 
+                }
             }
         }
 
         function populateDropdowns() {
-            let seenP = new Set(); let pulaus = [];
-            let seenPr = new Set(); let provs = [];
+            let seenP = new Set(); 
+            let pulaus = [];
+            
+            let seenPr = new Set(); 
+            let provs = [];
+            
             provinsiMaster = [];
             
             wilayahMaster.forEach(w => {
-                if(!seenP.has(w.pulau)) { seenP.add(w.pulau); pulaus.push(w.pulau); }
-                if(!seenPr.has(w.prov)) { 
-                    seenPr.add(w.prov); provs.push(w.prov); 
+                if (!seenP.has(w.pulau)) { 
+                    seenP.add(w.pulau); 
+                    pulaus.push(w.pulau); 
+                }
+                if (!seenPr.has(w.prov)) { 
+                    seenPr.add(w.prov); 
+                    provs.push(w.prov); 
                     const provId = w.id ? w.id.split('.')[0] : '';
                     provinsiMaster.push({ id: provId, prov: w.prov, pulau: w.pulau });
                 }
             });
 
-            choiceFilterPulau.clearChoices(); choiceFilterProv.clearChoices();
-            choiceFilterPulau.setChoices([{value: '', label: 'Semua Pulau'}].concat(pulaus.map(p => ({value: p, label: p}))));
-            choiceFilterProv.setChoices([{value: '', label: 'Semua Provinsi'}].concat(provs.map(p => ({value: p, label: p}))));
+            choiceFilterPulau.clearChoices(); 
+            choiceFilterProv.clearChoices();
+            
+            choiceFilterPulau.setChoices([
+                {value: '', label: 'Semua Pulau'}
+            ].concat(pulaus.map(p => ({value: p, label: p}))));
+            
+            choiceFilterProv.setChoices([
+                {value: '', label: 'Semua Provinsi'}
+            ].concat(provs.map(p => ({value: p, label: p}))));
 
-            // Populate Form Dropdowns
             choiceFormUnit.clearChoices();
-            if(db.unit) {
-                choiceFormUnit.setChoices([{value: '', label: 'Pilih Unit...'}].concat(db.unit.map(u => ({value: u.Unit, label: u.Unit}))));
+            if (db.unit) {
+                choiceFormUnit.setChoices([
+                    {value: '', label: 'Pilih Unit...'}
+                ].concat(db.unit.map(u => ({value: u.Unit, label: u.Unit}))));
             }
 
             choiceFormProv.clearChoices();
-            choiceFormProv.setChoices([{value: '', label: 'Ketik nama provinsi...'}].concat(provinsiMaster.map(p => ({value: p.prov, label: p.prov}))));
+            choiceFormProv.setChoices([
+                {value: '', label: 'Ketik nama provinsi...'}
+            ].concat(provinsiMaster.map(p => ({value: p.prov, label: p.prov}))));
 
             choiceFormKab.clearChoices();
-            choiceFormKab.setChoices([{value: '', label: 'Ketik nama kabupaten...'}].concat(wilayahMaster.map(k => ({value: k.kab, label: k.kab}))));
+            choiceFormKab.setChoices([
+                {value: '', label: 'Ketik nama kabupaten...'}
+            ].concat(wilayahMaster.map(k => ({value: k.kab, label: k.kab}))));
         }
 
         // --- DYNAMIC LOCATION LOGIC ---
@@ -481,9 +936,10 @@
             const wrapTextProv = document.getElementById('wrapTextProv');
             const wrapTextPulau = document.getElementById('wrapTextPulau');
             
-            if(!isInit) {
-                if(choiceFormKab) choiceFormKab.setChoiceByValue('');
-                if(choiceFormProv) choiceFormProv.setChoiceByValue('');
+            // Reset fields on change
+            if (!isInit) {
+                if (choiceFormKab) choiceFormKab.setChoiceByValue('');
+                if (choiceFormProv) choiceFormProv.setChoiceByValue('');
                 document.getElementById('inputProvinsi').value = '';
                 document.getElementById('inputPulau').value = '';
             }
@@ -495,6 +951,7 @@
                 wrapTextPulau.classList.remove('d-none');
                 document.getElementById('inputKabupaten').removeAttribute('required');
                 document.getElementById('inputProvinsiSelect').setAttribute('required', 'required');
+                
             } else if (["DPD", "Pendidikan/Ponpes WI", "Internal lainnya"].includes(unit)) {
                 wrapKab.classList.remove('d-none');
                 wrapProv.classList.add('d-none');
@@ -502,7 +959,9 @@
                 wrapTextPulau.classList.remove('d-none');
                 document.getElementById('inputProvinsiSelect').removeAttribute('required');
                 document.getElementById('inputKabupaten').setAttribute('required', 'required');
-            } else if (unit) { // Eksternal, STIBA, dll
+                
+            } else if (unit) { 
+                // Kategori Lainnya (Eksternal, STIBA, dll)
                 wrapKab.classList.add('d-none');
                 wrapProv.classList.add('d-none');
                 wrapTextProv.classList.add('d-none');
@@ -511,60 +970,78 @@
                 document.getElementById('inputProvinsiSelect').removeAttribute('required');
             }
             
-            if(!isInit) calculateIDs();
+            if (!isInit) {
+                calculateIDs();
+            }
         }
 
         function autoFillRegion() {
             const kabName = document.getElementById('inputKabupaten').value;
             const found = wilayahMaster.find(w => w.kab === kabName);
-            if(found) {
+            
+            if (found) {
                 document.getElementById('inputPulau').value = found.pulau;
                 document.getElementById('inputProvinsi').value = found.prov;
             } else {
-                document.getElementById('inputPulau').value = ""; document.getElementById('inputProvinsi').value = "";
+                document.getElementById('inputPulau').value = ""; 
+                document.getElementById('inputProvinsi').value = "";
             }
+            
             calculateIDs();
         }
 
         function autoFillRegionProv() {
             const provName = document.getElementById('inputProvinsiSelect').value;
             const found = provinsiMaster.find(p => p.prov === provName);
-            if(found) {
+            
+            if (found) {
                 document.getElementById('inputPulau').value = found.pulau;
             } else {
                 document.getElementById('inputPulau').value = "";
             }
+            
             calculateIDs();
         }
 
+        // Perhitungan ID Wilayah dan Penempatan sesuai Rule User
         function calculateIDs() {
             const unit = document.getElementById('inputUnit').value;
-            let idWilayah = "";
+            let idWilayah = ""; 
             let idPenempatan = "";
             
             let unitData = db.unit ? db.unit.find(u => u.Unit === unit) : null;
             let unitKode = unitData ? unitData.Kode : "";
 
             if (!unit) {
-                // reset
+                // reset jika belum pilih apa-apa
             } else if (unit === 'DPW') {
                 const provName = document.getElementById('inputProvinsiSelect').value;
                 const found = provinsiMaster.find(p => p.prov === provName);
-                if (found && found.id) {
-                    idWilayah = `${found.id}.00.00.0000`;
-                    idPenempatan = `${unitKode}.${idWilayah}`;
+                
+                if (found && found.id) { 
+                    // Misal Sulawesi Selatan: IDProvinsi '73'
+                    // Menjadi '73.00.00.0000'
+                    idWilayah = `${found.id}.00.00.0000`; 
+                    // Menjadi '102.73.00.00.0000'
+                    idPenempatan = `${unitKode}.${idWilayah}`; 
                 }
             } else if (["DPD", "Pendidikan/Ponpes WI", "Internal lainnya"].includes(unit)) {
                 const kabName = document.getElementById('inputKabupaten').value;
                 const found = wilayahMaster.find(w => w.kab === kabName);
+                
                 if (found && found.id) {
+                    // Misal Bulukumba: IDKabupaten '73.02'
                     let shortId = String(found.id).split('.').slice(0, 2).join('.');
-                    idWilayah = `${shortId}.00.0000`;
+                    // Menjadi '73.02.00.0000'
+                    idWilayah = `${shortId}.00.0000`; 
+                    // Menjadi '103.73.02.00.0000'
                     idPenempatan = `${unitKode}.${idWilayah}`;
                 }
-            } else { // Eksternal, STIBA dll
-                idWilayah = `99.99.99.9999`;
-                idPenempatan = `${unitKode}.${idWilayah}`;
+            } else { 
+                // Kategori Lainnya (Eksternal, STIBA, dll)
+                idWilayah = `99.99.99.9999`; 
+                // Misal STIBA (Kode 191) menjadi '191.99.99.99.9999'
+                idPenempatan = `${unitKode}.99.99.99.99.9999`;
             }
 
             document.getElementById('mutasiIdWilayah').value = idWilayah;
@@ -573,6 +1050,7 @@
             document.getElementById('displayIdPenempatan').innerText = idPenempatan || "-";
         }
 
+        // --- FILTER & TABLE RENDER ---
         function applyFilters() {
             const s = document.getElementById('searchData').value.toLowerCase();
             const stat = document.getElementById('filterStatus').value;
@@ -580,59 +1058,110 @@
             const pro = document.getElementById('filterProvinsi').value;
 
             currentFilteredData = db.dai.filter(r => {
-                return (r.Nama.toLowerCase().includes(s) || r.ID_Dai.toLowerCase().includes(s) || r.Kabupaten.toLowerCase().includes(s) || r.SK_Penempatan.toLowerCase().includes(s)) &&
-                       (stat === "" || r.Status === stat) && (pul === "" || r.Pulau === pul) && (pro === "" || r.Provinsi === pro);
+                const isMatchSearch = 
+                    (r.Nama && r.Nama.toLowerCase().includes(s)) || 
+                    (r.ID_Dai && r.ID_Dai.toLowerCase().includes(s)) || 
+                    (r.Kabupaten && r.Kabupaten.toLowerCase().includes(s)) || 
+                    (r.SK_Penempatan && r.SK_Penempatan.toLowerCase().includes(s));
+                    
+                const isMatchStatus = (stat === "" || r.Status === stat);
+                const isMatchPulau = (pul === "" || r.Pulau === pul);
+                const isMatchProvinsi = (pro === "" || r.Provinsi === pro);
+                
+                return isMatchSearch && isMatchStatus && isMatchPulau && isMatchProvinsi;
             });
 
             currentFilteredData.sort((a, b) => {
-                let vA = a[sortConfig.key] || ""; let vB = b[sortConfig.key] || "";
-                if (vA < vB) return sortConfig.asc ? -1 : 1; if (vA > vB) return sortConfig.asc ? 1 : -1; return 0;
+                let vA = a[sortConfig.key] || ""; 
+                let vB = b[sortConfig.key] || "";
+                if (vA < vB) return sortConfig.asc ? -1 : 1; 
+                if (vA > vB) return sortConfig.asc ? 1 : -1; 
+                return 0;
             });
-            renderTable(); updateMetrics();
+            
+            renderTable(); 
+            updateMetrics();
         }
 
-        function handleSort(k) { sortConfig.asc = sortConfig.key===k ? !sortConfig.asc : true; sortConfig.key=k; applyFilters(); }
+        function handleSort(k) { 
+            sortConfig.asc = (sortConfig.key === k) ? !sortConfig.asc : true; 
+            sortConfig.key = k; 
+            applyFilters(); 
+        }
 
         function renderTable() {
-            const tb = document.getElementById('tableBody'); tb.innerHTML = '';
-            if (currentFilteredData.length === 0) { tb.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-muted">Belum ada data.</td></tr>`; return; }
+            const tb = document.getElementById('tableBody'); 
+            tb.innerHTML = '';
+            
+            if (currentFilteredData.length === 0) { 
+                tb.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-muted">Belum ada data.</td></tr>`; 
+                return; 
+            }
             
             currentFilteredData.forEach((row, i) => {
-                const isAktif = row.Status === 'Aktif';
-                const badge = `<span class="badge-status ${isAktif ? 'bg-aktif' : 'bg-nonaktif'}"><i class="bi ${isAktif ? 'bi-check-circle-fill' : 'bi-x-circle-fill'} me-1"></i>${row.Status}</span>`;
+                const isAktif = (row.Status === 'Aktif');
+                const badgeClass = isAktif ? 'bg-aktif' : 'bg-nonaktif';
+                const iconClass = isAktif ? 'bi-check-circle-fill' : 'bi-x-circle-fill';
+                
+                const badge = `<span class="badge-status ${badgeClass}"><i class="bi ${iconClass} me-1"></i>${row.Status}</span>`;
                 
                 let skHtml = `<span class="fw-bold text-dark">${row.SK_Penempatan}</span>`;
-                if (row.Jumlah_Riwayat > 1) skHtml += ` <button class="badge rounded-pill sk-badge ms-2" onclick="openRiwayat('${row.ID_Dai}', '${row.Nama}')">${row.Jumlah_Riwayat} <i class="bi bi-clock-history ms-1"></i></button>`;
+                if (row.Jumlah_Riwayat > 1) {
+                    skHtml += ` <button class="badge rounded-pill sk-badge ms-2" onclick="openRiwayat('${row.ID_Dai}', '${row.Nama}')">${row.Jumlah_Riwayat} <i class="bi bi-clock-history ms-1"></i></button>`;
+                }
 
-                tb.innerHTML += `<tr>
+                tb.innerHTML += `
+                <tr>
                     <td class="text-center text-muted fw-bold">${i + 1}</td>
-                    <td><div class="fw-bold fs-6 mb-1 text-primary">${row.Nama}</div><div class="d-flex align-items-center gap-2"><span class="font-monospace small text-muted">${row.ID_Dai}</span>${badge}</div></td>
-                    <td><div class="fw-bold text-dark">${row.Provinsi || '-'}</div><div class="small text-muted">${row.Pulau || '-'}</div></td>
-                    <td class="fw-semibold text-dark">${row.Kabupaten || '-'}</td><td>${skHtml}</td>
-                    <td class="text-center"><button class="btn btn-sm btn-light border rounded-circle shadow-sm" onclick='openModalMutasi(${JSON.stringify(row).replace(/'/g, "&#39;")})'><i class="bi bi-pencil-fill text-primary"></i></button></td>
+                    <td>
+                        <div class="fw-bold fs-6 mb-1 text-primary">${row.Nama}</div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="font-monospace small text-muted">${row.ID_Dai}</span>
+                            ${badge}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="fw-bold text-dark">${row.Provinsi || '-'}</div>
+                        <div class="small text-muted">${row.Pulau || '-'}</div>
+                    </td>
+                    <td class="fw-semibold text-dark">${row.Kabupaten || '-'}</td>
+                    <td>${skHtml}</td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-light border rounded-circle shadow-sm" onclick='openModalMutasi(${JSON.stringify(row).replace(/'/g, "&#39;")})'>
+                            <i class="bi bi-pencil-fill text-primary"></i>
+                        </button>
+                    </td>
                 </tr>`;
             });
         }
 
         function updateMetrics() {
-            const tot = db.dai.length; const akt = db.dai.filter(d => d.Status === 'Aktif').length;
-            document.getElementById('metrikTotal').innerText = tot; document.getElementById('metrikAktif').innerText = akt; document.getElementById('metrikNonaktif').innerText = tot - akt;
+            const tot = db.dai.length; 
+            const akt = db.dai.filter(d => d.Status === 'Aktif').length;
+            
+            document.getElementById('metrikTotal').innerText = tot; 
+            document.getElementById('metrikAktif').innerText = akt; 
+            document.getElementById('metrikNonaktif').innerText = (tot - akt);
         }
 
+        // --- SUBMIT DAN RIWAYAT MUTASI ---
         function openModalMutasi(row) {
             document.getElementById('mutasiIdDai').value = row.ID_Dai; 
             document.getElementById('mutasiNamaDisplay').innerText = row.Nama; 
             document.getElementById('mutasiIdDisplay').innerText = row.ID_Dai;
-            document.getElementById('statusAktif').checked = row.Status === 'Aktif'; 
-            document.getElementById('statusTidakAktif').checked = row.Status !== 'Aktif';
+            
+            document.getElementById('statusAktif').checked = (row.Status === 'Aktif'); 
+            document.getElementById('statusTidakAktif').checked = (row.Status !== 'Aktif');
+            
             document.getElementById('inputSKPenempatan').value = ""; 
             document.getElementById('inputTanggalMutasi').value = new Date().toISOString().split('T')[0];
             
-            // Set Dropdowns state
-            if(choiceFormUnit) choiceFormUnit.setChoiceByValue(row.Unit || '');
+            if (choiceFormUnit) choiceFormUnit.setChoiceByValue(row.Unit || '');
+            
             handleUnitChange(true); 
             
-            if(row.Unit === 'DPW' && choiceFormProv) {
+            // Re-assign previous location choices dynamically based on category unit
+            if (row.Unit === 'DPW' && choiceFormProv) {
                 choiceFormProv.setChoiceByValue(row.Provinsi || '');
                 autoFillRegionProv();
             } else if (["DPD", "Pendidikan/Ponpes WI", "Internal lainnya"].includes(row.Unit) && choiceFormKab) {
@@ -649,16 +1178,26 @@
             e.preventDefault();
             const unit = document.getElementById('inputUnit').value;
             const idPenempatan = document.getElementById('mutasiIdPenempatan').value;
-            if(!unit || !idPenempatan) return Swal.fire("Peringatan", "Pastikan Unit dan Lokasi telah dipilih dengan valid.", "warning");
+            
+            if (!unit || !idPenempatan) {
+                return Swal.fire("Peringatan", "Pastikan Unit dan Lokasi telah dipilih dengan benar.", "warning");
+            }
 
-            const btn = document.getElementById('btnSimpanMutasi'); btn.disabled = true; btn.innerHTML = 'Menyimpan...';
+            const btn = document.getElementById('btnSimpanMutasi'); 
+            btn.disabled = true; 
+            btn.innerHTML = 'Menyimpan...';
+            
             toggleOverlay(true, "Menyimpan Mutasi...");
             
-            let finalProv = ""; let finalKab = ""; let finalPulau = document.getElementById('inputPulau').value;
-            if(unit === 'DPW') {
-                finalProv = document.getElementById('inputProvinsiSelect').value;
+            // Format lokasi akhir berdasarkan tipe unit
+            let finalProv = ""; 
+            let finalKab = ""; 
+            let finalPulau = document.getElementById('inputPulau').value;
+            
+            if (unit === 'DPW') { 
+                finalProv = document.getElementById('inputProvinsiSelect').value; 
             } else if (["DPD", "Pendidikan/Ponpes WI", "Internal lainnya"].includes(unit)) {
-                finalProv = document.getElementById('inputProvinsi').value;
+                finalProv = document.getElementById('inputProvinsi').value; 
                 finalKab = document.getElementById('inputKabupaten').value;
             }
 
@@ -666,50 +1205,53 @@
                 idDai: document.getElementById('mutasiIdDai').value, 
                 nama: document.getElementById('mutasiNamaDisplay').innerText,
                 status: document.getElementById('statusAktif').checked ? 'Aktif' : 'Tidak Aktif',
-                idPenempatan: idPenempatan,
-                unit: unit,
+                idPenempatan: idPenempatan, 
+                unit: unit, 
                 idWilayah: document.getElementById('mutasiIdWilayah').value, 
-                pulau: finalPulau, provinsi: finalProv, kabupaten: finalKab, 
+                pulau: finalPulau, 
+                provinsi: finalProv, 
+                kabupaten: finalKab, 
                 skPenempatan: document.getElementById('inputSKPenempatan').value,
                 tanggalMutasi: document.getElementById('inputTanggalMutasi').value
             };
 
             try {
                 await callBackend('saveMutasi', payload);
-                if (typeof google === 'undefined') {
-                    // Update memori lokal untuk simulasi
-                    const index = db.dai.findIndex(d => d.ID_Dai === payload.idDai);
-                    if(index > -1) {
-                        db.dai[index] = {...db.dai[index], ...payload};
-                    } else {
-                        db.dai.push({...payload, Jumlah_Riwayat: 1});
-                    }
-                    db.riwayat.push({...payload});
-                } else {
-                    const res = await callBackend('getAllData'); db = res.data; 
-                }
+                const res = await callBackend('getAllData'); 
+                
+                db = res.data; 
                 applyFilters();
+                
                 bootstrap.Modal.getInstance(document.getElementById('modalMutasi')).hide();
-            } catch (err) { Swal.fire("Error", err.toString(), "error"); }
+                toggleOverlay(false, "", true); // Matikan loading + notif berhasil
+                
+            } catch (err) { 
+                toggleOverlay(false);
+                Swal.fire("Error", err.toString(), "error"); 
+            }
             
-            btn.disabled = false; btn.innerText = 'Simpan Perubahan'; toggleOverlay(false);
+            btn.disabled = false; 
+            btn.innerText = 'Simpan Perubahan'; 
         }
 
         function openRiwayat(idDai, nama) {
             document.getElementById('riwayatNama').innerText = nama;
-            const tb = document.getElementById('tableRiwayatBody'); tb.innerHTML = '';
+            const tb = document.getElementById('tableRiwayatBody'); 
+            tb.innerHTML = '';
             
             const logs = db.riwayat.filter(r => r.ID_Dai === idDai).sort((a,b) => (a.TanggalMutasi < b.TanggalMutasi ? 1 : -1));
             
-            if (logs.length === 0) tb.innerHTML = '<tr><td colspan="3" class="text-center text-muted py-4">Belum ada riwayat.</td></tr>';
-            else {
+            if (logs.length === 0) {
+                tb.innerHTML = '<tr><td colspan="3" class="text-center text-muted py-4">Belum ada riwayat mutasi.</td></tr>';
+            } else {
                 logs.forEach((log, idx) => {
-                    const isLatest = idx === 0;
+                    const isLatest = (idx === 0);
                     const trClass = isLatest ? 'table-primary border-primary' : '';
                     const dateStyle = isLatest ? 'text-primary fw-bold' : 'text-muted';
                     const activeBadge = isLatest ? '<span class="badge bg-success ms-2" style="font-size:0.6rem;">SK SAAT INI</span>' : '';
                     
-                    tb.innerHTML += `<tr class="${trClass}">
+                    tb.innerHTML += `
+                    <tr class="${trClass}">
                         <td class="fw-bold px-4 ${dateStyle}">${log.TanggalMutasi} ${activeBadge}</td>
                         <td class="${isLatest ? 'fw-bold text-dark' : 'text-secondary'}">${log.SK_Penempatan}</td>
                         <td class="small">
@@ -723,19 +1265,22 @@
             new bootstrap.Modal(document.getElementById('modalRiwayat')).show();
         }
 
-        // --- REKAP DATA (UNIT & WILAYAH) ---
+        // --- REKAPITULASI (UNIT, PULAU, PROV, KAB) ---
         function openRekapModal() {
             rekapSortConfig = { key: 'originalIndex', asc: true }; 
             prepareRekapData(); 
+            
             renderRekapData('Unit', 'bodyRekapUnit'); 
             renderRekapData('Pulau', 'bodyRekapPulau'); 
             renderRekapData('Provinsi', 'bodyRekapProv');
             
-            const provs = [...new Set(wilayahMaster.map(w=>w.prov))]; 
+            const provs = [...new Set(wilayahMaster.map(w => w.prov))]; 
             const sel = document.getElementById('rekapFilterProv');
+            
             sel.innerHTML = '<option value="">-- Pilih Provinsi --</option>';
             provs.forEach(p => sel.innerHTML += `<option value="${p}">${p}</option>`);
-            document.getElementById('bodyRekapKab').innerHTML = '<tr><td colspan="4" class="text-muted py-4 text-center">Pilih provinsi.</td></tr>';
+            
+            document.getElementById('bodyRekapKab').innerHTML = '<tr><td colspan="4" class="text-muted py-4 text-center">Silakan pilih provinsi.</td></tr>';
             
             new bootstrap.Modal(document.getElementById('modalRekap')).show();
         }
@@ -747,76 +1292,155 @@
                 const map = {};
                 db.dai.forEach(d => {
                     const key = d[groupKey] || "Belum Ditentukan";
-                    if(!map[key]) {
+                    
+                    if (!map[key]) {
                         let oIndex = 999999;
-                        if(groupKey === 'Unit' && db.unit) {
+                        
+                        // Set sort ordering specifically based on original sheet mapping
+                        if (groupKey === 'Unit' && db.unit) {
                             const uMatch = db.unit.findIndex(u => u.Unit === key);
-                            if(uMatch !== -1) oIndex = uMatch;
+                            if (uMatch !== -1) oIndex = uMatch;
                         } else {
-                            const wMatch = wilayahMaster.find(w => w[groupKey.toLowerCase().replace('i','i').replace('kabupaten','kab')] === key);
-                            if(wMatch) oIndex = wMatch.originalIndex;
+                            const formatKey = groupKey.toLowerCase().replace('i','i').replace('kabupaten','kab');
+                            const wMatch = wilayahMaster.find(w => w[formatKey] === key);
+                            if (wMatch) oIndex = wMatch.originalIndex;
                         }
+                        
                         map[key] = { name: key, aktif: 0, tidakAktif: 0, total: 0, originalIndex: oIndex };
                     }
+                    
                     map[key].total++;
-                    if(d.Status === 'Aktif') map[key].aktif++; else map[key].tidakAktif++;
+                    if (d.Status === 'Aktif') map[key].aktif++; 
+                    else map[key].tidakAktif++;
                 });
                 return Object.values(map);
             };
 
-            currentRekap.Unit = groupData('Unit');
+            currentRekap.Unit = groupData('Unit'); 
             currentRekap.Pulau = groupData('Pulau'); 
             currentRekap.Provinsi = groupData('Provinsi');
         }
 
         function generateRekapKabupaten() {
             const prov = document.getElementById('rekapFilterProv').value;
-            if(prov) {
+            
+            if (prov) {
                 const filteredDai = db.dai.filter(d => d.Provinsi === prov);
                 const map = {};
+                
                 filteredDai.forEach(d => {
                     const key = d.Kabupaten || "Belum Ditentukan";
-                    if(!map[key]) {
+                    if (!map[key]) {
                         const wMatch = wilayahMaster.find(w => w.kab === key);
-                        map[key] = { name: key, aktif: 0, tidakAktif: 0, total: 0, originalIndex: wMatch ? wMatch.originalIndex : 999999 };
+                        map[key] = { 
+                            name: key, 
+                            aktif: 0, 
+                            tidakAktif: 0, 
+                            total: 0, 
+                            originalIndex: wMatch ? wMatch.originalIndex : 999999 
+                        };
                     }
                     map[key].total++;
-                    if(d.Status === 'Aktif') map[key].aktif++; else map[key].tidakAktif++;
+                    if (d.Status === 'Aktif') map[key].aktif++; 
+                    else map[key].tidakAktif++;
                 });
+                
                 currentRekap.Kabupaten = Object.values(map);
                 renderRekapData('Kabupaten', 'bodyRekapKab');
-            } else document.getElementById('bodyRekapKab').innerHTML = '<tr><td colspan="4" class="text-muted py-4 text-center">Pilih provinsi.</td></tr>';
+            } else { 
+                document.getElementById('bodyRekapKab').innerHTML = '<tr><td colspan="4" class="text-muted py-4 text-center">Silakan pilih provinsi.</td></tr>';
+            }
         }
 
         function sortRekap(type, key) {
-            rekapSortConfig.asc = (rekapSortConfig.key === key) ? !rekapSortConfig.asc : true; rekapSortConfig.key = key;
-            renderRekapData(type, `bodyRekap${type==='Provinsi'?'Prov':(type==='Kabupaten'?'Kab':type)}`);
+            rekapSortConfig.asc = (rekapSortConfig.key === key) ? !rekapSortConfig.asc : true; 
+            rekapSortConfig.key = key;
+            
+            const target = `bodyRekap${type === 'Provinsi' ? 'Prov' : (type === 'Kabupaten' ? 'Kab' : type)}`;
+            renderRekapData(type, target);
         }
 
         function renderRekapData(type, targetId) {
-            const tb = document.getElementById(targetId); if(!tb) return; tb.innerHTML = '';
+            const tb = document.getElementById(targetId); 
+            if (!tb) return; 
+            tb.innerHTML = '';
+            
             let data = currentRekap[type];
             data.sort((a, b) => {
-                let vA = a[rekapSortConfig.key]; let vB = b[rekapSortConfig.key];
-                if (vA < vB) return rekapSortConfig.asc ? -1 : 1; if (vA > vB) return rekapSortConfig.asc ? 1 : -1; return 0;
+                let vA = a[rekapSortConfig.key]; 
+                let vB = b[rekapSortConfig.key];
+                if (vA < vB) return rekapSortConfig.asc ? -1 : 1; 
+                if (vA > vB) return rekapSortConfig.asc ? 1 : -1; 
+                return 0;
             });
+            
             data.forEach(d => {
-                tb.innerHTML += `<tr><td class="fw-bold ps-4 text-dark">${d.name}</td><td class="text-center w-25 fw-semibold text-success">${d.aktif}</td><td class="text-center w-25 fw-semibold text-danger">${d.tidakAktif}</td><td class="text-center w-25 fw-bold text-primary">${d.total}</td></tr>`;
+                tb.innerHTML += `
+                <tr>
+                    <td class="fw-bold ps-4 text-dark">${d.name}</td>
+                    <td class="text-center w-25 fw-semibold text-success">${d.aktif}</td>
+                    <td class="text-center w-25 fw-semibold text-danger">${d.tidakAktif}</td>
+                    <td class="text-center w-25 fw-bold text-primary">${d.total}</td>
+                </tr>`;
             });
         }
 
+        // --- EXPORT DATA ---
         function exportExcel() {
-            if(currentFilteredData.length===0) return; toggleOverlay(true,"Exporting...");
-            const dataToExport = currentFilteredData.map((d, i) => ({"No": i+1, "ID Dai": d.ID_Dai, "Nama": d.Nama, "Status": d.Status, "Unit": d.Unit, "Pulau": d.Pulau, "Provinsi": d.Provinsi, "Kabupaten": d.Kabupaten, "SK Penempatan": d.SK_Penempatan}));
-            const ws = XLSX.utils.json_to_sheet(dataToExport); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Penempatan");
-            XLSX.writeFile(wb, "SAPADAI_Penempatan.xlsx"); toggleOverlay(false);
+            if (currentFilteredData.length === 0) return; 
+            
+            toggleOverlay(true, "Membuat file Excel...");
+            
+            const dataToExport = currentFilteredData.map((d, i) => ({
+                "No": i + 1, 
+                "ID Dai": d.ID_Dai, 
+                "Nama": d.Nama, 
+                "Status": d.Status, 
+                "Unit": d.Unit, 
+                "Pulau": d.Pulau, 
+                "Provinsi": d.Provinsi, 
+                "Kabupaten": d.Kabupaten, 
+                "SK Penempatan": d.SK_Penempatan
+            }));
+            
+            const ws = XLSX.utils.json_to_sheet(dataToExport); 
+            const wb = XLSX.utils.book_new(); 
+            XLSX.utils.book_append_sheet(wb, ws, "Penempatan");
+            XLSX.writeFile(wb, "SAPADAI_Penempatan.xlsx"); 
+            
+            toggleOverlay(false);
         }
+
         function exportPDF() {
-            if(currentFilteredData.length===0) return; toggleOverlay(true,"Exporting...");
-            const { jsPDF } = window.jspdf; const doc = new jsPDF('landscape');
-            doc.setFontSize(16); doc.setTextColor(15, 76, 129); doc.text("SAPADAI - Laporan Penempatan", 14, 15);
-            doc.autoTable({ head: [["No", "ID", "Nama", "Status", "Unit", "Lokasi", "SK"]], body: currentFilteredData.map((d, i) => [i+1, d.ID_Dai, d.Nama, d.Status, d.Unit, `${d.Provinsi||'-'} - ${d.Kabupaten||'-'}`, d.SK_Penempatan]), startY: 25, styles: { fontSize: 8 }, headStyles: { fillColor: [15, 76, 129] } });
-            doc.save('SAPADAI_Laporan.pdf'); toggleOverlay(false);
+            if (currentFilteredData.length === 0) return; 
+            
+            toggleOverlay(true, "Membuat PDF Document...");
+            
+            const { jsPDF } = window.jspdf; 
+            const doc = new jsPDF('landscape');
+            
+            doc.setFontSize(16); 
+            doc.setTextColor(15, 76, 129); 
+            doc.text("SAPADAI - Laporan Penempatan", 14, 15);
+            
+            doc.autoTable({ 
+                head: [["No", "ID", "Nama", "Status", "Unit", "Lokasi", "SK Penempatan"]], 
+                body: currentFilteredData.map((d, i) => [
+                    i + 1, 
+                    d.ID_Dai, 
+                    d.Nama, 
+                    d.Status, 
+                    d.Unit, 
+                    `${d.Provinsi || '-'}\n${d.Kabupaten || '-'}`, 
+                    d.SK_Penempatan
+                ]), 
+                startY: 25, 
+                styles: { fontSize: 8 }, 
+                headStyles: { fillColor: [15, 76, 129] } 
+            });
+            
+            doc.save('SAPADAI_Laporan.pdf'); 
+            toggleOverlay(false);
         }
     </script>
 </body>
