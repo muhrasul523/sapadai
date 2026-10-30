@@ -154,16 +154,17 @@
             cursor: pointer; 
         }
 
-        .table tbody tr:nth-child(odd) { 
+        /* Fix Bootstrap 5: Apply background directly to TD elements agar tidak tertutup */
+        .table tbody tr:nth-child(odd) > td { 
             background-color: #ffffff !important; 
         }
 
-        .table tbody tr:nth-child(even) { 
-            background-color: #f0f7fd !important; /* Biru muda transparan yang kontras */
+        .table tbody tr:nth-child(even) > td { 
+            background-color: rgba(15, 76, 129, 0.08) !important; /* Warna biru dengan transparansi (sekitar 8%) */
         } 
 
-        .table tbody tr:hover { 
-            background-color: rgba(15, 76, 129, 0.08) !important; 
+        .table tbody tr:hover > td { 
+            background-color: rgba(15, 76, 129, 0.15) !important; 
         }
 
         .table td { 
@@ -208,6 +209,11 @@
             z-index: 10; 
         }
 
+        /* Ini kunci untuk mencegah saling timpa: container yg aktif ditarik ke paling depan */
+        .choices-container:focus-within {
+            z-index: 9999 !important;
+        }
+
         .choices[data-type*="select-one"] { 
             z-index: 4; 
         }
@@ -222,6 +228,12 @@
             background-color: #fff; 
             min-height: 42px; 
             padding: 4.5px 7.5px; 
+        }
+
+        /* Memastikan list dropdown tidak transparan (solid white) */
+        .choices__list--dropdown {
+            background-color: #ffffff !important;
+            z-index: 100 !important;
         }
 
         /* Forms */
