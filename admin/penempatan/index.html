@@ -369,7 +369,7 @@
             </div>
 
             <!-- Table -->
-            <div class="table-wrapper shadow-sm">
+            <div class="table-wrapper shadow-sm mb-3">
                 <table class="table mb-0">
                     <thead>
                         <tr>
@@ -383,6 +383,12 @@
                     </thead>
                     <tbody id="tableBody"></tbody>
                 </table>
+            </div>
+
+            <!-- Pagination Container -->
+            <div class="d-flex justify-content-between align-items-center bg-white p-3 rounded shadow-sm">
+                <div class="text-muted small fw-bold" id="paginationInfo">Menampilkan 0 - 0 dari 0 data</div>
+                <ul class="pagination pagination-sm mb-0" id="paginationControls"></ul>
             </div>
         </div>
     </div>
@@ -631,6 +637,10 @@
         let sortConfig = { key: 'Nama', asc: true };
         let currentRekap = { Unit: [], Pulau: [], Provinsi: [], Kabupaten: [] };
         let rekapSortConfig = { key: 'originalIndex', asc: true };
+
+        // State Pagination
+        let currentPage = 1;
+        const rowsPerPage = 50;
 
         // Widgets
         let choiceFilterPulau, choiceFilterProv;
@@ -1091,6 +1101,7 @@
                 return 0;
             });
             
+            currentPage = 1; // Reset halaman ke-1 setiap kali filter/search berubah
             renderTable(); 
             updateMetrics();
         }
@@ -1101,16 +1112,82 @@
             applyFilters(); 
         }
 
+        function changePage(page) {
+            currentPage = page;
+            renderTable();
+        }
+
+        function renderPagination() {
+            const totalData = currentFilteredData.length;
+            const totalPages = Math.ceil(totalData / rowsPerPage) || 1;
+            const paginationUl = document.getElementById('paginationControls');
+            const paginationInfo = document.getElementById('paginationInfo');
+            
+            paginationUl.innerHTML = '';
+            
+            if (totalData === 0) {
+                paginationInfo.innerText = "Menampilkan 0 data";
+                return;
+            }
+
+            const startIdx = ((currentPage - 1) * rowsPerPage) + 1;
+            const endIdx = Math.min(currentPage * rowsPerPage, totalData);
+            paginationInfo.innerText = `Menampilkan ${startIdx} - ${endIdx} dari ${totalData} data`;
+
+            // Prev Button
+            paginationUl.innerHTML += `
+                <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                    <button class="page-link" onclick="changePage(${currentPage - 1})"><i class="bi bi-chevron-left"></i></button>
+                </li>
+            `;
+
+            // Show window of pages
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, currentPage + 2);
+            
+            if (startPage > 1) {
+                paginationUl.innerHTML += `<li class="page-item"><button class="page-link" onclick="changePage(1)">1</button></li>`;
+                if (startPage > 2) paginationUl.innerHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                paginationUl.innerHTML += `
+                    <li class="page-item ${currentPage === i ? 'active' : ''}">
+                        <button class="page-link" onclick="changePage(${i})">${i}</button>
+                    </li>
+                `;
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) paginationUl.innerHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                paginationUl.innerHTML += `<li class="page-item"><button class="page-link" onclick="changePage(${totalPages})">${totalPages}</button></li>`;
+            }
+
+            // Next Button
+            paginationUl.innerHTML += `
+                <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                    <button class="page-link" onclick="changePage(${currentPage + 1})"><i class="bi bi-chevron-right"></i></button>
+                </li>
+            `;
+        }
+
         function renderTable() {
             const tb = document.getElementById('tableBody'); 
             tb.innerHTML = '';
             
             if (currentFilteredData.length === 0) { 
                 tb.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-muted">Belum ada data.</td></tr>`; 
+                renderPagination();
                 return; 
             }
             
-            currentFilteredData.forEach((row, i) => {
+            // Logika Pagination (Potong Data Sesuai Halaman)
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            const pageData = currentFilteredData.slice(start, end);
+            
+            pageData.forEach((row, i) => {
+                const actualIndex = start + i + 1;
                 const isAktif = (row.Status === 'Aktif');
                 const badgeClass = isAktif ? 'bg-aktif' : 'bg-nonaktif';
                 const iconClass = isAktif ? 'bi-check-circle-fill' : 'bi-x-circle-fill';
@@ -1124,7 +1201,7 @@
 
                 tb.innerHTML += `
                 <tr>
-                    <td class="text-center text-muted fw-bold">${i + 1}</td>
+                    <td class="text-center text-muted fw-bold">${actualIndex}</td>
                     <td>
                         <div class="fw-bold fs-6 mb-1 text-primary">${row.Nama}</div>
                         <div class="d-flex align-items-center gap-2">
@@ -1145,6 +1222,8 @@
                     </td>
                 </tr>`;
             });
+            
+            renderPagination();
         }
 
         function updateMetrics() {
