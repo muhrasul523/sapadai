@@ -66,15 +66,15 @@
 
     <!-- Halaman Login -->
     <div id="login-page" class="min-h-screen flex items-center justify-center p-4 bg-gray-50">
-        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
-            <div class="text-center mb-8">
+        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 flex flex-col">
+            <div class="text-center mb-6">
                 <!-- LOGO DENGAN ONCLICK UNTUK BUKA MODAL REKAP GLOBAL -->
                 <img src="https://muhrasul523.github.io/sapadai/logo_sapadai_1.png" alt="Logo" class="h-24 w-24 mx-auto mb-4 object-contain bg-white rounded-full p-2 shadow-sm cursor-pointer hover:scale-105 transition transform" onclick="openModalRekapGlobal()" title="Klik untuk melihat rekapitulasi data">
                 <h1 class="text-xl font-bold text-gray-800 uppercase tracking-wide">PORTAL VERIFIKASI</h1>
                 <p class="text-sm text-gray-500 font-semibold tracking-wide">LAPORAN KINERJA DAI UTUSAN</p>
             </div>
             
-            <form onsubmit="event.preventDefault(); submitLogin();" class="space-y-5">
+            <form onsubmit="event.preventDefault(); submitLogin();" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Kode Akses Laporan</label>
                     <div class="relative">
@@ -91,17 +91,25 @@
                         </select>
                     </div>
                 </div>
-                <button type="submit" class="w-full wahdah-bg text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-800 transition shadow-lg mt-4">
+                <button type="submit" class="w-full wahdah-bg text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-800 transition shadow-lg mt-2">
                     <i class="fas fa-sign-in-alt mr-2"></i> Masuk Sistem
                 </button>
             </form>
+
+            <!-- FITUR BARU: Tombol Rekap Global di Halaman Login -->
+            <div class="mt-6 border-t pt-5">
+                <button onclick="openModalRekapGlobal()" type="button" class="w-full flex justify-center items-center gap-2 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-800 border border-blue-200 font-bold py-3 px-4 rounded-lg transition shadow-sm">
+                    <i class="fas fa-chart-pie"></i> Lihat Rekap Laporan Nasional
+                </button>
+            </div>
         </div>
     </div>
 
     <!-- Aplikasi Utama -->
     <div id="main-app" class="hidden min-h-screen pb-20">
         <nav class="wahdah-bg text-white p-4 sticky top-0 z-40 shadow-lg">
-            <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <!-- FITUR BARU: Diperlebar menggunakan w-full dan xl:w-[95%] -->
+            <div class="w-full xl:w-[95%] mx-auto flex justify-between items-center">
                 <div class="font-bold text-lg flex items-center gap-3">
                     <img src="https://muhrasul523.github.io/sapadai/logo_sapadai_1.png" alt="Logo" class="h-8 w-8 bg-white p-1 rounded-full object-contain">
                     <span class="hidden sm:inline">Verifikasi Laporan Dai</span>
@@ -118,7 +126,8 @@
             </div>
         </nav>
 
-        <div class="max-w-7xl mx-auto mt-6 px-4">
+        <!-- FITUR BARU: Lebar kontainer aplikasi diperlebar 95% layar monitor besar -->
+        <div class="w-full xl:w-[95%] mx-auto mt-6 px-4">
             
             <!-- Filter & Navigasi Utama -->
             <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
@@ -140,7 +149,7 @@
                 <!-- Top Stats -->
                 <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
                     <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-blue-500 relative">
-                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Total Dai</p>
+                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Target Laporan</p>
                         <h3 class="text-3xl font-bold text-gray-800" id="stat-total">0</h3>
                         <span class="absolute top-4 right-4 text-xs font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded">100%</span>
                     </div>
@@ -200,8 +209,10 @@
 
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse whitespace-nowrap">
-                            <thead class="bg-gray-50 text-gray-600 border-b">
+                        <!-- FITUR BARU: Menghapus whitespace-nowrap dari tag table -->
+                        <table class="w-full text-left border-collapse">
+                            <!-- whitespace-nowrap ditambahkan spesifik di thead agar header tidak rusak -->
+                            <thead class="bg-gray-50 text-gray-600 border-b whitespace-nowrap">
                                 <tr>
                                     <th class="p-4 font-bold text-sm">No</th>
                                     <th class="p-4 font-bold text-sm sortable" onclick="setSort('waktu')">Waktu Input <i class="fas fa-sort ml-1 text-gray-400"></i></th>
@@ -221,7 +232,7 @@
         </div>
     </div>
 
-    <!-- Modal Rekap Global (Muncul jika klik Logo) -->
+    <!-- Modal Rekap Global (Muncul jika klik Logo atau Tombol Login) -->
     <div id="modal-rekap-global" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-2 md:p-4 backdrop-blur-sm">
         <div class="bg-white w-full max-w-4xl rounded-2xl shadow-2xl flex flex-col max-h-[95vh] overflow-hidden transform transition-all">
             
@@ -245,7 +256,7 @@
                 <div class="bg-white p-4 rounded-xl border shadow-sm">
                     <h4 class="font-bold text-teal-800 text-sm mb-3 uppercase border-b pb-1"><i class="fas fa-globe mr-1"></i> Rekap Keseluruhan (Nasional)</h4>
                     <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 text-center">
-                        <div class="bg-gray-50 border p-3 rounded-lg"><p class="text-[10px] text-gray-500 font-bold uppercase">Total Dai</p><p class="text-2xl font-bold text-gray-800" id="rg-total">0</p><p class="text-[10px] text-gray-500">100%</p></div>
+                        <div class="bg-gray-50 border p-3 rounded-lg"><p class="text-[10px] text-gray-500 font-bold uppercase">Target Laporan</p><p class="text-2xl font-bold text-gray-800" id="rg-total">0</p><p class="text-[10px] text-gray-500">100%</p></div>
                         <div class="bg-gray-50 border p-3 rounded-lg"><p class="text-[10px] text-gray-500 font-bold uppercase">Belum Mengisi</p><p class="text-2xl font-bold text-gray-800" id="rg-belum">0</p><p class="text-[10px] font-bold text-gray-600" id="rg-pct-belum">0%</p></div>
                         <div class="bg-gray-50 border p-3 rounded-lg"><p class="text-[10px] text-gray-500 font-bold uppercase">Menunggu</p><p class="text-2xl font-bold text-yellow-600" id="rg-wait">0</p><p class="text-[10px] font-bold text-yellow-600" id="rg-pct-wait">0%</p></div>
                         <div class="bg-gray-50 border p-3 rounded-lg"><p class="text-[10px] text-gray-500 font-bold uppercase">Diterima</p><p class="text-2xl font-bold text-green-600" id="rg-acc">0</p><p class="text-[10px] font-bold text-green-600" id="rg-pct-acc">0%</p></div>
@@ -261,10 +272,10 @@
                             <thead class="bg-gray-100 text-gray-600 border-b text-xs uppercase">
                                 <tr>
                                     <th class="p-3 font-bold">Nama Verifikator</th>
-                                    <th class="p-3 font-bold text-center">Total Dai</th>
+                                    <th class="p-3 font-bold text-center">Jml Dai</th>
                                     <th class="p-3 font-bold text-center text-blue-600">Laporan Masuk</th>
-                                    <th class="p-3 font-bold text-center text-green-600">Selesai Diverifikasi</th>
-                                    <th class="p-3 font-bold text-center">Pencapaian</th>
+                                    <th class="p-3 font-bold text-center text-green-600">Jml Diverifikasi</th>
+                                    <th class="p-3 font-bold text-center">Persentase</th>
                                 </tr>
                             </thead>
                             <tbody id="rg-table-verifikator" class="divide-y divide-gray-100">
@@ -303,7 +314,7 @@
                         <div class="w-full md:w-1/2 flex flex-col">
                             <div class="bg-gray-50 p-2.5 rounded border border-gray-200 mb-4">
                                 <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-0.5">Penempatan</p>
-                                <p class="font-bold text-gray-800 text-sm truncate" id="mdl-penempatan">-</p>
+                                <p class="font-bold text-gray-800 text-sm whitespace-normal break-words" id="mdl-penempatan">-</p>
                             </div>
                             
                             <h5 class="font-bold text-teal-800 text-xs uppercase mb-2 pb-1 border-b"><i class="fas fa-star text-yellow-500 mr-1"></i> Karya Unggulan</h5>
@@ -476,6 +487,16 @@
             let yr = parseInt(p[1]) || 0;
             return yr * 100 + idx; // Contoh: 202607
         }
+        
+        // Fungsi pembantu untuk bulan lalu
+        function getLastMonthString() {
+            const bln = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+            let d = new Date();
+            let prevM = d.getMonth() - 1;
+            let y = d.getFullYear();
+            if(prevM < 0) { prevM = 11; y--; }
+            return `${bln[prevM]} ${y}`;
+        }
 
         // URL Image Parser untuk Google Drive Bypass Preview
         function getHighResImgUrl(url) {
@@ -500,7 +521,7 @@
                     laporan: [
                         { id_laporan: "LAP-01", bulan_laporan: "Oktober 2026", id_pengguna: "DAI-001", timestamp: "29/10/2026 08:00:00", amanah: "Ketua DPW", waktu_berkantor_jam: "10", sharing_dai_jml: "2", sharing_dai_rincian: "Ahmad - Semangat berdakwah\nSiti - Kendala transport" }
                     ],
-                    riwayat: [], bulans: ["Oktober 2026"]
+                    riwayat: [], bulans: ["Oktober 2026", "November 2026"]
                 };
                 initLogin();
                 hideLoading();
@@ -553,11 +574,23 @@
         function initFilters() {
             let sel = document.getElementById('filter-bulan');
             sel.innerHTML = '';
-            if(db.bulans.length === 0) { sel.add(new Option("Belum ada data", "")); }
-            else { 
+            
+            // FITUR BARU: Tambah Opsi Semua Bulan
+            sel.add(new Option("Semua Bulan", "ALL"));
+
+            if(db.bulans.length === 0) {
+               // Jangan lakukan apapun bila data 0
+            } else { 
                 let sortedBulans = db.bulans.sort((a,b) => getBulanWeight(b) - getBulanWeight(a)); // Terbaru paling atas
                 sortedBulans.forEach(b => sel.add(new Option(b, b))); 
-                sel.value = sortedBulans[0]; // Set default ke bulan terbaru
+                
+                // FITUR BARU: Deteksi otomatis (Sekarang - 1 Bulan)
+                let targetPrevBulan = getLastMonthString();
+                if (db.bulans.includes(targetPrevBulan)) {
+                    sel.value = targetPrevBulan;
+                } else {
+                    sel.value = sortedBulans[0]; // Set default ke bulan terbaru jika bulan lalu tidak ada
+                }
             }
 
             let myDaiIds = activeVerifikator.daftar_id_dai.split(',').map(id => id.trim());
@@ -601,20 +634,25 @@
             let myUsers = db.users.filter(u => myDaiIds.includes(u.dai_id));
             
             cachedTableData = [];
-            let stats = { total: myUsers.length, wait: 0, acc: 0, rej: 0, belum: 0 };
+            
+            // FITUR BARU: Logika jika "Semua Bulan" dipilih
+            let targetBulans = bulanAktif === 'ALL' ? db.bulans : [bulanAktif];
+            let stats = { total: myUsers.length * targetBulans.length, wait: 0, acc: 0, rej: 0, belum: 0 };
 
-            myUsers.forEach(u => {
-                let info = getLaporanInfo(u.dai_id, bulanAktif);
-                
-                if(info.status === 'Menunggu') stats.wait++;
-                else if(info.status === 'Diterima') stats.acc++;
-                else if(info.status === 'Ditolak') stats.rej++;
-                else stats.belum++;
+            targetBulans.forEach(b => {
+                myUsers.forEach(u => {
+                    let info = getLaporanInfo(u.dai_id, b);
+                    
+                    if(info.status === 'Menunggu') stats.wait++;
+                    else if(info.status === 'Diterima') stats.acc++;
+                    else if(info.status === 'Ditolak') stats.rej++;
+                    else stats.belum++;
 
-                cachedTableData.push({
-                    dai_id: u.dai_id, nama: u.nama_dai, tempat: u.penempatan, prov: u.provinsi,
-                    status: info.status, waktu: info.waktu, timeVal: parseWaktuSort(info.waktu),
-                    id_laporan: info.idLap
+                    cachedTableData.push({
+                        dai_id: u.dai_id, nama: u.nama_dai, tempat: u.penempatan, prov: u.provinsi,
+                        status: info.status, waktu: info.waktu, timeVal: parseWaktuSort(info.waktu),
+                        id_laporan: info.idLap, nama_bulan: b // simpan nama bulan
+                    });
                 });
             });
 
@@ -651,6 +689,7 @@
             let kw = document.getElementById('search-dai').value.toLowerCase();
             let pFilter = document.getElementById('filter-prov').value;
             let sFilter = document.getElementById('filter-status').value;
+            let bAktif = document.getElementById('filter-bulan').value; // Untuk cek ALL mode
 
             let filtered = cachedTableData.filter(d => {
                 let matchText = d.nama.toLowerCase().includes(kw) || d.tempat.toLowerCase().includes(kw) || d.prov.toLowerCase().includes(kw);
@@ -681,7 +720,9 @@
                 let btnClass = d.status === 'Belum Input' 
                     ? 'opacity-50 cursor-not-allowed bg-gray-200 text-gray-500' 
                     : 'bg-teal-600 text-white hover:bg-teal-700 shadow-sm';
-                let btnAttr = d.status === 'Belum Input' ? 'disabled' : `onclick="openModal('${d.dai_id}')"`;
+                
+                // FITUR BARU: Lempar nama_bulan ke modal untuk memastikan data dirender sesuai bulan tsb.
+                let btnAttr = d.status === 'Belum Input' ? 'disabled' : `onclick="openModal('${d.dai_id}', '${d.nama_bulan}')"`;
                 
                 let rowBg = d.status === 'Menunggu' ? 'bg-yellow-50/30' : (d.status === 'Ditolak' ? 'bg-red-50/30' : '');
 
@@ -690,20 +731,26 @@
                     let pw = formatTanggalIndo(d.waktu).replace(' pukul ', ' <br><span class="text-[10px] text-gray-500">');
                     printWaktu = pw + '</span>';
                 }
+                
+                // FITUR BARU: Munculkan label bulan jika mode Semua Bulan diaktifkan
+                if(bAktif === 'ALL') {
+                    printWaktu += `<br><span class="inline-block mt-1 bg-teal-50 text-teal-700 px-1.5 rounded text-[10px] font-bold">${d.nama_bulan}</span>`;
+                }
 
+                // FITUR BARU: Tambah class whitespace-nowrap pada `td` yang harus 1 baris, biarkan kolom Penempatan dengan max-w untuk membungkus
                 html += `<tr class="${rowBg} hover:bg-teal-50 transition border-b">
-                    <td class="p-4 font-medium text-gray-500">${idx+1}</td>
-                    <td class="p-4 leading-tight"><span class="block text-xs font-semibold text-gray-700">${printWaktu}</span></td>
-                    <td class="p-4">
+                    <td class="p-4 font-medium text-gray-500 whitespace-nowrap">${idx+1}</td>
+                    <td class="p-4 leading-tight whitespace-nowrap"><span class="block text-xs font-semibold text-gray-700">${printWaktu}</span></td>
+                    <td class="p-4 whitespace-nowrap">
                         <p class="font-bold text-gray-800">${d.nama}</p>
                         <p class="text-xs text-gray-500">${d.dai_id}</p>
                     </td>
-                    <td class="p-4">
+                    <td class="p-4 min-w-[200px] whitespace-normal break-words max-w-sm">
                         <p class="font-medium text-gray-700">${d.tempat}</p>
-                        <p class="text-xs text-gray-500">${d.prov}</p>
+                        <p class="text-xs text-gray-500 mt-0.5">${d.prov}</p>
                     </td>
-                    <td class="p-4 text-center"><span class="px-2.5 py-1 rounded-full text-[11px] font-bold ${badgeClass} inline-flex items-center gap-1 uppercase tracking-wider"><i class="fas ${iconStatus}"></i> ${d.status}</span></td>
-                    <td class="p-4 text-center"><button ${btnAttr} class="px-4 py-1.5 rounded text-xs font-bold transition ${btnClass}"><i class="fas fa-check-circle"></i> Verifikasi</button></td>
+                    <td class="p-4 text-center whitespace-nowrap"><span class="px-2.5 py-1 rounded-full text-[11px] font-bold ${badgeClass} inline-flex items-center gap-1 uppercase tracking-wider"><i class="fas ${iconStatus}"></i> ${d.status}</span></td>
+                    <td class="p-4 text-center whitespace-nowrap"><button ${btnAttr} class="px-4 py-1.5 rounded text-xs font-bold transition ${btnClass}"><i class="fas fa-check-circle"></i> Verifikasi</button></td>
                 </tr>`;
             });
             if(html === '') html = '<tr><td colspan="6" class="text-center p-8 text-gray-500">Tidak ada data sesuai filter.</td></tr>';
@@ -759,10 +806,20 @@
         function openModalRekapGlobal() {
             let sel = document.getElementById('rekap-bulan');
             sel.innerHTML = '';
-            if(db.bulans.length === 0) { sel.add(new Option("Belum ada data", "")); }
-            else { 
+            sel.add(new Option("Semua Bulan", "ALL"));
+            
+            if(db.bulans.length === 0) {
+                 // handle empty
+            } else { 
                 let sortedBulans = db.bulans.sort((a,b) => getBulanWeight(b) - getBulanWeight(a));
                 sortedBulans.forEach(b => sel.add(new Option(b, b))); 
+                
+                let targetPrevBulan = getLastMonthString();
+                if (db.bulans.includes(targetPrevBulan)) {
+                    sel.value = targetPrevBulan;
+                } else {
+                    sel.value = sortedBulans[0]; 
+                }
             }
             renderRekapGlobal();
             document.getElementById('modal-rekap-global').style.display = 'flex';
@@ -772,14 +829,20 @@
             let b = document.getElementById('rekap-bulan').value;
             if(!b) return;
 
+            // FITUR BARU: Dukungan loop bulanan ganda untuk ALL
+            let targetBulans = b === 'ALL' ? db.bulans : [b];
+            
             // 1. Rekap Keseluruhan (Nasional)
-            let gTotal = db.users.length, gBelum=0, gWait=0, gAcc=0, gRej=0;
-            db.users.forEach(u => {
-                let info = getLaporanInfo(u.dai_id, b);
-                if(info.status === 'Belum Input') gBelum++;
-                else if(info.status === 'Menunggu') gWait++;
-                else if(info.status === 'Diterima') gAcc++;
-                else if(info.status === 'Ditolak') gRej++;
+            let gTotal = db.users.length * targetBulans.length, gBelum=0, gWait=0, gAcc=0, gRej=0;
+            
+            targetBulans.forEach(bulan => {
+                db.users.forEach(u => {
+                    let info = getLaporanInfo(u.dai_id, bulan);
+                    if(info.status === 'Belum Input') gBelum++;
+                    else if(info.status === 'Menunggu') gWait++;
+                    else if(info.status === 'Diterima') gAcc++;
+                    else if(info.status === 'Ditolak') gRej++;
+                });
             });
 
             document.getElementById('rg-total').innerText = gTotal;
@@ -793,15 +856,18 @@
             db.verifikator.forEach(v => {
                 let dIds = v.daftar_id_dai.split(',').map(id => id.trim());
                 let vUsers = db.users.filter(u => dIds.includes(u.dai_id));
-                let vTotal = vUsers.length;
+                let vTotal = vUsers.length; // Jumlah dai riil orangnya, tidak dikali bulan untuk informasi dasar
                 let vMasuk = 0, vSelesai = 0;
 
-                vUsers.forEach(u => {
-                    let info = getLaporanInfo(u.dai_id, b);
-                    if(info.status !== 'Belum Input') vMasuk++;
-                    if(info.status === 'Diterima' || info.status === 'Ditolak') vSelesai++;
+                targetBulans.forEach(bulan => {
+                    vUsers.forEach(u => {
+                        let info = getLaporanInfo(u.dai_id, bulan);
+                        if(info.status !== 'Belum Input') vMasuk++;
+                        if(info.status === 'Diterima' || info.status === 'Ditolak') vSelesai++;
+                    });
                 });
 
+                // FITUR BARU: Rumus persentase sesuai instruksi = (Selesai (Terima+Tolak) / Masuk) * 100
                 let pct = vMasuk > 0 ? (vSelesai / vMasuk * 100).toFixed(1) : 0;
                 let barColor = pct == 100 ? 'bg-green-500' : (pct > 50 ? 'bg-blue-500' : 'bg-red-500');
 
@@ -849,8 +915,10 @@
             showRincianAlert('Silaturahmi Eksternal', encodeURIComponent(tempRincianEksternal));
         }
 
-        function openModal(idDai) {
-            let bulan = document.getElementById('filter-bulan').value;
+        function openModal(idDai, overrideBulan) {
+            // Jika diklik saat filter di mode Semua Bulan, pakai parameter overrideBulan. Jika tidak, pakai dropdown.
+            let bulan = overrideBulan || document.getElementById('filter-bulan').value;
+            
             let info = getLaporanInfo(idDai, bulan);
             let lap = info.lapObj;
             let usr = db.users.find(u => u.dai_id === idDai);
@@ -861,7 +929,8 @@
             document.getElementById('v-id-dai').value = idDai;
             document.getElementById('v-id-laporan').value = lap.id_laporan;
 
-            document.getElementById('mdl-penempatan').innerText = `${usr.penempatan} (${usr.provinsi})`;
+            // FITUR BARU: Whitespace-normal & break-words agar Penempatan di Modal juga menyesuaikan jika sangat panjang
+            document.getElementById('mdl-penempatan').innerHTML = `<span class="whitespace-normal break-words">${usr.penempatan} (${usr.provinsi})</span>`;
             
             // Kolom Kinerja & Aktivitas Berkantor
             document.getElementById('mdl-amanah').innerText = lap.amanah || '-';
@@ -973,7 +1042,10 @@
         function submitVerifikasi() {
             let idDai = document.getElementById('v-id-dai').value;
             let idLap = document.getElementById('v-id-laporan').value;
-            let bulan = document.getElementById('filter-bulan').value;
+            // FITUR BARU: Override bulan jika dikirim dari tombol khusus (Saat mode ALL bulan)
+            let bAktif = document.getElementById('filter-bulan').value;
+            let bulan = bAktif === 'ALL' ? cachedTableData.find(d => d.dai_id === idDai && d.id_laporan === idLap).nama_bulan : bAktif;
+            
             let statusEl = document.querySelector('input[name="v_status"]:checked');
             let catatan = document.getElementById('v-catatan').value;
 
