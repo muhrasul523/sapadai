@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Meta Tag untuk Preview WhatsApp -->
+    <meta property="og:title" content="SAPADAI - Admin Portal">
+    <meta property="og:description" content="Portal Administrasi dan Manajemen Data SAPADAI">
+    <!-- Mengarah ke folder utama -->
+    <meta property="og:image" content="../logo_sapadai_2.png">
+    <meta property="og:url" content="https://sapadai.wadahdigital.my.id/admin/">
+    <meta property="og:type" content="website">
+
+    <title>Admin Portal - SAPADAI</title>
+    
+    <!-- Favicon mengarah ke folder utama -->
+    <link rel="icon" type="image/png" href="../logo_sapadai_1.png">
+    
+    <!-- Google Fonts: Plus Jakarta Sans untuk tampilan modern -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Konfigurasi Tailwind untuk Font -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Efek latar belakang animatif halus - Kontras diturunkan */
+        .bg-pattern {
+            background-color: #f8fafc;
+            background-image: radial-gradient(rgba(148, 163, 184, 0.15) 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-pattern text-slate-800 min-h-screen flex flex-col font-sans antialiased selection:bg-brand-500 selection:text-white relative z-0">
+
+    <!-- Efek Gradasi Latar Belakang (Blobs) -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+        <div class="absolute -top-40 -right-40 w-[30rem] h-[30rem] rounded-full bg-emerald-400/20 blur-3xl opacity-60"></div>
+        <div class="absolute top-60 -left-20 w-96 h-96 rounded-full bg-teal-400/20 blur-3xl opacity-60"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="glass-card sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center gap-4">
+                    <!-- Logo SAPADAI dari folder utama (tanpa onerror fallback agar file asli dipaksa dimuat) -->
+                    <img src="../logo_sapadai_1.png" alt="SAPADAI Logo" class="h-12 w-auto object-contain drop-shadow-sm transition-transform hover:scale-105">
+                    <div>
+                        <h1 class="font-bold text-xl tracking-tight text-slate-900 leading-none">SAPADAI</h1>
+                        <p class="text-sm text-brand-600 font-medium">Administrator Portal</p>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <span class="inline-flex items-center rounded-full bg-brand-50 px-3 py-1 text-sm font-medium text-brand-600 ring-1 ring-inset ring-brand-600/20">
+                        <svg class="mr-1.5 h-2 w-2 fill-brand-500" viewBox="0 0 6 6" aria-hidden="true"><circle cx="3" cy="3" r="3" /></svg>
+                        Sistem Aktif
+                    </span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+        
+        <div class="mb-12 text-center md:text-left">
+            <h2 class="text-3xl font-extrabold sm:text-4xl tracking-tight bg-gradient-to-r from-brand-600 via-emerald-500 to-teal-500 bg-clip-text text-transparent drop-shadow-sm pb-1">Selamat Datang, Admin 👋</h2>
+            <p class="mt-3 text-lg text-slate-600 max-w-2xl font-medium">Silakan pilih menu di bawah ini untuk mengelola data operasional dan kinerja dai pada sistem SAPADAI.</p>
+        </div>
+
+        <!-- Grid Container untuk Menu -->
+        <div id="menu-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Menu akan di-generate oleh JavaScript di sini -->
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto border-t border-slate-200 bg-white/50 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <p class="text-center text-sm text-slate-500">
+                &copy; <span id="year"></span> SAPADAI. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <!-- LOGIKA JAVASCRIPT UNTUK MENU DAN 404 -->
+    <script>
+        // Set tahun footer otomatis
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        /* 
+        ====================================================================
+        👇 PENGATURAN MENU ADMIN (UBAH DI SINI) 👇
+        ====================================================================
+        Untuk menambah, menghapus, atau mengubah menu, Anda cukup mengubah 
+        data di dalam list `daftarMenu` di bawah ini.
+
+        Keterangan:
+        - title : Judul menu
+        - desc  : Penjelasan singkat menu
+        - url   : Link tujuan (Bisa link lengkap atau link folder)
+        - icon  : Kode SVG untuk ikon (bisa cari ikon di heroicons.com)
+        - show  : true (untuk menampilkan), false (untuk menyembunyikan sementara)
+        ====================================================================
+        */
+        const daftarMenu = [
+            {
+                title: "Profil Dai",
+                desc: "Kelola data master, identitas, dan profil lengkap para Dai.",
+                url: "https://sapadai.wadahdigital.my.id/admin/profil",
+                show: true, // Ubah ke false jika ingin menyembunyikan menu ini
+                icon: `<svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>`
+            },
+            {
+                title: "Verifikasi Laporan Kinerja",
+                desc: "Tinjau, evaluasi, dan verifikasi laporan kinerja operasional.",
+                url: "https://sapadai.wadahdigital.my.id/admin/verifikasi",
+                show: true, // Ubah ke false jika ingin menyembunyikan menu ini
+                icon: `<svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.125 2.25h-4.5c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9M10.125 2.25h.375a9 9 0 0 1 9 9v.375M10.125 2.25A3.375 3.375 0 0 1 13.5 5.625v1.5c0 .621.504 1.125 1.125 1.125h1.5a3.375 3.375 0 0 1 3.375 3.375M9 15l2.25 2.25L15 12" /></svg>`
+            },
+            {
+                title: "Manajemen Akun",
+                desc: "Atur hak akses dan password untuk pengguna sistem.",
+                url: "https://sapadai.wadahdigital.my.id/admin/akun",
+                show: false, // Contoh Menu Disembunyikan (Ubah ke true untuk melihat)
+                icon: `<svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg>`
+            }
+        ];
+        /* ==================================================================== */
+
+        
+        // Fungsi untuk me-render menu ke HTML
+        function renderMenu() {
+            const container = document.getElementById('menu-container');
+            container.innerHTML = '';
+
+            // Filter menu yang memiliki properti show: true
+            const activeMenus = daftarMenu.filter(menu => menu.show === true);
+
+            if (activeMenus.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center py-10 text-slate-500">Belum ada menu yang diaktifkan.</div>`;
+                return;
+            }
+
+            activeMenus.forEach(menu => {
+                const card = document.createElement('div');
+                card.className = "group relative bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-2xl hover:shadow-brand-500/10 hover:border-brand-300 hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full";
+                
+                // Efek hover dekoratif gradasi
+                const decoration = `<div class="absolute -right-12 -top-12 w-36 h-36 bg-gradient-to-br from-brand-100 to-teal-50 rounded-full group-hover:scale-150 group-hover:opacity-70 transition-transform duration-500 z-0"></div>`;
+
+                card.innerHTML = `
+                    ${decoration}
+                    <div class="relative z-10 flex-grow">
+                        <div class="w-14 h-14 bg-gradient-to-br from-brand-50 to-emerald-100 text-brand-600 rounded-xl flex items-center justify-center mb-6 shadow-sm border border-white group-hover:from-brand-500 group-hover:to-teal-500 group-hover:text-white transition-all duration-300">
+                            ${menu.icon}
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-brand-600 group-hover:to-teal-600 transition-all">${menu.title}</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">${menu.desc}</p>
+                    </div>
+                    <div class="relative z-10 mt-6 pt-4 border-t border-slate-100 flex items-center text-brand-600 font-semibold text-sm group-hover:gap-2 transition-all">
+                        <span>Buka Modul</span>
+                        <svg class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                        </svg>
+                    </div>
+                `;
+
+                // Logika Pengecekan 404 saat menu diklik
+                card.addEventListener('click', () => {
+                    handleNavigation(menu.url);
+                });
+
+                container.appendChild(card);
+            });
+        }
+
+        // Fungsi navigasi cerdas (Cek apakah halaman ada, jika tidak buka 404.html)
+        async function handleNavigation(url) {
+            // Animasi loading cursor
+            document.body.style.cursor = 'wait';
+            
+            try {
+                // Melakukan ping (request HEAD) ke URL tujuan
+                const response = await fetch(url, { method: 'HEAD' });
+                
+                if (response.ok) {
+                    // Jika halaman ditemukan (Status 200-299), arahkan ke halaman tersebut
+                    window.location.href = url;
+                } else {
+                    // Jika halaman tidak ditemukan (Status 404), arahkan ke file 404.html di folder utama
+                    window.location.href = "../404.html";
+                }
+            } catch (error) {
+                // Jika terjadi error CORS (Beda domain) atau jaringan saat fetch,
+                // kita asumsikan link berjalan normal dan biarkan server (GitHub Pages) yang menangani 404-nya.
+                window.location.href = url;
+            }
+        }
+
+        // Jalankan render saat halaman selesai dimuat
+        document.addEventListener('DOMContentLoaded', renderMenu);
+    </script>
+</body>
+</html>
