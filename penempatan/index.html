@@ -131,7 +131,7 @@
         .custom-dropdown { position: relative; }
         .dropdown-list {
             position: absolute; top: 100%; left: 0; width: 100%;
-            background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(10px);
+            background: #1e293b; /* Latar solid tidak transparan */
             border: 1px solid rgba(255,255,255,0.2); border-radius: 10px;
             max-height: 220px; overflow-y: auto; z-index: 100;
             display: none; margin-top: 5px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
@@ -230,14 +230,14 @@
             <h2>Portal Penyesuaian SK</h2>
             
             <div class="login-tabs">
-                <div class="login-tab active" id="tabWA" onclick="switchLoginMode('wa')">Login via  WA</div>
-                <div class="login-tab" id="tabEmail" onclick="switchLoginMode('email')">Login via Email</div>
+                <div class="login-tab active" id="tabWA" onclick="switchLoginMode('wa')">Nomor WhatsApp</div>
+                <div class="login-tab" id="tabEmail" onclick="switchLoginMode('email')">Alamat Email</div>
             </div>
 
             <form id="loginForm">
                 <div class="form-group">
                     <label id="lblLoginId">Nomor WhatsApp Anda</label>
-                    <input type="number" id="loginId" class="input-field" placeholder="Contoh: 0812xxxx (otomatis jadi 62)" required>
+                    <input type="text" inputmode="numeric" id="loginId" class="input-field" placeholder="Contoh: 0812xxxx (otomatis jadi 62)" required>
                 </div>
                 <div class="form-group">
                     <label>Kata Sandi</label>
@@ -423,13 +423,15 @@
                 document.getElementById('tabWA').classList.add('active');
                 document.getElementById('tabEmail').classList.remove('active');
                 document.getElementById('lblLoginId').innerText = 'Nomor WhatsApp Anda';
-                inputEl.type = 'number';
+                inputEl.type = 'text';
+                inputEl.setAttribute('inputmode', 'numeric');
                 inputEl.placeholder = 'Contoh: 0812xxxx (otomatis jadi 62)';
             } else {
                 document.getElementById('tabEmail').classList.add('active');
                 document.getElementById('tabWA').classList.remove('active');
                 document.getElementById('lblLoginId').innerText = 'Alamat Email Terdaftar';
                 inputEl.type = 'email';
+                inputEl.removeAttribute('inputmode');
                 inputEl.placeholder = 'contoh@email.com';
             }
         }
@@ -477,8 +479,12 @@
 
             // Cari user
             const user = dbData.akun.find(u => {
-                if(loginMode === 'wa') return u.wa == idInput && u.password == passInput;
-                return u.email == idInput && u.password == passInput;
+                let dbWa = String(u.wa || u.WA || u['No WA'] || u['Nomor WA'] || '').trim();
+                let dbEmail = String(u.email || u.Email || '').trim();
+                let dbPass = String(u.password || u.Password || '').trim();
+                
+                if(loginMode === 'wa') return dbWa === idInput && dbPass === passInput;
+                return dbEmail === idInput && dbPass === passInput;
             });
 
             if (user) {
@@ -520,16 +526,15 @@
         // Fetch & Tampilkan Profil Dai
         function renderDaiProfile() {
             // Ambil ID sesuai struktur terbaru:
-            // currentUser berasal dari sheet 'Akun'. ID-nya ada di kolom 'dai_id' (atau 'id')
             let daiId = currentUser.dai_id || currentUser.id || currentUser.ID_Dai;
 
             // Cari di Update Profil (Berdasarkan dai_id)
-            let userProfile = dbData.profil.find(p => p.dai_id == daiId) || {};
+            let userProfile = dbData.profil.find(p => String(p.dai_id) === String(daiId)) || {};
             
             // Cari di Penempatan (Berdasarkan ID_Dai)
-            let userPenempatan = dbData.penempatan.find(p => p.ID_Dai == daiId) || {};
+            let userPenempatan = dbData.penempatan.find(p => String(p.ID_Dai) === String(daiId)) || {};
 
-            document.getElementById('profNama').value = currentUser.nama || "-";
+            document.getElementById('profNama').value = currentUser.nama_dai || currentUser.nama || "-";
             document.getElementById('profTahun').value = userProfile.tahun_diutus || "-";
             document.getElementById('profSK').value = userPenempatan.SK_Penempatan || "-";
             document.getElementById('profLokasi').value = userPenempatan.lokasi_awal || "Belum ada data awal";
@@ -584,8 +589,10 @@
                         document.getElementById('hiddenKabId').value = k.id;
                         listKab.classList.remove('show');
                         
-                        // Auto fill Provinsi
-                        const provObj = rawWilayahData.prov.find(p => p.id == k.prov_id);
+                        // Auto fill Provinsi: Ambil kode prov dari kode kab (misal 11.02 -> 11)
+                        let provIdPrefix = String(k.id).split('.')[0];
+                        const provObj = rawWilayahData.prov.find(p => String(p.id) === provIdPrefix);
+                        
                         if(provObj) {
                             inputProv.value = provObj.name;
                             document.getElementById('hiddenProvId').value = provObj.id;
