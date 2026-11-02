@@ -1244,8 +1244,20 @@
             document.getElementById('statusAktif').checked = (row.Status === 'Aktif'); 
             document.getElementById('statusTidakAktif').checked = (row.Status !== 'Aktif');
             
-            document.getElementById('inputSKPenempatan').value = ""; 
-            document.getElementById('inputTanggalMutasi').value = new Date().toISOString().split('T')[0];
+            // Auto fill field SK Penempatan dan Tanggal Mutasi dari row data
+            document.getElementById('inputSKPenempatan').value = row.SK_Penempatan || ""; 
+            
+            let tglMutasi = new Date().toISOString().split('T')[0]; // Default hari ini jika kosong
+            if (row.TanggalMutasi) {
+                let d = new Date(row.TanggalMutasi);
+                if (!isNaN(d.getTime())) {
+                    let year = d.getFullYear();
+                    let month = String(d.getMonth() + 1).padStart(2, '0');
+                    let day = String(d.getDate()).padStart(2, '0');
+                    tglMutasi = `${year}-${month}-${day}`;
+                }
+            }
+            document.getElementById('inputTanggalMutasi').value = tglMutasi;
             
             if (choiceFormUnit) choiceFormUnit.setChoiceByValue(row.Unit || '');
             
@@ -1465,7 +1477,15 @@
                 return 0;
             });
             
+            let totalAktif = 0;
+            let totalTidakAktif = 0;
+            let grandTotal = 0;
+
             data.forEach(d => {
+                totalAktif += d.aktif;
+                totalTidakAktif += d.tidakAktif;
+                grandTotal += d.total;
+
                 tb.innerHTML += `
                 <tr>
                     <td class="fw-bold ps-4 text-dark">${d.name}</td>
@@ -1474,6 +1494,17 @@
                     <td class="text-center w-25 fw-bold text-primary">${d.total}</td>
                 </tr>`;
             });
+
+            // Menambahkan baris total di bagian bawah rekapitulasi data
+            if (data.length > 0) {
+                tb.innerHTML += `
+                <tr class="table-primary border-primary">
+                    <td class="fw-bold ps-4 text-primary">TOTAL KESELURUHAN</td>
+                    <td class="text-center w-25 fw-bold text-success">${totalAktif}</td>
+                    <td class="text-center w-25 fw-bold text-danger">${totalTidakAktif}</td>
+                    <td class="text-center w-25 fw-bold text-primary">${grandTotal}</td>
+                </tr>`;
+            }
         }
 
         // --- EXPORT DATA ---
