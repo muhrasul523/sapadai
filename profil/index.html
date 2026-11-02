@@ -956,8 +956,17 @@
         
         function applyCrop() {
             if(!cropper) return;
-            var canvas = cropper.getCroppedCanvas({ width: currentCropTarget === 'ktp' ? 800 : 600 });
-            var base64 = canvas.toDataURL('image/jpeg', 0.8);
+            
+            // PERUBAHAN UTAMA
+            // Lebar diekspor 1280px (KTP) dan 900px (Wajah) agar HD dan teks KTP sangat jelas
+            // Tinggi otomatis menyesuaikan aspect ratio (8/5 atau 3/4)
+            var canvas = cropper.getCroppedCanvas({ 
+                width: currentCropTarget === 'ktp' ? 1280 : 900 
+            });
+            
+            // PERUBAHAN KEDUA
+            // Render JPEG dengan kualitas 90%. File Size/MB turun signifikan, tapi tulisan tidak akan pecah.
+            var base64 = canvas.toDataURL('image/jpeg', 0.90);
             
             var previewImg = document.getElementById('preview_' + currentCropTarget);
             previewImg.src = base64; 
