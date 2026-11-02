@@ -231,12 +231,6 @@
                     <label>Unit Baru</label>
                     <select id="formUnit" class="input-field" required onchange="handleUnitChange()">
                         <option value="">-- Pilih Unit --</option>
-                        <option value="DPW">DPW (Tingkat Wilayah/Provinsi)</option>
-                        <option value="DPD">DPD (Tingkat Daerah/Kabupaten)</option>
-                        <option value="DPC">DPC (Tingkat Cabang/Kecamatan)</option>
-                        <option value="Sekolah">Sekolah / Yayasan</option>
-                        <option value="Masjid">Masjid</option>
-                        <option value="Lainnya">Lainnya</option>
                     </select>
                 </div>
                 
@@ -271,10 +265,6 @@
                     <label>Siapa yang memindahkan?</label>
                     <select id="formPemindah" class="input-field" required>
                         <option value="">-- Pilih Pihak --</option>
-                        <option value="Pengurus Pusat">Pengurus Pusat</option>
-                        <option value="Pengurus Wilayah (DPW)">Pengurus Wilayah (DPW)</option>
-                        <option value="Pengurus Daerah (DPD)">Pengurus Daerah (DPD)</option>
-                        <option value="Inisiatif Sendiri (Mandiri)">Inisiatif Sendiri</option>
                     </select>
                 </div>
 
@@ -362,6 +352,7 @@
                 console.log("Berjalan di Mode Simulasi (Local/Canvas)");
                 generateDummyData();
                 setupWilayahDatalist();
+                setupDynamicDropdowns();
                 hideLoader();
                 showView('loginView');
                 return;
@@ -375,6 +366,7 @@
                     dbData = result.data;
                     if(dbData.wilayah) rawWilayahData = dbData.wilayah;
                     setupWilayahDatalist();
+                    setupDynamicDropdowns();
                     hideLoader();
                     showView('loginView');
                 } else {
@@ -461,9 +453,28 @@
             });
         }
 
+        // Setup Dropdown Unit & Pemindah Dinamis
+        function setupDynamicDropdowns() {
+            const selUnit = document.getElementById('formUnit');
+            const selPemindah = document.getElementById('formPemindah');
+            
+            if(dbData.unit) {
+                dbData.unit.forEach(u => {
+                    let text = u['Nama Unit'] || u['nama unit'] || Object.values(u)[0];
+                    if(text) selUnit.add(new Option(text, text));
+                });
+            }
+            if(dbData.pemindah) {
+                dbData.pemindah.forEach(p => {
+                    let text = p['Nama Pihak'] || p['nama pihak'] || Object.values(p)[0];
+                    if(text) selPemindah.add(new Option(text, text));
+                });
+            }
+        }
+
         // Handler saat Unit Berubah
         function handleUnitChange() {
-            const unit = document.getElementById('formUnit').value;
+            const unit = document.getElementById('formUnit').value.toUpperCase();
             const wProv = document.getElementById('wrapProv');
             const wKab = document.getElementById('wrapKab');
             const wInst = document.getElementById('wrapInstansi');
@@ -478,7 +489,7 @@
             iInst.value = '';
             iProv.readOnly = false;
 
-            if (unit === 'DPW') {
+            if (unit.includes('DPW')) {
                 wProv.style.display = 'block'; iProv.required = true;
                 wKab.style.display = 'none'; iKab.required = false;
                 wInst.style.display = 'none'; iInst.required = false;
@@ -490,7 +501,7 @@
                 wKab.style.display = 'block'; iKab.required = true;
                 wProv.style.display = 'block'; iProv.required = true; iProv.readOnly = true; // Auto fill dari Kab
                 
-                if (unit === 'DPD') {
+                if (unit.includes('DPD')) {
                     wInst.style.display = 'none'; iInst.required = false;
                 } else {
                     wInst.style.display = 'block'; iInst.required = true;
@@ -647,11 +658,19 @@
                 if(item.Status === 'Ditolak') statClass = 'status-rejected';
 
                 let txtWilayah = `Prov: ${item['Nama Prov']}`;
-                if(item['Unit Baru'] !== 'DPW') txtWilayah += `<br>Kab: ${item['Nama Kab']}`;
+                if(!item['Unit Baru'].toUpperCase().includes('DPW')) txtWilayah += `<br>Kab: ${item['Nama Kab']}`;
                 if(item['Instansi Baru'] && item['Instansi Baru'] !== '-') txtWilayah += `<br>Instansi: ${item['Instansi Baru']}`;
 
-                // Bukti Files (jika ada)
-                let btnBukti = item['File Bukti'] ? `<button class="btn-copy" style="background:#8b5cf6;" onclick="showCustomAlert('Fitur lihat bukti file base64.', 'Lampiran')">Lihat Foto</button>` : '-';
+                // Bukti Files (jika ada - sekarang berbentuk URL Drive dipisah \n)
+                let btnBukti = '-';
+                if(item['File Bukti']) {
+                    let urls = item['File Bukti'].split('\n');
+                    btnBukti = `<div style="display:flex; flex-direction:column; gap:3px;">`;
+                    urls.forEach((url, idx) => {
+                        if(url.trim()) btnBukti += `<a href="${url}" target="_blank" style="color:var(--neon-green); font-size:11px; text-decoration:underline;">Lihat Bukti ${idx+1}</a>`;
+                    });
+                    btnBukti += `</div>`;
+                }
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -688,7 +707,7 @@
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    body: JSON.stringify({ action: 'updateStatus', payload: { id: id, status: newStatus } })
+                    body: JSON.stringify({ action: 'updateStatus', payload: { id: id, status: newStatus, adminName: currentUser.nama } })
                 });
                 const res = await response.json();
                 hideLoader();
@@ -768,6 +787,8 @@
                 profil: [ { nama_lengkap_beserta_gelar: "Ust. Fulan, Lc.", tahun_diutus: "2018" } ],
                 penempatan: [ { nama_lengkap_beserta_gelar: "Ust. Fulan, Lc.", SK_Penempatan: "015/SK/DPW/2018", lokasi_awal: "Makassar" } ],
                 usulan: [],
+                unit: [{ 'Nama Unit': 'DPW (Tingkat Wilayah)' }, { 'Nama Unit': 'DPD (Tingkat Daerah)' }, { 'Nama Unit': 'Sekolah' }],
+                pemindah: [{ 'Nama Pihak': 'Pengurus Pusat' }, { 'Nama Pihak': 'Inisiatif Sendiri' }],
                 config: [ { Key: "admin_code", Value: "123" } ],
                 wilayah: {
                     prov: [ {id: "73", name: "SULAWESI SELATAN"}, {id: "31", name: "DKI JAKARTA"} ],
