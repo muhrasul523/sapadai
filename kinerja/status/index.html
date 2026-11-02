@@ -164,7 +164,6 @@
         // ==========================================
         // KONFIGURASI APLIKASI
         // ==========================================
-        // WAJIB DIGANTI DENGAN URL WEBAPP STATUS LAPORAN YANG BARU DIDEPLOY
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwz4-XAlbLmDPtbr8kN1u0P0ZU8UNAEtPQqWx6Dm_iwk81y8oxPRM3PcfpqPbFwEn9b/exec';
 
         let currentLoginType = 'wa';
@@ -240,44 +239,24 @@
 
             showLoading('Memproses...');
             
-            // CEK MODE ENVIRONTMENT (GOOGLE SCRIPT ATAU SIMULASI)
-            if (typeof google === 'undefined') {
-                // MODE SIMULASI DI CANVAS PREVIEW / BROWSER
-                setTimeout(() => {
-                    if (u === '628123456789' && p === '123') {
-                        let dummyResponse = {
-                            success: true,
-                            user: { dai_id: "DAI-001", nama_dai: "Ahmad Fulan", nomor_wa: "628123456789", email: "ahmad@gmail.com" },
-                            riwayat: [
-                                { bulan_laporan: "September 2026", id_dai: "DAI-001", status: "Diterima", catatan: "Lengkap dan tepat waktu", timestamp_laporan: "02/10/2026 08:00:00", timestamp: "03/10/2026 09:00:00" },
-                                { bulan_laporan: "Oktober 2026", id_dai: "DAI-001", status: "Ditolak", catatan: "Mohon lampirkan ulang bukti", timestamp_laporan: "01/11/2026 10:00:00", timestamp: "02/11/2026 11:00:00" },
-                                { bulan_laporan: "Oktober 2026", id_dai: "DAI-001", status: "Menunggu", catatan: "-", timestamp_laporan: "02/11/2026 13:00:00", timestamp: "-" }
-                            ],
-                            serverTime: "2026-11-02T10:48:00"
-                        };
-                        processLoginSuccess(dummyResponse);
-                    } else {
-                        hideLoading();
-                        Swal.fire('Gagal Login', 'Gunakan WA: 628123456789 dan Sandi: 123 (Mode Simulasi Canvas)', 'error');
-                    }
-                }, 1000);
-            } else {
-                // MODE PRODUCTION (APP SCRIPT LIVE)
-                google.script.run
-                    .withSuccessHandler(res => {
-                        if (res.success) {
-                            processLoginSuccess(res);
-                        } else {
-                            hideLoading();
-                            Swal.fire('Gagal Login', res.message, 'error');
-                        }
-                    })
-                    .withFailureHandler(err => {
-                        hideLoading();
-                        Swal.fire('Error Koneksi', err.message || 'Gagal terhubung ke server', 'error');
-                    })
-                    .processLogin({ type: currentLoginType, username: u, password: p });
-            }
+            fetch(SCRIPT_URL, {
+                method: 'POST', 
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'login', data: { type: currentLoginType, username: u, password: p } })
+            })
+            .then(res => res.text())
+            .then(text => {
+                try {
+                    let data = JSON.parse(text);
+                    if(data.success) { processLoginSuccess(data); } 
+                    else { hideLoading(); Swal.fire('Gagal Login', data.message, 'error'); }
+                } catch(e) {
+                    hideLoading(); Swal.fire('Error Parsing', 'Sistem menerima data tidak valid. Pastikan WebApp terbaru sudah di-deploy.', 'error');
+                }
+            })
+            .catch(err => {
+                hideLoading(); Swal.fire('Error Koneksi', 'Tidak dapat terhubung ke server.', 'error');
+            });
         }
 
         function processLoginSuccess(data) {
