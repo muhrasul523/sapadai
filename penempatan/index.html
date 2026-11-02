@@ -252,10 +252,10 @@
             <div class="header-logo">
                 <img src="../logo_sapadai_1.png" alt="Logo" style="max-height: 50px;" onclick="openAdminModal()" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgODAiPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iODAiIGZpbGw9IiMwZjc2NmUiIHJ4PSIxMCIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjQwIiByPSIyMCIgZmlsbD0iIzEwYjk4MSIvPjwvc3ZnPg==';">
             </div>
-            <h3>Profil Penempatan Da'i Saat Ini</h3>
+            <h3>PENGECEKAN KESESUAIAN SK PENEMPATAN</h3>
             
             <div class="form-group">
-                <label>Nama Lengkap & Gelar</label>
+                <label>Nama Dai</label>
                 <input type="text" id="profNama" class="input-field" readonly>
             </div>
             <div class="form-group" style="display:flex; gap:15px; flex-wrap: wrap;">
@@ -267,10 +267,6 @@
                     <label>SK Penempatan Saat Ini</label>
                     <input type="text" id="profSK" class="input-field" readonly>
                 </div>
-            </div>
-            <div class="form-group">
-                <label>Lokasi Penempatan Awal</label>
-                <input type="text" id="profLokasi" class="input-field" readonly>
             </div>
 
             <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 35px 0;">
@@ -315,7 +311,7 @@
                 </div>
 
                 <div class="form-group" id="wrapInstansi" style="display: none;">
-                    <label>Nama Instansi / Sekolah / Masjid / Unit Spesifik</label>
+                    <label>Nama Instansi / Sekolah / Pondok Pesantren / Unit Spesifik</label>
                     <input type="text" id="formInstansi" class="input-field" placeholder="Contoh: SD IT Fulan / Masjid Al-Fulan">
                 </div>
 
@@ -334,7 +330,7 @@
 
                 <div class="form-group">
                     <label>Alasan Pemindahan / Penyesuaian</label>
-                    <textarea id="formAlasan" class="input-field" rows="3" placeholder="Jelaskan secara detail alasan Anda..." required></textarea>
+                    <textarea id="formAlasan" class="input-field" rows="3" placeholder="Jelaskan secara detail alasan pemindahannya" required></textarea>
                 </div>
 
                 <div class="form-group">
@@ -346,7 +342,7 @@
                 <button type="submit" class="btn btn-gold" style="margin-top: 20px;">AJUKAN PENYESUAIAN SEKARANG</button>
             </form>
             
-            <button onclick="logout()" class="btn btn-red" style="margin-top:40px;">KELUAR DARI AKUN</button>
+            <button onclick="logout()" class="btn btn-red" style="margin-top:40px; width: auto; padding: 10px 20px; font-size: 13px; display: block; margin-left: auto; margin-right: auto;">KELUAR DARI AKUN</button>
         </div>
 
         <!-- ================= ADMIN DASHBOARD VIEW ================= -->
@@ -479,7 +475,7 @@
 
             // Cari user
             const user = dbData.akun.find(u => {
-                let dbWa = String(u.wa || u.WA || u['No WA'] || u['Nomor WA'] || '').trim();
+                let dbWa = String(u.wa || u.WA || u.nomor_wa || u['nomor_wa'] || u['No WA'] || u['Nomor WA'] || '').trim();
                 let dbEmail = String(u.email || u.Email || '').trim();
                 let dbPass = String(u.password || u.Password || '').trim();
                 
@@ -537,7 +533,6 @@
             document.getElementById('profNama').value = currentUser.nama_dai || currentUser.nama || "-";
             document.getElementById('profTahun').value = userProfile.tahun_diutus || "-";
             document.getElementById('profSK').value = userPenempatan.SK_Penempatan || "-";
-            document.getElementById('profLokasi').value = userPenempatan.lokasi_awal || "Belum ada data awal";
         }
 
         // Tampilkan/Sembunyikan Form Pindah
@@ -707,11 +702,11 @@
             showLoader("Menyimpan & Mengirim Usulan...");
 
             const payload = {
-                nama: currentUser.nama,
-                wa: currentUser.wa,
+                nama: currentUser.nama_dai || currentUser.nama,
+                wa: currentUser.nomor_wa || currentUser.wa || currentUser['No WA'],
                 tahun_diutus: document.getElementById('profTahun').value,
                 sk_awal: document.getElementById('profSK').value,
-                lokasi_awal: document.getElementById('profLokasi').value,
+                lokasi_awal: "-",
                 
                 unit_baru: unit,
                 id_prov: document.getElementById('hiddenProvId').value,
