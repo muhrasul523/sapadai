@@ -11,15 +11,18 @@
     
     <style>
         :root {
-            --bg-dark: #0f172a;
-            --bg-emerald: #064e3b;
+            /* Warna Lebih Terang & Modern */
+            --bg-dark: #1e293b; 
+            --bg-emerald: #0f766e;
             --neon-green: #10b981;
-            --neon-gold: #fbbf24;
+            --neon-gold: #f59e0b;
             --neon-red: #ef4444;
-            --text-main: #ffffff;
-            --text-muted: #e2e8f0;
-            --glass-bg: rgba(0, 0, 0, 0.6);
+            --text-main: #f8fafc;
+            --text-muted: #cbd5e1;
+            --glass-bg: rgba(255, 255, 255, 0.1);
             --glass-border: rgba(255, 255, 255, 0.2);
+            --btn-grad-green: linear-gradient(135deg, #10b981, #059669);
+            --btn-grad-red: linear-gradient(135deg, #ef4444, #b91c1c);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
@@ -38,109 +41,150 @@
         .container {
             width: 100%;
             max-width: 800px;
+            transition: all 0.5s ease;
+        }
+
+        /* Halaman Admin menjadi Full Width */
+        .container.admin-mode {
+            max-width: 95%;
         }
 
         .glass-panel {
             background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border: 1px solid var(--glass-border);
             border-radius: 20px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             padding: 40px;
             animation: fadeIn 0.5s ease;
         }
 
-        .header-logo { text-align: center; margin-bottom: 30px; }
+        .header-logo { text-align: center; margin-bottom: 25px; }
         .header-logo img {
             max-height: 80px;
-            filter: drop-shadow(0 0 10px rgba(16,185,129,0.8));
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
             cursor: pointer;
             transition: transform 0.3s;
         }
         .header-logo img:hover { transform: scale(1.05); }
 
-        h2, h3 { color: var(--neon-gold); margin-bottom: 20px; text-align: center; font-weight: 600; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
+        h2, h3 { color: #fff; margin-bottom: 20px; text-align: center; font-weight: 600; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+        h3 { color: var(--neon-gold); font-size: 18px; }
         
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-size: 14px; color: var(--text-main); margin-bottom: 8px; font-weight: 500; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);}
+        .form-group { margin-bottom: 20px; position: relative; }
+        label { display: block; font-size: 13px; color: #f1f5f9; margin-bottom: 8px; font-weight: 500; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);}
         
         .input-field {
             width: 100%;
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255,255,255,0.2);
             color: #ffffff;
-            padding: 12px 15px;
-            border-radius: 8px;
+            padding: 14px 16px;
+            border-radius: 10px;
             font-size: 14px;
             outline: none;
             transition: all 0.3s;
         }
         .input-field::placeholder { color: #94a3b8; }
-        .input-field:focus { border-color: var(--neon-green); box-shadow: 0 0 10px rgba(16, 185, 129, 0.6); }
-        .input-field[readonly] { background: rgba(255, 255, 255, 0.1); color: #a7f3d0; cursor: not-allowed; border-color: transparent; }
+        .input-field:focus { border-color: var(--neon-green); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); background: rgba(255, 255, 255, 0.15); }
+        .input-field[readonly] { background: rgba(0, 0, 0, 0.2); color: #94a3b8; cursor: not-allowed; border-color: transparent; }
         select.input-field option { background: var(--bg-dark); color: #fff; }
 
+        /* Modern Buttons */
         .btn {
             width: 100%;
-            padding: 15px;
-            background: rgba(15, 23, 42, 0.5);
-            border: 2px solid var(--neon-green);
-            color: var(--neon-green);
-            font-size: 16px;
+            padding: 14px;
+            background: var(--btn-grad-green);
+            border: none;
+            color: white;
+            font-size: 15px;
             font-weight: 600;
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s;
             margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(16,185,129,0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .btn:hover { background: var(--neon-green); color: #000; box-shadow: 0 0 15px rgba(16, 185, 129, 0.8); }
-        .btn-gold { border-color: var(--neon-gold); color: var(--neon-gold); }
-        .btn-gold:hover { background: var(--neon-gold); box-shadow: 0 0 15px rgba(251, 191, 36, 0.8); }
-        .btn-red { border-color: var(--neon-red); color: var(--neon-red); }
-        .btn-red:hover { background: var(--neon-red); box-shadow: 0 0 15px rgba(239, 68, 68, 0.8); }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16,185,129,0.5); }
+        .btn-gold { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 15px rgba(245,158,11,0.3); }
+        .btn-gold:hover { box-shadow: 0 6px 20px rgba(245,158,11,0.5); }
+        .btn-red { background: var(--btn-grad-red); box-shadow: 0 4px 15px rgba(239,68,68,0.3); }
+        .btn-red:hover { box-shadow: 0 6px 20px rgba(239,68,68,0.5); }
 
         .view-section { display: none; }
         .view-section.active { display: block; }
 
-        /* Admin Table */
-        .table-responsive { overflow-x: auto; margin-top: 20px; }
-        table { width: 100%; border-collapse: collapse; min-width: 800px; background: rgba(0,0,0,0.3); border-radius: 8px;}
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--glass-border); color: #fff; font-size: 13px;}
-        th { color: var(--neon-gold); font-weight: 600; background: rgba(0,0,0,0.5); }
-        
-        .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
-        .status-pending { background: rgba(251, 191, 36, 0.2); color: var(--neon-gold); border: 1px solid var(--neon-gold); }
-        .status-accepted { background: rgba(16, 185, 129, 0.2); color: var(--neon-green); border: 1px solid var(--neon-green); }
-        .status-rejected { background: rgba(239, 68, 68, 0.2); color: var(--neon-red); border: 1px solid var(--neon-red); }
+        /* Login Tabs */
+        .login-tabs {
+            display: flex; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 5px; margin-bottom: 25px;
+        }
+        .login-tab {
+            flex: 1; text-align: center; padding: 10px; cursor: pointer; border-radius: 8px;
+            font-size: 14px; font-weight: 500; color: #cbd5e1; transition: all 0.3s;
+        }
+        .login-tab.active { background: var(--neon-green); color: #000; font-weight: 600; box-shadow: 0 2px 10px rgba(16,185,129,0.4); }
 
-        .action-btns { display: flex; gap: 5px; flex-wrap: wrap; }
-        .action-btns button { padding: 5px 10px; font-size: 11px; border-radius: 5px; cursor: pointer; border: none; font-weight: 600;}
+        /* Custom Dropdown (Modern) */
+        .custom-dropdown { position: relative; }
+        .dropdown-list {
+            position: absolute; top: 100%; left: 0; width: 100%;
+            background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 10px;
+            max-height: 220px; overflow-y: auto; z-index: 100;
+            display: none; margin-top: 5px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .dropdown-list.show { display: block; }
+        .dropdown-item {
+            padding: 12px 16px; color: #fff; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px;
+        }
+        .dropdown-item:hover { background: rgba(16,185,129,0.2); color: var(--neon-green); padding-left: 20px; transition: 0.2s;}
+
+        /* Admin Table */
+        .table-responsive { overflow-x: auto; margin-top: 20px; border-radius: 10px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);}
+        table { width: 100%; border-collapse: collapse; min-width: 1000px; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); color: #fff; font-size: 13px;}
+        th { color: var(--neon-gold); font-weight: 600; background: rgba(0,0,0,0.4); text-transform: uppercase; letter-spacing: 0.5px;}
+        
+        .status-badge { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        .status-pending { background: rgba(245, 158, 11, 0.2); color: #fcd34d; border: 1px solid #fcd34d; }
+        .status-accepted { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid #6ee7b7; }
+        .status-rejected { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid #fca5a5; }
+
+        .action-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+        .action-btns button { padding: 6px 12px; font-size: 11px; border-radius: 6px; cursor: pointer; border: none; font-weight: 600; transition: 0.2s;}
+        .action-btns button:hover { transform: scale(1.05); }
         .btn-copy { background: #3b82f6; color: white; }
         .btn-acc { background: var(--neon-green); color: black; }
         .btn-rej { background: var(--neon-red); color: white; }
 
+        /* Overlays & Modals */
         .loader-overlay, .alert-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.9); z-index: 9999;
+            background: rgba(15, 23, 42, 0.85); z-index: 9999;
             display: flex; justify-content: center; align-items: center;
-            flex-direction: column; color: #fff;
-            backdrop-filter: blur(5px);
+            flex-direction: column; color: #fff; backdrop-filter: blur(8px);
         }
         .alert-overlay { display: none; z-index: 10000; }
         .alert-box {
-            background: var(--bg-dark); border: 2px solid var(--neon-gold);
-            padding: 30px; border-radius: 15px; text-align: center; max-width: 400px; width: 90%;
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+            background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.2);
+            padding: 35px; border-radius: 20px; text-align: center; max-width: 400px; width: 90%;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
         
         .spinner {
-            width: 50px; height: 50px; border: 5px solid rgba(16,185,129,0.2);
+            width: 50px; height: 50px; border: 4px solid rgba(16,185,129,0.2);
             border-top-color: var(--neon-green); border-radius: 50%;
             animation: spin 1s linear infinite; margin-bottom: 20px;
         }
-        
-        .file-list { font-size: 12px; color: var(--neon-gold); margin-top: 5px; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 5px;}
+
+        /* Scrollbar custom */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -151,56 +195,76 @@
     <!-- Loading Screen -->
     <div class="loader-overlay" id="loader">
         <div class="spinner"></div>
-        <h3 id="loaderText" style="color: var(--neon-green);">Menghubungkan ke SAPADAI...</h3>
+        <h3 id="loaderText" style="color: var(--neon-green); margin-top: 15px;">Menghubungkan ke Sistem...</h3>
     </div>
 
-    <!-- Custom Alert -->
+    <!-- Custom Alert Modal -->
     <div class="alert-overlay" id="customAlert">
         <div class="alert-box">
-            <h3 id="alertTitle" style="color: var(--neon-gold); margin-bottom: 10px;">Pemberitahuan</h3>
-            <p id="alertMessage" style="font-size: 14px; margin-bottom: 20px; color: #fff;"></p>
-            <button class="btn btn-gold" onclick="closeAlert()" style="padding: 10px;">TUTUP</button>
+            <h2 id="alertTitle" style="color: var(--neon-gold); margin-bottom: 15px;">Pemberitahuan</h2>
+            <p id="alertMessage" style="font-size: 14px; margin-bottom: 25px; color: #cbd5e1; line-height: 1.5;"></p>
+            <button class="btn btn-gold" onclick="closeAlert()">MENGERTI</button>
         </div>
     </div>
 
-    <div class="container">
+    <!-- Admin Access Modal -->
+    <div class="alert-overlay" id="adminAuthModal">
+        <div class="alert-box">
+            <h2 style="color: var(--neon-green); margin-bottom: 10px;">Akses Administrator</h2>
+            <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 20px;">Masukkan kode rahasia untuk mengakses rekap data.</p>
+            <input type="password" id="adminCodeInput" class="input-field" placeholder="Ketik kode di sini..." style="margin-bottom: 20px; text-align: center; font-size: 16px; letter-spacing: 2px;">
+            <div style="display: flex; gap: 15px;">
+                <button class="btn btn-red" onclick="closeAdminModal()">BATAL</button>
+                <button class="btn" onclick="verifyAdminCode()">MASUK</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="mainContainer">
+        
         <!-- ================= LOGIN VIEW ================= -->
         <div class="glass-panel view-section" id="loginView">
             <div class="header-logo">
-                <img src="../logo_sapadai_1.png" alt="Logo SAPADAI" class="admin-logo-btn" title="Akses Admin" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgODAiPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iODAiIGZpbGw9IiMwNjRlM2IiIHJ4PSIxMCIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjQwIiByPSIyMCIgZmlsbD0iIzEwYjk4MSIvPjwvc3ZnPg==';">
+                <img src="../logo_sapadai_1.png" alt="Logo SAPADAI" onclick="openAdminModal()" title="Akses Admin (Klik Logo)" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgODAiPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iODAiIGZpbGw9IiMwZjc2NmUiIHJ4PSIxMCIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjQwIiByPSIyMCIgZmlsbD0iIzEwYjk4MSIvPjwvc3ZnPg==';">
             </div>
-            <h2>Portal Penempatan Da'i</h2>
+            <h2>Portal Penyesuaian SK</h2>
+            
+            <div class="login-tabs">
+                <div class="login-tab active" id="tabWA" onclick="switchLoginMode('wa')">Login via  WA</div>
+                <div class="login-tab" id="tabEmail" onclick="switchLoginMode('email')">Login via Email</div>
+            </div>
+
             <form id="loginForm">
                 <div class="form-group">
-                    <label>Email atau Nomor WA</label>
-                    <input type="text" id="loginId" class="input-field" placeholder="0812xxxx atau email@domain.com" required>
+                    <label id="lblLoginId">Nomor WhatsApp Anda</label>
+                    <input type="number" id="loginId" class="input-field" placeholder="Contoh: 0812xxxx (otomatis jadi 62)" required>
                 </div>
                 <div class="form-group">
                     <label>Kata Sandi</label>
-                    <input type="password" id="loginPass" class="input-field" placeholder="Masukkan kata sandi" required>
+                    <input type="password" id="loginPass" class="input-field" placeholder="Masukkan kata sandi akun" required>
                 </div>
-                <button type="submit" class="btn">MASUK</button>
+                <button type="submit" class="btn">MASUK SEKARANG</button>
             </form>
         </div>
 
         <!-- ================= DA'I DASHBOARD VIEW ================= -->
         <div class="glass-panel view-section" id="daiView">
             <div class="header-logo">
-                <img src="../logo_sapadai_1.png" alt="Logo SAPADAI" class="admin-logo-btn" title="Akses Admin" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgODAiPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iODAiIGZpbGw9IiMwNjRlM2IiIHJ4PSIxMCIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjQwIiByPSIyMCIgZmlsbD0iIzEwYjk4MSIvPjwvc3ZnPg==';">
+                <img src="../logo_sapadai_1.png" alt="Logo" style="max-height: 50px;" onclick="openAdminModal()" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgODAiPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iODAiIGZpbGw9IiMwZjc2NmUiIHJ4PSIxMCIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjQwIiByPSIyMCIgZmlsbD0iIzEwYjk4MSIvPjwvc3ZnPg==';">
             </div>
-            <h3>Profil Penempatan Saat Ini</h3>
+            <h3>Profil Penempatan Da'i Saat Ini</h3>
             
             <div class="form-group">
                 <label>Nama Lengkap & Gelar</label>
                 <input type="text" id="profNama" class="input-field" readonly>
             </div>
-            <div class="form-group" style="display:flex; gap:10px; flex-wrap: wrap;">
+            <div class="form-group" style="display:flex; gap:15px; flex-wrap: wrap;">
                 <div style="flex:1; min-width: 150px;">
                     <label>Tahun Diutus</label>
                     <input type="text" id="profTahun" class="input-field" readonly>
                 </div>
-                <div style="flex:1; min-width: 150px;">
-                    <label>SK Penempatan</label>
+                <div style="flex:2; min-width: 200px;">
+                    <label>SK Penempatan Saat Ini</label>
                     <input type="text" id="profSK" class="input-field" readonly>
                 </div>
             </div>
@@ -209,86 +273,87 @@
                 <input type="text" id="profLokasi" class="input-field" readonly>
             </div>
 
-            <hr style="border: 1px solid var(--glass-border); margin: 30px 0;">
+            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 35px 0;">
 
-            <h3>Apakah penempatan sekarang sudah sesuai?</h3>
-            <div class="form-group" style="display: flex; gap: 20px; justify-content: center; margin-top: 15px;">
-                <label style="font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                    <input type="radio" name="isSesuai" value="ya" style="width: 20px; height: 20px;">
-                    <span style="color: var(--neon-green); font-weight: 600;">Sudah Sesuai</span>
+            <h3 style="color: #fff;">Apakah penempatan sekarang sudah sesuai?</h3>
+            <div class="form-group" style="display: flex; gap: 30px; justify-content: center; margin-top: 20px;">
+                <label style="font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 10px; background: rgba(16,185,129,0.1); padding: 10px 20px; border-radius: 10px; border: 1px solid rgba(16,185,129,0.3);">
+                    <input type="radio" name="isSesuai" value="ya" style="width: 22px; height: 22px; accent-color: var(--neon-green);">
+                    <span style="color: #6ee7b7; font-weight: 600;">Sudah Sesuai</span>
                 </label>
-                <label style="font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                    <input type="radio" name="isSesuai" value="tidak" style="width: 20px; height: 20px;">
-                    <span style="color: var(--neon-red); font-weight: 600;">Tidak Sesuai (Pindah)</span>
+                <label style="font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 10px; background: rgba(239,68,68,0.1); padding: 10px 20px; border-radius: 10px; border: 1px solid rgba(239,68,68,0.3);">
+                    <input type="radio" name="isSesuai" value="tidak" style="width: 22px; height: 22px; accent-color: var(--neon-red);">
+                    <span style="color: #fca5a5; font-weight: 600;">Tidak Sesuai</span>
                 </label>
             </div>
 
             <!-- Formulir Pemindahan -->
-            <form id="pindahForm" style="display: none; margin-top: 30px; background: rgba(0,0,0,0.4); padding: 25px; border-radius: 15px; border: 1px solid var(--glass-border);">
-                <h3 style="color: var(--neon-gold); font-size: 18px; margin-bottom: 25px;">Form Usulan Penyesuaian</h3>
+            <form id="pindahForm" style="display: none; margin-top: 40px; background: rgba(0,0,0,0.25); padding: 30px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1);">
+                <h3 style="color: var(--neon-gold); font-size: 18px; margin-bottom: 25px; text-align: left;">Form Usulan Penyesuaian SK</h3>
                 
                 <div class="form-group">
-                    <label>Unit Baru</label>
+                    <label>Pilih Unit Baru</label>
                     <select id="formUnit" class="input-field" required onchange="handleUnitChange()">
-                        <option value="">-- Pilih Unit --</option>
+                        <option value="">-- Silakan Pilih Unit --</option>
                     </select>
                 </div>
                 
-                <!-- Datalist Wilayah (Hidden) -->
-                <datalist id="listProv"></datalist>
-                <datalist id="listKab"></datalist>
-
-                <!-- Input Autosearch Wilayah -->
-                <div class="form-group" id="wrapProv" style="display: none;">
-                    <label>Pilih Provinsi Penempatan Baru</label>
-                    <input type="text" id="formProv" class="input-field" list="listProv" placeholder="Ketik nama provinsi..." autocomplete="off">
+                <!-- Custom Modern Dropdown Provinsi -->
+                <div class="form-group custom-dropdown" id="wrapProv" style="display: none;">
+                    <label>Pilih Provinsi Baru</label>
+                    <input type="text" id="formProv" class="input-field" placeholder="Ketik nama provinsi..." autocomplete="off">
+                    <div class="dropdown-list" id="listProv"></div>
                     <input type="hidden" id="hiddenProvId">
                 </div>
 
-                <div class="form-group" id="wrapKab" style="display: none;">
-                    <label>Pilih Kabupaten/Kota Penempatan Baru</label>
-                    <input type="text" id="formKab" class="input-field" list="listKab" placeholder="Ketik nama kabupaten/kota..." autocomplete="off" oninput="handleKabChange()">
+                <!-- Custom Modern Dropdown Kabupaten -->
+                <div class="form-group custom-dropdown" id="wrapKab" style="display: none;">
+                    <label>Pilih Kabupaten/Kota Baru</label>
+                    <input type="text" id="formKab" class="input-field" placeholder="Ketik nama kabupaten/kota..." autocomplete="off">
+                    <div class="dropdown-list" id="listKab"></div>
                     <input type="hidden" id="hiddenKabId">
                 </div>
 
                 <div class="form-group" id="wrapInstansi" style="display: none;">
-                    <label>Nama Instansi / Sekolah / Masjid / Unit</label>
-                    <input type="text" id="formInstansi" class="input-field" placeholder="Masukkan nama instansi spesifik">
+                    <label>Nama Instansi / Sekolah / Masjid / Unit Spesifik</label>
+                    <input type="text" id="formInstansi" class="input-field" placeholder="Contoh: SD IT Fulan / Masjid Al-Fulan">
+                </div>
+
+                <div class="form-group" style="display:flex; gap:15px; flex-wrap: wrap;">
+                    <div style="flex:1; min-width: 200px;">
+                        <label>Tanggal Pemindahan</label>
+                        <input type="date" id="formTanggal" class="input-field" required>
+                    </div>
+                    <div style="flex:1; min-width: 200px;">
+                        <label>Siapa yang memindahkan?</label>
+                        <select id="formPemindah" class="input-field" required>
+                            <option value="">-- Pilih Pihak --</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label>Tanggal Pemindahan</label>
-                    <input type="date" id="formTanggal" class="input-field" required>
+                    <label>Alasan Pemindahan / Penyesuaian</label>
+                    <textarea id="formAlasan" class="input-field" rows="3" placeholder="Jelaskan secara detail alasan Anda..." required></textarea>
                 </div>
 
                 <div class="form-group">
-                    <label>Siapa yang memindahkan?</label>
-                    <select id="formPemindah" class="input-field" required>
-                        <option value="">-- Pilih Pihak --</option>
-                    </select>
+                    <label>Bukti Pemindahan (Maksimal 5 Foto JPG/PNG)</label>
+                    <input type="file" id="formFile" class="input-field" accept="image/png, image/jpeg" multiple style="padding: 10px;">
+                    <div id="fileList" style="display: none; font-size: 12px; color: var(--neon-gold); margin-top: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px;"></div>
                 </div>
 
-                <div class="form-group">
-                    <label>Alasan Pemindahan</label>
-                    <textarea id="formAlasan" class="input-field" rows="3" placeholder="Jelaskan alasan pemindahan..." required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>Bukti Pemindahan (Maks. 5 Foto JPG/PNG)</label>
-                    <input type="file" id="formFile" class="input-field" accept="image/png, image/jpeg" multiple>
-                    <div id="fileList" class="file-list" style="display: none;"></div>
-                </div>
-
-                <button type="submit" class="btn btn-gold">AJUKAN PENYESUAIAN</button>
+                <button type="submit" class="btn btn-gold" style="margin-top: 20px;">AJUKAN PENYESUAIAN SEKARANG</button>
             </form>
             
-            <button onclick="logout()" class="btn btn-red" style="margin-top:30px;">KELUAR AKUN</button>
+            <button onclick="logout()" class="btn btn-red" style="margin-top:40px;">KELUAR DARI AKUN</button>
         </div>
 
         <!-- ================= ADMIN DASHBOARD VIEW ================= -->
-        <div class="glass-panel view-section" id="adminView" style="max-width: 1000px;">
-            <div class="header-logo">
-                <h2>Panel Admin Rekap Penempatan</h2>
+        <div class="glass-panel view-section" id="adminView">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+                <h2 style="margin: 0; text-align: left;">Rekap Penyesuaian SK</h2>
+                <button onclick="logout()" class="btn btn-red" style="width: auto; margin: 0; padding: 10px 20px; font-size: 13px;">Keluar Admin</button>
             </div>
             
             <div class="table-responsive">
@@ -296,13 +361,13 @@
                     <thead>
                         <tr>
                             <th>Nama Da'i</th>
-                            <th>No. WA</th>
-                            <th>Penempatan Awal</th>
+                            <th>No. WhatsApp</th>
+                            <th>Data Awal</th>
                             <th>Usulan Baru (Wilayah & Unit)</th>
                             <th>Alasan</th>
-                            <th>Bukti</th>
+                            <th>File Bukti</th>
                             <th>Status</th>
-                            <th>Aksi</th>
+                            <th>Tindakan Admin</th>
                         </tr>
                     </thead>
                     <tbody id="adminTableBody">
@@ -310,8 +375,6 @@
                     </tbody>
                 </table>
             </div>
-            
-            <button onclick="logout()" class="btn btn-red" style="margin-top:30px; max-width: 200px;">KELUAR ADMIN</button>
         </div>
 
     </div>
@@ -324,34 +387,59 @@
         let currentUser = null;
         let uploadedFilesBase64 = []; 
         let rawWilayahData = { prov: [], kabkota: [] };
+        let loginMode = 'wa'; // default
 
+        // UI Helpers
         const loader = document.getElementById('loader');
-        const loaderText = document.getElementById('loaderText');
-
-        // Custom Alert System
+        function showLoader(text) { document.getElementById('loaderText').innerText = text || "Memuat..."; loader.style.display = 'flex'; }
+        function hideLoader() { loader.style.display = 'none'; }
+        
         function showCustomAlert(msg, title = "Pemberitahuan") {
             document.getElementById('alertTitle').innerText = title;
             document.getElementById('alertMessage').innerText = msg;
             document.getElementById('customAlert').style.display = 'flex';
         }
-        function closeAlert() {
-            document.getElementById('customAlert').style.display = 'none';
-        }
+        function closeAlert() { document.getElementById('customAlert').style.display = 'none'; }
+        
+        function openAdminModal() { document.getElementById('adminAuthModal').style.display = 'flex'; document.getElementById('adminCodeInput').value = ''; }
+        function closeAdminModal() { document.getElementById('adminAuthModal').style.display = 'none'; }
 
-        // Format Nomor WA (Realtime 08 -> 62)
+        // Format No WA
         document.getElementById('loginId').addEventListener('input', function(e) {
-            let val = e.target.value;
-            if (/^[0-9]+$/.test(val) && val.startsWith('08')) {
-                e.target.value = '62' + val.substring(1);
+            if(loginMode === 'wa') {
+                let val = e.target.value;
+                if(val.startsWith('08')) {
+                    e.target.value = '62' + val.substring(1);
+                }
             }
         });
 
-        // Initialize App
+        function switchLoginMode(mode) {
+            loginMode = mode;
+            const inputEl = document.getElementById('loginId');
+            inputEl.value = '';
+            
+            if(mode === 'wa') {
+                document.getElementById('tabWA').classList.add('active');
+                document.getElementById('tabEmail').classList.remove('active');
+                document.getElementById('lblLoginId').innerText = 'Nomor WhatsApp Anda';
+                inputEl.type = 'number';
+                inputEl.placeholder = 'Contoh: 0812xxxx (otomatis jadi 62)';
+            } else {
+                document.getElementById('tabEmail').classList.add('active');
+                document.getElementById('tabWA').classList.remove('active');
+                document.getElementById('lblLoginId').innerText = 'Alamat Email Terdaftar';
+                inputEl.type = 'email';
+                inputEl.placeholder = 'contoh@email.com';
+            }
+        }
+
+        // Initialize
         async function initApp() {
             if (window.location.hostname === '' || window.location.hostname === 'null') {
-                console.log("Berjalan di Mode Simulasi (Local/Canvas)");
+                console.log("Mode Canvas/Local");
                 generateDummyData();
-                setupWilayahDatalist();
+                setupCustomDropdowns();
                 setupDynamicDropdowns();
                 hideLoader();
                 showView('loginView');
@@ -365,58 +453,89 @@
                 if(result.status === 'success') {
                     dbData = result.data;
                     if(dbData.wilayah) rawWilayahData = dbData.wilayah;
-                    setupWilayahDatalist();
+                    setupCustomDropdowns();
                     setupDynamicDropdowns();
                     hideLoader();
                     showView('loginView');
                 } else {
-                    showCustomAlert("Gagal memuat data database: " + result.message, "Error DB");
+                    showCustomAlert("Gagal memuat database: " + result.message, "Database Error");
                 }
             } catch (error) {
-                console.error("Fetch Error, Menggunakan Data Dummy:", error);
+                console.error("Fetch Error, pakai Dummy:", error);
                 generateDummyData(); 
-                setupWilayahDatalist();
+                setupCustomDropdowns();
                 hideLoader();
                 showView('loginView');
             }
         }
 
-        // Login Logic
+        // Login Submit
         document.getElementById('loginForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const idInput = document.getElementById('loginId').value.trim();
             const passInput = document.getElementById('loginPass').value;
 
-            const user = dbData.akun.find(u => 
-                (u.wa == idInput || u.email == idInput) && u.password == passInput
-            );
+            // Cari user
+            const user = dbData.akun.find(u => {
+                if(loginMode === 'wa') return u.wa == idInput && u.password == passInput;
+                return u.email == idInput && u.password == passInput;
+            });
 
             if (user) {
                 currentUser = user;
                 if(user.role && user.role.toLowerCase() === 'admin') {
+                    document.getElementById('mainContainer').classList.add('admin-mode');
                     renderAdminTable();
                     showView('adminView');
                 } else {
+                    document.getElementById('mainContainer').classList.remove('admin-mode');
                     renderDaiProfile();
                     showView('daiView');
                 }
             } else {
-                showCustomAlert("Email/WA atau Kata Sandi salah!", "Login Gagal");
+                showCustomAlert("Kredensial tidak ditemukan atau kata sandi salah. Silakan periksa kembali.", "Login Gagal");
             }
         });
 
-        // Render Da'i Data
-        function renderDaiProfile() {
-            let userProfile = dbData.profil.find(p => p.nama_lengkap_beserta_gelar == currentUser.nama) || {};
-            let userPenempatan = dbData.penempatan.find(p => p.nama_lengkap_beserta_gelar == currentUser.nama) || {};
+        // Verifikasi Modal Admin
+        function verifyAdminCode() {
+            const code = document.getElementById('adminCodeInput').value;
+            let validCode = "123"; 
+            if (dbData && dbData.config) {
+                const configRow = dbData.config.find(c => c.Key === 'admin_code' || c.key === 'admin_code');
+                if (configRow) validCode = configRow.Value || configRow.value;
+            }
 
-            document.getElementById('profNama').value = currentUser.nama || "-";
-            document.getElementById('profTahun').value = userPenempatan.tahun_diutus || userProfile.tahun_diutus || "-";
-            document.getElementById('profSK').value = userPenempatan.SK_Penempatan || "-";
-            document.getElementById('profLokasi').value = userPenempatan.lokasi_awal || "Belum ada data";
+            if (code === validCode) {
+                closeAdminModal();
+                if(!currentUser) { currentUser = { nama: "Super Admin", role: "admin" }; }
+                document.getElementById('mainContainer').classList.add('admin-mode');
+                renderAdminTable();
+                showView('adminView');
+            } else {
+                showCustomAlert("Kode akses admin tidak valid!", "Akses Ditolak");
+            }
         }
 
-        // Radio Sesuai / Tidak Sesuai
+        // Fetch & Tampilkan Profil Dai
+        function renderDaiProfile() {
+            // Ambil ID sesuai struktur terbaru:
+            // currentUser berasal dari sheet 'Akun'. ID-nya ada di kolom 'dai_id' (atau 'id')
+            let daiId = currentUser.dai_id || currentUser.id || currentUser.ID_Dai;
+
+            // Cari di Update Profil (Berdasarkan dai_id)
+            let userProfile = dbData.profil.find(p => p.dai_id == daiId) || {};
+            
+            // Cari di Penempatan (Berdasarkan ID_Dai)
+            let userPenempatan = dbData.penempatan.find(p => p.ID_Dai == daiId) || {};
+
+            document.getElementById('profNama').value = currentUser.nama || "-";
+            document.getElementById('profTahun').value = userProfile.tahun_diutus || "-";
+            document.getElementById('profSK').value = userPenempatan.SK_Penempatan || "-";
+            document.getElementById('profLokasi').value = userPenempatan.lokasi_awal || "Belum ada data awal";
+        }
+
+        // Tampilkan/Sembunyikan Form Pindah
         const radios = document.getElementsByName('isSesuai');
         radios.forEach(radio => {
             radio.addEventListener('change', (e) => {
@@ -430,30 +549,68 @@
             });
         });
 
-        // Setup Wilayah Datalist (Dari fetch Spreadsheet Eksternal)
-        function setupWilayahDatalist() {
+        // Setup Custom Searchable Dropdown Wilayah
+        function setupCustomDropdowns() {
             const listProv = document.getElementById('listProv');
             const listKab = document.getElementById('listKab');
-            
-            listProv.innerHTML = '';
-            rawWilayahData.prov.forEach(p => {
-                let opt = document.createElement('option');
-                opt.value = p.name;
-                opt.setAttribute('data-id', p.id);
-                listProv.appendChild(opt);
-            });
+            const inputProv = document.getElementById('formProv');
+            const inputKab = document.getElementById('formKab');
 
-            listKab.innerHTML = '';
-            rawWilayahData.kabkota.forEach(k => {
-                let opt = document.createElement('option');
-                opt.value = k.name;
-                opt.setAttribute('data-id', k.id);
-                opt.setAttribute('data-prov-id', k.prov_id);
-                listKab.appendChild(opt);
+            // Render List Provinsi
+            function renderProv(filter = "") {
+                listProv.innerHTML = '';
+                let match = rawWilayahData.prov.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()));
+                match.forEach(p => {
+                    let div = document.createElement('div');
+                    div.className = 'dropdown-item'; div.innerText = p.name;
+                    div.onclick = () => {
+                        inputProv.value = p.name;
+                        document.getElementById('hiddenProvId').value = p.id;
+                        listProv.classList.remove('show');
+                    };
+                    listProv.appendChild(div);
+                });
+            }
+
+            // Render List Kab
+            function renderKab(filter = "") {
+                listKab.innerHTML = '';
+                let match = rawWilayahData.kabkota.filter(k => k.name.toLowerCase().includes(filter.toLowerCase()));
+                match.forEach(k => {
+                    let div = document.createElement('div');
+                    div.className = 'dropdown-item'; div.innerText = k.name;
+                    div.onclick = () => {
+                        inputKab.value = k.name;
+                        document.getElementById('hiddenKabId').value = k.id;
+                        listKab.classList.remove('show');
+                        
+                        // Auto fill Provinsi
+                        const provObj = rawWilayahData.prov.find(p => p.id == k.prov_id);
+                        if(provObj) {
+                            inputProv.value = provObj.name;
+                            document.getElementById('hiddenProvId').value = provObj.id;
+                        }
+                    };
+                    listKab.appendChild(div);
+                });
+            }
+
+            // Events Prov
+            inputProv.addEventListener('focus', () => { renderProv(); listProv.classList.add('show'); });
+            inputProv.addEventListener('input', (e) => renderProv(e.target.value));
+            
+            // Events Kab
+            inputKab.addEventListener('focus', () => { renderKab(); listKab.classList.add('show'); });
+            inputKab.addEventListener('input', (e) => renderKab(e.target.value));
+
+            // Hide dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if(!e.target.closest('#wrapProv')) listProv.classList.remove('show');
+                if(!e.target.closest('#wrapKab')) listKab.classList.remove('show');
             });
         }
 
-        // Setup Dropdown Unit & Pemindah Dinamis
+        // Dropdown Data Dinamis
         function setupDynamicDropdowns() {
             const selUnit = document.getElementById('formUnit');
             const selPemindah = document.getElementById('formPemindah');
@@ -472,7 +629,7 @@
             }
         }
 
-        // Handler saat Unit Berubah
+        // Logic Perubahan Unit
         function handleUnitChange() {
             const unit = document.getElementById('formUnit').value.toUpperCase();
             const wProv = document.getElementById('wrapProv');
@@ -483,23 +640,21 @@
             const iKab = document.getElementById('formKab');
             const iInst = document.getElementById('formInstansi');
 
-            // Reset field
+            // Reset
             iProv.value = ''; document.getElementById('hiddenProvId').value = '';
             iKab.value = ''; document.getElementById('hiddenKabId').value = '';
             iInst.value = '';
             iProv.readOnly = false;
 
             if (unit.includes('DPW')) {
-                wProv.style.display = 'block'; iProv.required = true;
-                wKab.style.display = 'none'; iKab.required = false;
+                wProv.style.display = 'block'; 
+                wKab.style.display = 'none'; 
                 wInst.style.display = 'none'; iInst.required = false;
             } else if (unit === '') {
-                wProv.style.display = 'none'; iProv.required = false;
-                wKab.style.display = 'none'; iKab.required = false;
-                wInst.style.display = 'none'; iInst.required = false;
+                wProv.style.display = 'none'; wKab.style.display = 'none'; wInst.style.display = 'none'; iInst.required = false;
             } else {
-                wKab.style.display = 'block'; iKab.required = true;
-                wProv.style.display = 'block'; iProv.required = true; iProv.readOnly = true; // Auto fill dari Kab
+                wKab.style.display = 'block';
+                wProv.style.display = 'block'; iProv.readOnly = true; // readonly karena diisi dari kab
                 
                 if (unit.includes('DPD')) {
                     wInst.style.display = 'none'; iInst.required = false;
@@ -509,50 +664,7 @@
             }
         }
 
-        // Handler Autofill Provinsi ketika Kabupaten Dipilih di Datalist
-        function handleKabChange() {
-            const inputKab = document.getElementById('formKab');
-            const val = inputKab.value;
-            const options = document.getElementById('listKab').options;
-            
-            for (let i = 0; i < options.length; i++) {
-                if (options[i].value === val) {
-                    // Ketemu!
-                    const idKab = options[i].getAttribute('data-id');
-                    const idProv = options[i].getAttribute('data-prov-id');
-                    document.getElementById('hiddenKabId').value = idKab;
-                    
-                    // Cari nama provinsi berdasarkan idProv
-                    const provObj = rawWilayahData.prov.find(p => p.id == idProv);
-                    if (provObj) {
-                        document.getElementById('formProv').value = provObj.name;
-                        document.getElementById('hiddenProvId').value = provObj.id;
-                    }
-                    return;
-                }
-            }
-            // Jika diketik manual tapi tidak ada di list
-            document.getElementById('hiddenKabId').value = '';
-            document.getElementById('formProv').value = '';
-            document.getElementById('hiddenProvId').value = '';
-        }
-
-        // Tangkap event untuk Datalist Provinsi (Jika Unit DPW)
-        document.getElementById('formProv').addEventListener('input', function(e) {
-            if(document.getElementById('formUnit').value !== 'DPW') return; // Hanya berlalu jika ngisi manual
-            const val = e.target.value;
-            const options = document.getElementById('listProv').options;
-            for (let i = 0; i < options.length; i++) {
-                if (options[i].value === val) {
-                    document.getElementById('hiddenProvId').value = options[i].getAttribute('data-id');
-                    return;
-                }
-            }
-            document.getElementById('hiddenProvId').value = '';
-        });
-
-
-        // File Upload Handler Base64
+        // Upload Preview
         document.getElementById('formFile').addEventListener('change', function(e) {
             const files = e.target.files;
             const fileList = document.getElementById('fileList');
@@ -560,38 +672,32 @@
             uploadedFilesBase64 = [];
 
             if(files.length > 5) {
-                showCustomAlert("Maksimal 5 foto!", "Peringatan");
-                this.value = '';
-                fileList.style.display = 'none';
-                return;
+                showCustomAlert("Maaf, maksimal hanya diperbolehkan 5 foto/file bukti.", "Batas File");
+                this.value = ''; fileList.style.display = 'none'; return;
             }
-
             if(files.length > 0) fileList.style.display = 'block';
 
             Array.from(files).forEach((file) => {
                 fileList.innerHTML += `📄 ${file.name}<br>`;
                 const reader = new FileReader();
-                reader.onload = function(event) {
-                    uploadedFilesBase64.push(event.target.result);
-                };
+                reader.onload = (event) => uploadedFilesBase64.push(event.target.result);
                 reader.readAsDataURL(file);
             });
         });
 
-        // Submit Usulan Pindah
+        // Submit Form
         document.getElementById('pindahForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Validasi Datalist agar tidak asal ketik
             const unit = document.getElementById('formUnit').value;
-            if (unit === 'DPW' && !document.getElementById('hiddenProvId').value) {
-                showCustomAlert("Silakan pilih Provinsi dari daftar yang tersedia.", "Validasi"); return;
+            if (unit.includes('DPW') && !document.getElementById('hiddenProvId').value) {
+                showCustomAlert("Anda belum memilih Provinsi yang valid dari daftar dropdown.", "Validasi"); return;
             }
-            if (unit !== 'DPW' && !document.getElementById('hiddenKabId').value) {
-                showCustomAlert("Silakan pilih Kabupaten/Kota dari daftar yang tersedia.", "Validasi"); return;
+            if (!unit.includes('DPW') && !document.getElementById('hiddenKabId').value) {
+                showCustomAlert("Anda belum memilih Kabupaten/Kota yang valid dari daftar dropdown.", "Validasi"); return;
             }
 
-            showLoader("Menyimpan Usulan...");
+            showLoader("Menyimpan & Mengirim Usulan...");
 
             const payload = {
                 nama: currentUser.nama,
@@ -623,69 +729,64 @@
                 hideLoader();
                 
                 if (res.status === 'success') {
-                    showCustomAlert("Berhasil! Usulan penyesuaian Anda telah dikirim dan menunggu verifikasi Admin.", "Sukses");
+                    showCustomAlert("Alhamdulillah! Usulan Anda telah berhasil direkam dan akan diteruskan ke Admin untuk diverifikasi.", "Berhasil");
                     document.getElementById('pindahForm').reset();
                     document.getElementById('pindahForm').style.display = 'none';
                     radios.forEach(r => r.checked = false);
-                    document.getElementById('fileList').innerHTML = '';
                     document.getElementById('fileList').style.display = 'none';
                 } else {
-                    showCustomAlert("Gagal: " + res.message, "Error");
+                    showCustomAlert("Terjadi kegagalan di server: " + res.message, "Gagal");
                 }
             } catch (error) {
                 hideLoader();
-                showCustomAlert("Simulasi Berhasil: Data Usulan disimpan (Backend terisolasi saat Canvas Mode).", "Simulasi Sukses");
+                showCustomAlert("Mode Simulasi: Data Usulan tersimpan (Backend Apps Script tidak diakses di Canvas).", "Simulasi Sukses");
                 document.getElementById('pindahForm').reset();
-                document.getElementById('fileList').innerHTML = '';
-                document.getElementById('fileList').style.display = 'none';
                 radios.forEach(r => r.checked = false);
             }
         });
 
-        // Admin Table Render
+        // Tabel Admin
         function renderAdminTable() {
             const tbody = document.getElementById('adminTableBody');
             tbody.innerHTML = '';
             
             if(!dbData.usulan || dbData.usulan.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Belum ada data usulan</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Belum ada usulan penempatan yang masuk</td></tr>';
                 return;
             }
 
             dbData.usulan.forEach(item => {
                 let statClass = 'status-pending';
-                if(item.Status === 'Diterima' || item.Status === 'Selesai') statClass = 'status-accepted';
+                if(item.Status === 'Diterima') statClass = 'status-accepted';
                 if(item.Status === 'Ditolak') statClass = 'status-rejected';
 
-                let txtWilayah = `Prov: ${item['Nama Prov']}`;
-                if(!item['Unit Baru'].toUpperCase().includes('DPW')) txtWilayah += `<br>Kab: ${item['Nama Kab']}`;
-                if(item['Instansi Baru'] && item['Instansi Baru'] !== '-') txtWilayah += `<br>Instansi: ${item['Instansi Baru']}`;
+                let txtWilayah = `<span style="color:#6ee7b7">Prov: ${item['Nama Prov']}</span>`;
+                if(!item['Unit Baru'].toUpperCase().includes('DPW')) txtWilayah += `<br><span style="color:#93c5fd">Kab: ${item['Nama Kab']}</span>`;
+                if(item['Instansi Baru'] && item['Instansi Baru'] !== '-') txtWilayah += `<br><span style="color:#fcd34d">Instansi: ${item['Instansi Baru']}</span>`;
 
-                // Bukti Files (jika ada - sekarang berbentuk URL Drive dipisah \n)
                 let btnBukti = '-';
                 if(item['File Bukti']) {
                     let urls = item['File Bukti'].split('\n');
-                    btnBukti = `<div style="display:flex; flex-direction:column; gap:3px;">`;
+                    btnBukti = `<div style="display:flex; flex-direction:column; gap:5px;">`;
                     urls.forEach((url, idx) => {
-                        if(url.trim()) btnBukti += `<a href="${url}" target="_blank" style="color:var(--neon-green); font-size:11px; text-decoration:underline;">Lihat Bukti ${idx+1}</a>`;
+                        if(url.trim()) btnBukti += `<a href="${url}" target="_blank" style="color:#38bdf8; font-size:12px; text-decoration:none; background:rgba(56,189,248,0.1); padding:4px 8px; border-radius:5px;">Berkas ${idx+1}</a>`;
                     });
                     btnBukti += `</div>`;
                 }
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>${item['Nama Lengkap'] || '-'}</td>
+                    <td><strong>${item['Nama Lengkap'] || '-'}</strong></td>
                     <td>
-                        ${item['Nomor WA'] || '-'}
-                        <br>
-                        <button class="action-btns btn-copy" onclick="copyWA('${item['Nomor WA']}')" style="margin-top:5px;">Salin WA</button>
+                        ${item['Nomor WA'] || '-'}<br>
+                        <button class="action-btns btn-copy" onclick="copyWA('${item['Nomor WA']}')" style="margin-top:8px;">Salin WA</button>
                     </td>
-                    <td>${item['Lokasi Awal'] || '-'}<br><small>${item['SK Awal']||''}</small></td>
+                    <td>${item['Lokasi Awal'] || '-'}<br><small style="color:#cbd5e1">${item['SK Awal']||''}</small></td>
                     <td>
-                        <b>Unit: ${item['Unit Baru'] || '-'}</b><br>
-                        <span style="font-size:11px; color:#cbd5e1;">${txtWilayah}</span>
+                        <b style="color:var(--neon-gold)">Unit: ${item['Unit Baru'] || '-'}</b><br>
+                        <div style="font-size:12px; margin-top:5px;">${txtWilayah}</div>
                     </td>
-                    <td style="max-width:150px; font-size:11px;">${item['Alasan'] || '-'}</td>
+                    <td style="font-size:12px;">${item['Alasan'] || '-'}</td>
                     <td>${btnBukti}</td>
                     <td><span class="status-badge ${statClass}">${item.Status || 'Pending'}</span></td>
                     <td>
@@ -700,10 +801,9 @@
         }
 
         async function changeStatus(id, newStatus) {
-            // Gunakan konfirmasi bawaan krn custom alert async lebih ribet diimplementasikan via innerHTML
             if(!confirm(`Yakin menandai usulan ini sebagai ${newStatus}?`)) return; 
             
-            showLoader("Memperbarui Status...");
+            showLoader("Menyimpan Status...");
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
@@ -713,27 +813,23 @@
                 hideLoader();
                 
                 if (res.status === 'success') {
-                    showCustomAlert("Status berhasil diubah!", "Sukses");
+                    showCustomAlert("Status berhasil diubah ke dalam database!", "Selesai");
                     let target = dbData.usulan.find(u => u.ID == id);
                     if(target) target.Status = newStatus;
                     renderAdminTable();
                 } else {
-                    showCustomAlert("Gagal memperbarui: " + res.message, "Error");
+                    showCustomAlert("Kesalahan Database: " + res.message, "Gagal");
                 }
             } catch (err) {
                 hideLoader();
-                showCustomAlert("Simulasi: Status berhasil diubah menjadi " + newStatus, "Simulasi");
+                showCustomAlert("Simulasi: Status dirubah menjadi " + newStatus, "Mode Kanvas");
             }
         }
 
         function copyWA(wa) {
             const temp = document.createElement('textarea');
-            temp.value = wa;
-            document.body.appendChild(temp);
-            temp.select();
-            document.execCommand('copy');
-            document.body.removeChild(temp);
-            showCustomAlert('Nomor WA disalin: ' + wa, 'Berhasil');
+            temp.value = wa; document.body.appendChild(temp); temp.select(); document.execCommand('copy'); document.body.removeChild(temp);
+            showCustomAlert('Nomor WhatsApp disalin ke Papan Klip: ' + wa, 'Berhasil');
         }
 
         function showView(viewId) {
@@ -741,51 +837,22 @@
             document.getElementById(viewId).classList.add('active');
         }
 
-        function showLoader(text) {
-            if(text) loaderText.innerText = text;
-            loader.style.display = 'flex';
-        }
-
-        function hideLoader() { loader.style.display = 'none'; }
-
         function logout() {
             currentUser = null;
             document.getElementById('loginForm').reset();
+            document.getElementById('mainContainer').classList.remove('admin-mode');
             showView('loginView');
         }
 
-        // Fitur Rahasia Admin (Klik Logo)
-        document.querySelectorAll('.admin-logo-btn').forEach(logo => {
-            logo.addEventListener('click', () => {
-                const code = prompt("Masukkan Kode Akses Admin:");
-                if (code === null) return; 
-                
-                let validCode = "123"; 
-                if (dbData && dbData.config) {
-                    const configRow = dbData.config.find(c => c.Key === 'admin_code' || c.key === 'admin_code');
-                    if (configRow) validCode = configRow.Value || configRow.value;
-                }
-
-                if (code === validCode) {
-                    if(!currentUser) {
-                        currentUser = { nama: "Super Admin", role: "admin" }; // Bypass object
-                    }
-                    renderAdminTable();
-                    showView('adminView');
-                } else {
-                    showCustomAlert("Kode akses salah!", "Akses Ditolak");
-                }
-            });
-        });
-
+        // Data Simulasi
         function generateDummyData() {
             dbData = {
                 akun: [
-                    { wa: "628123456789", email: "dai@mail.com", password: "123", nama: "Ust. Fulan, Lc.", role: "dai" },
-                    { wa: "628999888777", email: "admin@mail.com", password: "admin", nama: "Admin Pusat", role: "admin" }
+                    { dai_id: "D-001", wa: "628123456789", email: "dai@mail.com", password: "123", nama: "Ust. Fulan, Lc.", role: "dai" },
+                    { dai_id: "ADM-1", wa: "628999888777", email: "admin@mail.com", password: "admin", nama: "Admin Pusat", role: "admin" }
                 ],
-                profil: [ { nama_lengkap_beserta_gelar: "Ust. Fulan, Lc.", tahun_diutus: "2018" } ],
-                penempatan: [ { nama_lengkap_beserta_gelar: "Ust. Fulan, Lc.", SK_Penempatan: "015/SK/DPW/2018", lokasi_awal: "Makassar" } ],
+                profil: [ { dai_id: "D-001", nama_lengkap_beserta_gelar: "Ust. Fulan, Lc.", tahun_diutus: "2018" } ],
+                penempatan: [ { ID_Dai: "D-001", nama_lengkap_beserta_gelar: "Ust. Fulan, Lc.", SK_Penempatan: "015/SK/DPW/2018", lokasi_awal: "Makassar" } ],
                 usulan: [],
                 unit: [{ 'Nama Unit': 'DPW (Tingkat Wilayah)' }, { 'Nama Unit': 'DPD (Tingkat Daerah)' }, { 'Nama Unit': 'Sekolah' }],
                 pemindah: [{ 'Nama Pihak': 'Pengurus Pusat' }, { 'Nama Pihak': 'Inisiatif Sendiri' }],
