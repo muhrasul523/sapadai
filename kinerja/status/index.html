@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>STATUS LAPORAN KINERJA</title>
     
-    <!-- Favicon & OpenGraph menggunakan absolute URL ke root folder -->
     <link rel="icon" type="image/png" href="https://sapadai.wadahdigital.my.id/logo_sapadai_1.png">
     <meta property="og:title" content="STATUS LAPORAN KINERJA">
     <meta property="og:description" content="Aplikasi pengecekan status laporan kinerja Dai Utusan Wahdah Islamiyah.">
@@ -30,12 +29,10 @@
         .tab-btn.active { background-color: #0f766e; color: white; border-color: #0f766e; }
         .tab-btn { background-color: white; color: #374151; border: 1px solid #d1d5db; }
         
-        /* UI Login */
         .login-tab.active { border-bottom: 2px solid #0f766e; color: #0f766e; font-weight: 600; background-color: #f0fdfa; }
         .login-tab { border-bottom: 2px solid transparent; color: #6b7280; font-weight: 500; cursor: pointer; transition: all 0.2s; }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
@@ -53,7 +50,6 @@
     <div id="login-page" class="min-h-screen flex items-center justify-center p-4 bg-gray-50">
         <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
             <div class="text-center mb-6">
-                <!-- Logo Root Absolute -->
                 <img src="https://sapadai.wadahdigital.my.id/logo_sapadai_1.png" alt="Logo" class="h-20 mx-auto mb-4 object-contain">
                 <h1 class="text-xl font-bold text-gray-800 uppercase tracking-wide">STATUS LAPORAN KINERJA</h1>
                 <p class="text-sm text-gray-500 font-semibold tracking-wide">DAI UTUSAN WAHDAH ISLAMIYAH</p>
@@ -68,7 +64,7 @@
                 <input type="hidden" id="login-type" value="wa">
                 <div id="div-login-wa">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Nomor WhatsApp</label>
-                    <input type="text" inputmode="numeric" id="login-wa" class="w-full p-3 rounded-lg border focus:ring-2 focus:ring-teal-500 wa-validate numeric-only" placeholder="Contoh: 628123456789" required>
+                    <input type="text" inputmode="numeric" id="login-wa" class="w-full p-3 rounded-lg border focus:ring-2 focus:ring-teal-500 wa-validate numeric-only" placeholder="Contoh: 628123456789 (Canvas: bebas)" required>
                 </div>
                 <div id="div-login-email" class="hidden">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Alamat Email</label>
@@ -88,7 +84,6 @@
 
     <!-- Aplikasi Utama -->
     <div id="main-app" class="hidden min-h-screen pb-20">
-        <!-- Navbar -->
         <nav class="wahdah-bg text-white p-4 sticky top-0 z-40 shadow-md">
             <div class="max-w-5xl mx-auto flex justify-between items-center">
                 <div class="font-bold text-lg flex items-center gap-3">
@@ -107,7 +102,6 @@
 
         <div class="max-w-5xl mx-auto mt-6 px-4">
             
-            <!-- Widget Deadline Pengingat -->
             <div id="deadline-widget" class="hidden bg-red-50 border-l-4 border-red-500 p-4 rounded-xl shadow-sm mb-6 flex items-start">
                 <i class="fas fa-exclamation-circle text-red-600 mt-1 mr-3 text-lg"></i>
                 <div class="flex-1">
@@ -120,13 +114,12 @@
                 </div>
             </div>
 
-            <!-- Navigasi Tab -->
             <div class="flex gap-2 w-full mb-6 bg-white p-2 rounded-xl shadow-sm border border-gray-100">
                 <button onclick="switchTab('status')" id="btn-tab-status" class="flex-1 px-4 py-3 tab-btn active rounded-lg text-sm font-bold transition shadow-sm flex justify-center items-center gap-2"><i class="fas fa-calendar-check"></i> <span class="hidden sm:inline">Cek per</span> Bulan</button>
                 <button onclick="switchTab('rekap')" id="btn-tab-rekap" class="flex-1 px-4 py-3 tab-btn rounded-lg text-sm font-bold transition shadow-sm flex justify-center items-center gap-2"><i class="fas fa-list"></i> Rekap <span class="hidden sm:inline">Keseluruhan</span></button>
             </div>
 
-            <!-- TAB 1: Cek Status Per Bulan -->
+            <!-- TAB 1: Cek Status -->
             <div id="tab-status" class="space-y-4">
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                     <label class="block text-sm font-bold text-gray-700 mb-2">Pilih Bulan Laporan</label>
@@ -136,11 +129,10 @@
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"><i class="fas fa-chevron-down text-gray-400 text-sm"></i></div>
                     </div>
                 </div>
-
                 <div id="hasil-status-container"></div>
             </div>
 
-            <!-- TAB 2: Rekap Keseluruhan -->
+            <!-- TAB 2: Rekap -->
             <div id="tab-rekap" class="hidden space-y-4">
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                     <div class="p-4 bg-gray-50 border-b flex items-center gap-2">
@@ -164,6 +156,7 @@
         // ==========================================
         // KONFIGURASI APLIKASI
         // ==========================================
+        // Ganti URL ini dengan URL WebApp yang baru Anda deploy
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwz4-XAlbLmDPtbr8kN1u0P0ZU8UNAEtPQqWx6Dm_iwk81y8oxPRM3PcfpqPbFwEn9b/exec';
 
         let currentLoginType = 'wa';
@@ -172,7 +165,6 @@
         let availableMonths = [];
         let serverTime = null;
 
-        // UI HELPERS (Memfilter Input WA agar 08 menjadi 628)
         document.addEventListener('input', e => {
             if(e.target.classList.contains('numeric-only')) {
                 e.target.value = e.target.value.replace(/[^0-9]/g, '');
@@ -214,16 +206,15 @@
             document.getElementById('btn-tab-rekap').className = tab === 'rekap' ? 'flex-1 px-4 py-3 tab-btn active rounded-lg text-sm font-bold transition shadow-sm flex justify-center items-center gap-2' : 'flex-1 px-4 py-3 tab-btn rounded-lg text-sm font-bold transition shadow-sm flex justify-center items-center gap-2';
         }
 
-        // FORMATTER TANGGAL WITA TERBARU (Tampilan Bagus)
-        // Output: "23 Oktober 2026 pukul 12.34 WITA"
+        // FORMATTER TANGGAL WITA
         function formatTanggalWITA(dateStr) {
             if(!dateStr || dateStr === '-') return '-';
             try {
                 let parts = dateStr.trim().split(' ');
-                let d = parts[0].split('/'); // asumsikan format d/m/yyyy
+                let d = parts[0].split('/'); 
                 if(d.length < 3) return dateStr;
                 let timeParts = parts[1] ? parts[1].split(':') : ['00', '00'];
-                let t = `${timeParts[0]}.${timeParts[1]}`; // Gunakan titik untuk jam indo
+                let t = `${timeParts[0]}.${timeParts[1]}`; 
                 
                 const bln = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
                 let m = parseInt(d[1]) - 1;
@@ -232,13 +223,39 @@
             } catch(e) { return dateStr; }
         }
 
-        // LOGIC & DATA PROCESSING
+        // ==========================================
+        // SUBMIT LOGIN (DENGAN SIMULASI MODE)
+        // ==========================================
         function submitLogin() {
             let u = currentLoginType === 'wa' ? document.getElementById('login-wa').value : document.getElementById('login-email').value;
             let p = document.getElementById('login-password').value;
 
             showLoading('Memproses...');
+
+            // CEK MODE: Jika dijalankan di Gemini Canvas/Luar GAS, gunakan Dummy Data
+            if (typeof google === 'undefined') {
+                setTimeout(() => {
+                    let dummyResponse = {
+                        success: true,
+                        user: { dai_id: "SDI140420260101", nama_dai: "A. HASBAR LUKMAN, S.H.", nomor_wa: "628123456789", email: "dummy@mail.com" },
+                        riwayat: [
+                            {
+                                bulan_laporan: "Oktober 2026",
+                                id_dai: "SDI140420260101",
+                                status: "Diterima",
+                                catatan: "-",
+                                timestamp: "2/11/2026 16:54:40", // Waktu Diverifikasi
+                                timestamp_laporan: "2/11/2026 16:27:01" // Waktu Masuk Laporan
+                            }
+                        ],
+                        serverTime: new Date().toISOString()
+                    };
+                    processLoginSuccess(dummyResponse);
+                }, 800);
+                return;
+            }
             
+            // JIKA PRODUCTION (Di GAS)
             fetch(SCRIPT_URL, {
                 method: 'POST', 
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -330,7 +347,7 @@
             const container = document.getElementById('hasil-status-container');
             
             if(!bulan) {
-                container.innerHTML = `<div class="bg-white p-8 rounded-xl border border-gray-100 text-center text-gray-400 shadow-sm"><i class="fas fa-file-alt text-4xl mb-3 opacity-20"></i><p>Belum ada data riwayat.</p></div>`;
+                container.innerHTML = `<div class="bg-white p-8 rounded-xl border border-gray-100 text-center text-gray-400 shadow-sm"><i class="fas fa-file-alt text-4xl mb-3 opacity-20"></i><p>Belum ada data laporan.</p></div>`;
                 return;
             }
 
@@ -369,27 +386,6 @@
                     </div>
                 </div>
             </div>`;
-
-            if(riwayatBulan.length > 1) {
-                cardHtml += `
-                <div class="mt-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                    <h5 class="text-xs font-bold text-gray-500 uppercase mb-3"><i class="fas fa-history mr-1"></i> Histori Pemeriksaan Terdahulu</h5>
-                    <div class="space-y-3">`;
-                
-                for(let i = riwayatBulan.length - 2; i >= 0; i--) {
-                    let old = riwayatBulan[i];
-                    let verifName = old.nama_verifikator || `Verifikator ${i + 1}`; 
-                    cardHtml += `
-                        <div class="flex items-start gap-3 p-3 bg-gray-50 rounded border text-sm">
-                            <div class="mt-0.5">${getBadge(old.status)}</div>
-                            <div class="flex-1">
-                                <p class="text-xs text-gray-500 mb-1">Oleh <span class="font-bold text-gray-700">${verifName}</span> pada <span class="font-semibold text-gray-600">${formatTanggalWITA(old.timestamp)}</span></p>
-                                <p class="text-gray-700 font-medium">"${old.catatan || '-'}"</p>
-                            </div>
-                        </div>`;
-                }
-                cardHtml += `</div></div>`;
-            }
 
             container.innerHTML = cardHtml;
         }
