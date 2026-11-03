@@ -1,3 +1,4 @@
+```html:Index.html
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -64,7 +65,7 @@
                 <input type="hidden" id="login-type" value="wa">
                 <div id="div-login-wa">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Nomor WhatsApp</label>
-                    <input type="text" inputmode="numeric" id="login-wa" class="w-full p-3 rounded-lg border focus:ring-2 focus:ring-teal-500 wa-validate numeric-only" placeholder="Contoh: 628123456789 (Canvas: bebas)" required>
+                    <input type="text" inputmode="numeric" id="login-wa" class="w-full p-3 rounded-lg border focus:ring-2 focus:ring-teal-500 wa-validate numeric-only" placeholder="Contoh: 628123456789" required>
                 </div>
                 <div id="div-login-email" class="hidden">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Alamat Email</label>
@@ -224,38 +225,14 @@
         }
 
         // ==========================================
-        // SUBMIT LOGIN (DENGAN SIMULASI MODE)
+        // SUBMIT LOGIN (HANYA CEK KE SPREADSHEET ASLI)
         // ==========================================
         function submitLogin() {
             let u = currentLoginType === 'wa' ? document.getElementById('login-wa').value : document.getElementById('login-email').value;
             let p = document.getElementById('login-password').value;
 
             showLoading('Memproses...');
-
-            // CEK MODE: Jika dijalankan di Gemini Canvas/Luar GAS, gunakan Dummy Data
-            if (typeof google === 'undefined') {
-                setTimeout(() => {
-                    let dummyResponse = {
-                        success: true,
-                        user: { dai_id: "SDI140420260101", nama_dai: "A. HASBAR LUKMAN, S.H.", nomor_wa: "628123456789", email: "dummy@mail.com" },
-                        riwayat: [
-                            {
-                                bulan_laporan: "Oktober 2026",
-                                id_dai: "SDI140420260101",
-                                status: "Diterima",
-                                catatan: "-",
-                                timestamp: "2/11/2026 16:54:40", // Waktu Diverifikasi
-                                timestamp_laporan: "2/11/2026 16:27:01" // Waktu Masuk Laporan
-                            }
-                        ],
-                        serverTime: new Date().toISOString()
-                    };
-                    processLoginSuccess(dummyResponse);
-                }, 800);
-                return;
-            }
             
-            // JIKA PRODUCTION (Di GAS)
             fetch(SCRIPT_URL, {
                 method: 'POST', 
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
