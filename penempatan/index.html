@@ -142,8 +142,21 @@
         }
         .dropdown-item:hover { background: rgba(16,185,129,0.2); color: var(--neon-green); padding-left: 20px; transition: 0.2s;}
 
+        /* Admin Toolbar */
+        .admin-toolbar {
+            display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;
+            background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .admin-toolbar .input-field { flex: 1; min-width: 140px; padding: 10px 12px; font-size: 12px; }
+        .view-toggles { display: flex; gap: 5px; align-items: center; margin-left: auto; }
+        .view-toggles button {
+            padding: 10px 15px; background: rgba(255,255,255,0.1); border: none; color: #fff; cursor: pointer; border-radius: 8px; transition: 0.2s; font-size: 12px;
+        }
+        .view-toggles button.active { background: var(--neon-green); color: #000; font-weight: bold; }
+        .view-toggles button:hover:not(.active) { background: rgba(255,255,255,0.2); }
+
         /* Admin Table */
-        .table-responsive { overflow-x: auto; margin-top: 20px; border-radius: 10px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);}
+        .table-responsive { overflow-x: auto; border-radius: 10px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);}
         table { width: 100%; border-collapse: collapse; min-width: 1100px; }
         th, td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); color: #fff; font-size: 13px;}
         th { color: var(--neon-gold); font-weight: 600; background: rgba(0,0,0,0.4); text-transform: uppercase; letter-spacing: 0.5px;}
@@ -152,6 +165,20 @@
         tbody#adminTableBody tr:nth-child(even) { background-color: rgba(255, 255, 255, 0.04); }
         tbody#adminTableBody tr:nth-child(odd) { background-color: transparent; }
         tbody#adminTableBody tr:hover { background-color: rgba(255, 255, 255, 0.08); transition: 0.2s; }
+
+        /* Admin Grid (Gallery Mode) */
+        .admin-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;
+        }
+        .grid-card {
+            background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 20px;
+            display: flex; flex-direction: column; gap: 10px; transition: 0.3s;
+        }
+        .grid-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); border-color: var(--glass-border); }
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .card-title { font-weight: 600; color: #fff; font-size: 15px; }
+        .card-body { font-size: 13px; color: #cbd5e1; display: flex; flex-direction: column; gap: 8px; line-height: 1.5; }
+        .card-footer { margin-top: auto; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
 
         .status-badge { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; display: inline-block;}
         .status-pending { background: rgba(245, 158, 11, 0.2); color: #fcd34d; border: 1px solid #fcd34d; }
@@ -378,7 +405,39 @@
                 <button onclick="logout()" class="btn btn-red" style="width: auto; margin: 0; padding: 10px 20px; font-size: 13px;">Keluar Admin</button>
             </div>
             
-            <div class="table-responsive">
+            <!-- TOOLBAR PENCARIAN & FILTER -->
+            <div class="admin-toolbar">
+                <input type="text" id="adminSearch" class="input-field" placeholder="Cari Nama / WA..." oninput="handleAdminFilterChange()">
+                <select id="adminFilterTahun" class="input-field" onchange="handleAdminFilterChange()">
+                    <option value="">Semua Tahun</option>
+                </select>
+                <select id="adminFilterUnit" class="input-field" onchange="handleAdminFilterChange()">
+                    <option value="">Semua Unit</option>
+                </select>
+                <select id="adminFilterProv" class="input-field" onchange="handleAdminFilterChange()">
+                    <option value="">Semua Provinsi</option>
+                </select>
+                <select id="adminFilterStatus" class="input-field" onchange="handleAdminFilterChange()">
+                    <option value="">Semua Status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Diterima">Diterima</option>
+                    <option value="Ditolak">Ditolak</option>
+                </select>
+                <select id="adminSort" class="input-field" onchange="handleAdminFilterChange()">
+                    <option value="newest">Terbaru</option>
+                    <option value="oldest">Terlama</option>
+                    <option value="az">Nama (A-Z)</option>
+                    <option value="za">Nama (Z-A)</option>
+                </select>
+
+                <div class="view-toggles">
+                    <button id="btnTableView" class="active" onclick="setAdminViewMode('table')">Tabel</button>
+                    <button id="btnGridView" onclick="setAdminViewMode('grid')">Galeri</button>
+                </div>
+            </div>
+
+            <!-- TABEL VIEW -->
+            <div class="table-responsive" id="adminTableWrapper">
                 <table id="adminTable">
                     <thead>
                         <tr>
@@ -399,6 +458,12 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- GRID / GALLERY VIEW -->
+            <div class="admin-grid" id="adminGridWrapper" style="display: none;">
+                <!-- Data render via JS -->
+            </div>
+            
         </div>
 
     </div>
@@ -413,6 +478,7 @@
         let rawWilayahData = { prov: [], kabkota: [] };
         let loginMode = 'wa'; // default
         let confirmActionCb = null; // callback untuk modal konfirmasi custom
+        let currentAdminViewMode = 'table'; // state default tampilan admin
 
         // UI Helpers
         const loader = document.getElementById('loader');
@@ -541,7 +607,8 @@
                 currentUser = user;
                 if(user.role && user.role.toLowerCase() === 'admin') {
                     document.getElementById('mainContainer').classList.add('admin-mode');
-                    renderAdminTable();
+                    populateAdminFilters(); // Memuat pilihan di toolbar filter
+                    renderAdminData();      // Merender data berdasarkan filter & view
                     showView('adminView');
                 } else {
                     document.getElementById('mainContainer').classList.remove('admin-mode');
@@ -566,7 +633,8 @@
                 closeAdminModal();
                 if(!currentUser) { currentUser = { nama: "Super Admin", role: "admin" }; }
                 document.getElementById('mainContainer').classList.add('admin-mode');
-                renderAdminTable();
+                populateAdminFilters();
+                renderAdminData();
                 showView('adminView');
             } else {
                 showCustomAlert("Kode akses admin tidak valid!", "Akses Ditolak");
@@ -812,39 +880,147 @@
             }
         });
 
-        // Tabel Admin
-        function renderAdminTable() {
+
+        // ================= LOGIKA ADMIN FILTER & TAMPILAN =================
+
+        function populateAdminFilters() {
+            const usulan = dbData.usulan || [];
+            const tahunSet = new Set();
+            const unitSet = new Set();
+            const provSet = new Set();
+
+            usulan.forEach(u => {
+                if(u['Tahun Diutus']) tahunSet.add(u['Tahun Diutus']);
+                if(u['Unit Baru']) unitSet.add(u['Unit Baru']);
+                if(u['Nama Prov']) provSet.add(u['Nama Prov']);
+            });
+
+            const optTahun = document.getElementById('adminFilterTahun');
+            optTahun.innerHTML = '<option value="">Semua Tahun</option>';
+            [...tahunSet].sort().forEach(t => optTahun.add(new Option(t, t)));
+
+            const optUnit = document.getElementById('adminFilterUnit');
+            optUnit.innerHTML = '<option value="">Semua Unit</option>';
+            [...unitSet].sort().forEach(u => optUnit.add(new Option(u, u)));
+
+            const optProv = document.getElementById('adminFilterProv');
+            optProv.innerHTML = '<option value="">Semua Provinsi</option>';
+            [...provSet].sort().forEach(p => optProv.add(new Option(p, p)));
+        }
+
+        function handleAdminFilterChange() {
+            renderAdminData();
+        }
+
+        function setAdminViewMode(mode) {
+            currentAdminViewMode = mode;
+            document.getElementById('btnTableView').classList.remove('active');
+            document.getElementById('btnGridView').classList.remove('active');
+            
+            if(mode === 'table') {
+                document.getElementById('btnTableView').classList.add('active');
+                document.getElementById('adminTableWrapper').style.display = 'block';
+                document.getElementById('adminGridWrapper').style.display = 'none';
+            } else {
+                document.getElementById('btnGridView').classList.add('active');
+                document.getElementById('adminTableWrapper').style.display = 'none';
+                document.getElementById('adminGridWrapper').style.display = 'grid'; // display setup on css
+            }
+            renderAdminData();
+        }
+
+        // Builder Helper Component HTML
+        function buildBuktiBtns(item) {
+            let btnBukti = '-';
+            if(item['File Bukti']) {
+                let urls = item['File Bukti'].split('\n');
+                btnBukti = `<div style="display:flex; flex-wrap:wrap; gap:5px;">`;
+                urls.forEach((url, idx) => {
+                    if(url.trim()) btnBukti += `<a href="${url}" target="_blank" class="btn-bukti" title="Berkas ${idx+1}">${idx+1}</a>`;
+                });
+                btnBukti += `</div>`;
+            }
+            return btnBukti;
+        }
+
+        function buildTxtWilayah(item) {
+            let txtWilayah = `<span style="color:#6ee7b7">Prov: ${item['Nama Prov']}</span>`;
+            if(!item['Unit Baru'].toUpperCase().includes('DPW')) txtWilayah += `<br><span style="color:#93c5fd">Kab: ${item['Nama Kab']}</span>`;
+            if(item['Instansi Baru'] && item['Instansi Baru'] !== '-') txtWilayah += `<br><span style="color:#fcd34d">Instansi: ${item['Instansi Baru']}</span>`;
+            return txtWilayah;
+        }
+
+        function getStatusClass(status) {
+            if(status === 'Diterima') return 'status-accepted';
+            if(status === 'Ditolak') return 'status-rejected';
+            return 'status-pending';
+        }
+
+        // Render Utama: Filter, Sort & Cetak
+        function renderAdminData() {
+            // Get values
+            const sSearch = document.getElementById('adminSearch').value.toLowerCase();
+            const sTahun = document.getElementById('adminFilterTahun').value;
+            const sUnit = document.getElementById('adminFilterUnit').value;
+            const sProv = document.getElementById('adminFilterProv').value;
+            const sStatus = document.getElementById('adminFilterStatus').value;
+            const sSort = document.getElementById('adminSort').value;
+
+            let filtered = [...(dbData.usulan || [])];
+
+            // 1. Filter Data
+            filtered = filtered.filter(u => {
+                let matchSearch = true;
+                if(sSearch) {
+                    matchSearch = (u['Nama Lengkap']||'').toLowerCase().includes(sSearch) || 
+                                  (u['Nomor WA']||'').toLowerCase().includes(sSearch);
+                }
+                let matchTahun = sTahun ? (u['Tahun Diutus'] == sTahun) : true;
+                let matchUnit = sUnit ? (u['Unit Baru'] == sUnit) : true;
+                let matchProv = sProv ? (u['Nama Prov'] == sProv) : true;
+                let matchStatus = sStatus ? ((u['Status'] || 'Pending') === sStatus) : true;
+
+                return matchSearch && matchTahun && matchUnit && matchProv && matchStatus;
+            });
+
+            // 2. Sort Data
+            filtered.sort((a, b) => {
+                if(sSort === 'az') return (a['Nama Lengkap']||'').localeCompare(b['Nama Lengkap']||'');
+                if(sSort === 'za') return (b['Nama Lengkap']||'').localeCompare(a['Nama Lengkap']||'');
+                
+                // Fallback Sorting berdasar waktu input timestamp ID / Baris
+                let timeA = new Date(a['Waktu']).getTime() || parseInt((a['ID']||'').replace(/\D/g, '')) || 0;
+                let timeB = new Date(b['Waktu']).getTime() || parseInt((b['ID']||'').replace(/\D/g, '')) || 0;
+
+                if(sSort === 'oldest') return timeA - timeB;
+                return timeB - timeA; // newest (default)
+            });
+
+            // 3. Render Mode
+            if (currentAdminViewMode === 'table') {
+                renderAdminTableBody(filtered);
+            } else {
+                renderAdminGridBody(filtered);
+            }
+        }
+
+        // Render TABEL
+        function renderAdminTableBody(dataArray) {
             const tbody = document.getElementById('adminTableBody');
             tbody.innerHTML = '';
             
-            if(!dbData.usulan || dbData.usulan.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;">Belum ada usulan penempatan yang masuk</td></tr>';
+            if(dataArray.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:30px;">Tidak ada usulan yang cocok dengan pencarian / filter ini.</td></tr>';
                 return;
             }
 
             let index = 1;
-            dbData.usulan.forEach(item => {
-                let statClass = 'status-pending';
-                if(item.Status === 'Diterima') statClass = 'status-accepted';
-                if(item.Status === 'Ditolak') statClass = 'status-rejected';
-
-                let txtWilayah = `<span style="color:#6ee7b7">Prov: ${item['Nama Prov']}</span>`;
-                if(!item['Unit Baru'].toUpperCase().includes('DPW')) txtWilayah += `<br><span style="color:#93c5fd">Kab: ${item['Nama Kab']}</span>`;
-                if(item['Instansi Baru'] && item['Instansi Baru'] !== '-') txtWilayah += `<br><span style="color:#fcd34d">Instansi: ${item['Instansi Baru']}</span>`;
-
-                // Render File Bukti Horizontal Numbers
-                let btnBukti = '-';
-                if(item['File Bukti']) {
-                    let urls = item['File Bukti'].split('\n');
-                    btnBukti = `<div style="display:flex; flex-wrap:wrap; gap:5px;">`;
-                    urls.forEach((url, idx) => {
-                        if(url.trim()) btnBukti += `<a href="${url}" target="_blank" class="btn-bukti" title="Berkas ${idx+1}">${idx+1}</a>`;
-                    });
-                    btnBukti += `</div>`;
-                }
-
-                // Render Tombol WA Icon saja
+            dataArray.forEach(item => {
+                let statClass = getStatusClass(item.Status);
+                let txtWilayah = buildTxtWilayah(item);
+                let btnBukti = buildBuktiBtns(item);
                 let waHtml = '-';
+                
                 if (item['Nomor WA'] && item['Nomor WA'] !== '-') {
                     waHtml = `<div style="display:flex; align-items:center; gap:8px;">
                                 ${item['Nomor WA']} 
@@ -883,6 +1059,69 @@
             });
         }
 
+        // Render GALERI / GRID
+        function renderAdminGridBody(dataArray) {
+            const gridWrap = document.getElementById('adminGridWrapper');
+            gridWrap.innerHTML = '';
+            
+            if(dataArray.length === 0) {
+                gridWrap.innerHTML = '<div style="text-align:center; padding:30px; grid-column: 1 / -1;">Tidak ada usulan yang cocok dengan pencarian / filter ini.</div>';
+                return;
+            }
+
+            dataArray.forEach(item => {
+                let statClass = getStatusClass(item.Status);
+                let txtWilayah = buildTxtWilayah(item);
+                let btnBukti = buildBuktiBtns(item);
+                
+                const card = document.createElement('div');
+                card.className = 'grid-card';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">${item['Nama Lengkap'] || '-'}</div>
+                            <small style="color:#94a3b8;">Diutus Tahun: ${item['Tahun Diutus'] || '-'}</small>
+                        </div>
+                        <span class="status-badge ${statClass}">${item.Status || 'Pending'}</span>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-size:12px;">WA: ${item['Nomor WA']||'-'}</span>
+                                <span onclick="copyWA('${item['Nomor WA']}')" style="cursor:pointer; font-size:16px;" title="Salin WA">📋</span>
+                            </div>
+                        </div>
+                        <hr style="border-color: rgba(255,255,255,0.05); margin: 5px 0;">
+                        <div>
+                            <b>SK Lama:</b><br>${item['SK Awal'] || '-'}
+                        </div>
+                        <div>
+                            <b>Usulan Baru (${item['Unit Baru'] || '-'}):</b><br>
+                            ${txtWilayah}
+                        </div>
+                        <div style="background: rgba(0,0,0,0.2); padding: 8px; border-radius: 8px; margin-top: 5px;">
+                            <i>"${item['Alasan'] || '-'}"</i><br>
+                            <small style="color:#cbd5e1;">- ${item['Dipindahkan Oleh'] || '-'} (${formatTanggalIndo(item['Tanggal Pindah'])})</small>
+                        </div>
+                        <div>
+                            <b>Lampiran Bukti:</b><br> ${btnBukti}
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <div class="action-btns">
+                            <button class="btn-acc" onclick="changeStatus('${item.ID}', 'Diterima')">Terima</button>
+                            <button class="btn-rej" onclick="changeStatus('${item.ID}', 'Ditolak')">Tolak</button>
+                        </div>
+                    </div>
+                `;
+                gridWrap.appendChild(card);
+            });
+        }
+
+
+        // Handle Aksi Admin Status 
         function changeStatus(id, newStatus) {
             showCustomConfirm(
                 `Yakin menandai usulan penempatan ini sebagai "${newStatus}"? Data akan tersimpan ke database.`,
@@ -901,7 +1140,7 @@
                             showCustomAlert("Status berhasil diubah ke dalam database!", "Selesai");
                             let target = dbData.usulan.find(u => u.ID == id);
                             if(target) target.Status = newStatus;
-                            renderAdminTable();
+                            renderAdminData();
                         } else {
                             showCustomAlert("Kesalahan Database: " + res.message, "Gagal");
                         }
@@ -910,7 +1149,7 @@
                         showCustomAlert("Simulasi: Status dirubah menjadi " + newStatus, "Mode Kanvas");
                         let target = dbData.usulan.find(u => u.ID == id);
                         if(target) target.Status = newStatus;
-                        renderAdminTable();
+                        renderAdminData();
                     }
                 }
             );
@@ -943,7 +1182,10 @@
                 ],
                 profil: [ { dai_id: "D-001", nama_lengkap_beserta_gelar: "Ust. Fulan, Lc.", tahun_diutus: "2018" } ],
                 penempatan: [ { ID_Dai: "D-001", nama_lengkap_beserta_gelar: "Ust. Fulan, Lc.", SK_Penempatan: "015/SK/DPW/2018", lokasi_awal: "Makassar" } ],
-                usulan: [],
+                usulan: [
+                    { "ID": "TRX-1", "Waktu": "2026-11-01 10:00", "Nama Lengkap": "Ust. Fulan, Lc.", "Nomor WA": "628123456789", "Tahun Diutus": "2018", "SK Awal": "015/SK/DPW/2018", "Unit Baru": "DPD", "Nama Prov": "SULAWESI SELATAN", "Nama Kab": "KOTA MAKASSAR", "Instansi Baru": "-", "Tanggal Pindah": "2026-11-15", "Dipindahkan Oleh": "Pengurus Pusat", "Alasan": "Rotasi rutin tahunan", "File Bukti": "https://drive.google.com/...", "Status": "Pending" },
+                    { "ID": "TRX-2", "Waktu": "2026-11-02 14:00", "Nama Lengkap": "Ust. Ahmad", "Nomor WA": "628111222333", "Tahun Diutus": "2020", "SK Awal": "010/SK/DPD/2020", "Unit Baru": "Sekolah", "Nama Prov": "DKI JAKARTA", "Nama Kab": "JAKARTA SELATAN", "Instansi Baru": "SD IT Wahdah", "Tanggal Pindah": "2026-11-20", "Dipindahkan Oleh": "Inisiatif Sendiri", "Alasan": "Pindah domisili keluarga", "File Bukti": "", "Status": "Diterima" }
+                ],
                 unit: [{ 'Nama Unit': 'DPW (Tingkat Wilayah)' }, { 'Nama Unit': 'DPD (Tingkat Daerah)' }, { 'Nama Unit': 'Sekolah' }],
                 pemindah: [{ 'Nama Pihak': 'Pengurus Pusat' }, { 'Nama Pihak': 'Inisiatif Sendiri' }],
                 config: [ { Key: "admin_code", Value: "123" } ],
