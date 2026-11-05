@@ -38,13 +38,24 @@
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            background: radial-gradient(circle at 15% 50%, #fdfbfb, #ebedee 50%, #e0eafc 100%);
             background-size: 200% 200%;
             animation: gradientMove 15s ease infinite;
+            transition: background-image 0.8s ease-in-out, background-color 0.8s ease-in-out;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+        }
+
+        /* TEMA DINAMIS UNTUK TIAP HALAMAN (Warna Biru, Hijau, Kuning Soft ala Apple) */
+        body.theme-login {
+            background-image: radial-gradient(circle at 15% 50%, #A1C4FD, #C2E9FB 50%, #E0F3FF 100%);
+        }
+        body.theme-form {
+            background-image: radial-gradient(circle at 15% 50%, #F5F7FA, #E2EBF0 50%, #D8E6F3 100%);
+        }
+        body.theme-success {
+            background-image: radial-gradient(circle at 15% 50%, #D4F0DB, #FCFDDB 50%, #B2E3B6 100%);
         }
 
         @keyframes gradientMove {
@@ -105,12 +116,13 @@
             height: auto;
             margin-bottom: 20px;
             filter: drop-shadow(0 8px 16px rgba(0,0,0,0.15));
+            border-radius: 24px; /* Sudut dibuat membulat */
         }
 
         .form-logo {
             max-width: 60px;
             height: auto;
-            border-radius: 12px;
+            border-radius: 16px; /* Sudut dibuat membulat */
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
@@ -193,6 +205,17 @@
             margin-bottom: 20px;
         }
 
+        /* Variasi Kartu Informasi */
+        .card-blue {
+            background: linear-gradient(135deg, rgba(230, 240, 255, 0.8), rgba(240, 248, 255, 0.9));
+            border: 1px solid rgba(0, 122, 255, 0.2);
+        }
+
+        .card-green {
+            background: linear-gradient(135deg, rgba(230, 255, 235, 0.8), rgba(240, 255, 245, 0.9));
+            border: 1px solid rgba(52, 199, 89, 0.2);
+        }
+
         .info-card label {
             font-size: 0.75rem;
             text-transform: uppercase;
@@ -231,7 +254,7 @@
         .spinner-border { width: 1.2rem; height: 1.2rem; }
     </style>
 </head>
-<body>
+<body class="theme-login">
 
     <div class="app-container">
         
@@ -239,7 +262,7 @@
         <div id="page-login" class="page-slide active">
             <div class="text-center mt-3">
                 <img src="../../logo_sapadai_2.png" alt="Sapa Dai Logo" class="main-logo">
-                <p class="text-muted small fw-medium px-3">Silakan masuk untuk melanjutkan pendataan status kedatangan antum.</p>
+                <p class="text-muted small fw-medium px-3">Silakan masuk untuk melanjutkan pendataan status kedatangan Anda.</p>
             </div>
 
             <div class="pill-container mt-4">
@@ -317,7 +340,7 @@
 
                 <hr style="opacity: 0.1; margin: 10px 0;">
                 
-                <label>Pimpinan Daerah</label>
+                <label>Pimpinan Tempat Tugas</label>
                 <div class="val mb-1" id="disp-pimp-nama">...</div>
                 <div class="val text-muted small fw-normal mb-1" id="disp-pimp-jab">...</div>
                 <div class="val mb-0"><i class="bi bi-whatsapp text-success me-1"></i> <span id="disp-pimp-wa">...</span></div>
@@ -352,7 +375,7 @@
 
                 <!-- Input Jika Sudah Tiba -->
                 <div id="group-sudah-tiba" class="mb-4" style="display: none;">
-                    <label class="form-label small fw-semibold text-muted">Tanggal Awal Kali Tiba <span class="text-danger">*</span></label>
+                    <label class="form-label small fw-semibold text-muted">Tanggal Awal Kali Tiba di DPW <span class="text-danger">*</span></label>
                     <input type="date" id="input-tgl-tiba" class="form-control">
                     <small class="text-muted mt-1 d-block" style="font-size: 0.7rem;">Berlaku sejak 1 Sept 2026 hingga hari ini.</small>
                 </div>
@@ -367,7 +390,7 @@
                 </div>
 
                 <button type="submit" id="btn-submit" class="btn-apple mt-3 mb-4">
-                    <span class="btn-text">Kirim Laporan Kedatangan</span>
+                    <span class="btn-text">Simpan</span>
                     <span class="spinner-border spinner-border-sm d-none" role="status"></span>
                 </button>
             </form>
@@ -377,22 +400,22 @@
         <div id="page-success" class="page-slide text-center pt-4">
             <img src="../../logo_sapadai_2.png" alt="Sapa Dai" class="main-logo" style="max-width: 120px;">
             <h4 class="fw-bold text-success mt-2 mb-1"><i class="bi bi-check-circle-fill me-2"></i>Berhasil</h4>
-            <p class="text-muted small mb-4">Data kedatangan antum telah terekam di sistem pusat.</p>
+            <p class="text-muted small mb-4">Data kedatangan Anda telah terekam di sistem pusat.</p>
 
-            <div class="info-card text-start mb-3">
+            <div class="info-card card-blue text-start mb-3">
                 <label>Informasi Penempatan Anda</label>
                 <div class="val text-primary fs-6 mb-3" id="succ-tempat">...</div>
 
                 <p class="small text-muted mb-2 lh-sm">
-                    Jika penempatan di atas <b>tidak sesuai</b> dengan realita tugas sekarang, silakan ajukan penyesuaian SK di bawah ini:
+                    Jika penempatan di atas <b>tidak sesuai</b> dengan realita tempat tugas sekarang, silakan ajukan penyesuaian SK melalui tombol di bawah ini:
                 </p>
-                <a href="#" id="btn-link-sk" target="_blank" class="btn-outline-apple mb-3 d-none">
+                <a href="#" id="btn-link-sk" target="_blank" class="btn-outline-apple d-none">
                     <i class="bi bi-file-earmark-text me-1"></i> Ajukan Penyesuaian SK
                 </a>
+            </div>
 
-                <hr style="opacity: 0.1; margin: 15px 0;">
-
-                <label>Info Pimpinan Daerah</label>
+            <div class="info-card card-green text-start mb-3">
+                <label>Info Pimpinan Tempat Tugas</label>
                 <div class="val mb-1"><i class="bi bi-person me-2"></i><span id="succ-pimp-nama">...</span></div>
                 <div class="val text-muted fw-normal small mb-1"><i class="bi bi-briefcase me-2"></i><span id="succ-pimp-jab">...</span></div>
                 <div class="val mb-3"><i class="bi bi-whatsapp me-2 text-success"></i><span id="succ-pimp-wa">...</span></div>
@@ -400,10 +423,10 @@
                 <hr style="opacity: 0.1; margin: 15px 0;">
 
                 <p class="small text-muted mb-2 lh-sm">
-                    Apakah sudah sesuai dengan <b>Halaqah Tarbiyah</b> sekarang? (Diutamakan offline di tempat tugas). Jika belum, perbaharui data:
+                    Apakah sudah sesuai dengan pimpinan tempat tugas yang sekarang? jika belum maka silakan perbaharui datanya melalui tombol di bawah ini:
                 </p>
                 <a href="#" id="btn-link-halaqah" target="_blank" class="btn-outline-apple d-none">
-                    <i class="bi bi-people me-1"></i> Penyesuaian Halaqah
+                    <i class="bi bi-people me-1"></i> Perbaharui Data
                 </a>
             </div>
             
@@ -457,6 +480,13 @@
                 const target = document.getElementById(pageId);
                 target.classList.remove('prev');
                 target.classList.add('active');
+                
+                // Ubah background berdasarkan halaman
+                document.body.className = '';
+                if(pageId === 'page-login') document.body.classList.add('theme-login');
+                if(pageId === 'page-form') document.body.classList.add('theme-form');
+                if(pageId === 'page-success') document.body.classList.add('theme-success');
+                
             }, 50);
         }
 
