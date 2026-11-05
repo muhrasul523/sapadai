@@ -227,6 +227,16 @@
                         <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-2">SK Tugas</h4>
                         <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 flex-grow">Pengajuan penyesuaian lokasi penempatan dan pembaharuan Surat Keputusan (SK).</p>
                     </a>
+                    
+                    <!-- 9. Awal Tiba -->
+                    <a id="btn-kedatangan" href="https://sapadai.wadahdigital.my.id/profil/kedatangan/" class="flex-1 min-w-[280px] max-w-[350px] group relative bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-soft hover:shadow-hover border border-gray-100 dark:border-gray-700 transform transition-all duration-300 hover:-translate-y-2 flex flex-col items-center text-center overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-sapadai-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="w-14 h-14 rounded-full bg-sapadai-bgLight dark:bg-gray-700 flex items-center justify-center mb-4 group-hover:bg-sapadai-accent group-hover:text-white text-sapadai-accent transition-colors duration-300">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Awal Kedatangan</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 flex-grow">Pencatatan awal kali dai tiba di tempat tugas.</p>
+                    </a>
 
                 </div>
             </div>
@@ -385,7 +395,8 @@
             kinerjaKafalah: true,     // 5. Kinerja & Kafalah
             perizinan: true,          // 6. Perizinan
             dokumen: true,            // 7. Dokumen
-            skTugas: true             // 8. SK Tugas
+            skTugas: true,            // 8. SK Tugas
+            awalKedatangan: true      // 9. Awal Kedatangan
         };
 
         function applyButtonVisibility() {
@@ -397,7 +408,8 @@
                 'btn-kinerja-kafalah': BUTTON_CONFIG.kinerjaKafalah,
                 'btn-perizinan': BUTTON_CONFIG.perizinan,
                 'btn-dokumen': BUTTON_CONFIG.dokumen,
-                'btn-sk-tugas': BUTTON_CONFIG.skTugas
+                'btn-sk-tugas': BUTTON_CONFIG.skTugas,
+                'btn-kedatangan': BUTTON_CONFIG.awalKedatangan
             };
 
             for (const [id, isVisible] of Object.entries(buttons)) {
