@@ -186,7 +186,7 @@
                         <!-- Filter Status Keaktifan -->
                         <div class="relative w-full sm:w-36">
                             <select id="statusAktifFilter" onchange="applyFilters()" class="w-full pl-4 pr-10 py-2.5 bg-white dark:bg-darkHover border border-slate-200 dark:border-darkBorder rounded-xl focus:ring-2 focus:ring-brand-500/50 outline-none text-sm dark:text-white font-bold text-slate-700 cursor-pointer appearance-none shadow-sm transition-all">
-                                <option value="">Status Aktif</option>
+                                <option value="">Semua Status</option>
                                 <!-- Dimuat dinamis -->
                             </select>
                             <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400"><i class="fas fa-chevron-down text-xs"></i></div>
@@ -226,9 +226,10 @@
                 </div>
 
                 <!-- Kontainer Tabel -->
+                <!-- REVISI: Dihilangkan whitespace-nowrap secara global pada elemen <table> untuk memaksimalkan ukuran layar (word-wrap) pada penempatan -->
                 <div class="table-container flex-1 relative bg-white dark:bg-darkCard">
-                    <table class="min-w-full w-full text-left text-sm whitespace-nowrap">
-                        <thead class="bg-slate-100/90 dark:bg-darkHover/90 backdrop-blur-md sticky top-0 z-20 text-slate-600 dark:text-slate-300 font-extrabold border-b border-slate-200 dark:border-darkBorder shadow-sm uppercase tracking-wider text-[11px]">
+                    <table class="min-w-full w-full text-left text-sm">
+                        <thead class="bg-slate-100/90 dark:bg-darkHover/90 backdrop-blur-md sticky top-0 z-20 text-slate-600 dark:text-slate-300 font-extrabold border-b border-slate-200 dark:border-darkBorder shadow-sm uppercase tracking-wider text-[11px] whitespace-nowrap">
                             <tr>
                                 <th class="px-4 py-3.5 text-center w-12 rounded-tl-lg">No</th>
                                 <th class="px-4 py-3.5 cursor-pointer hover:text-brand-600 transition group" onclick="sortTable('nama_dai')">Nama Dai <i class="fas fa-sort text-slate-300 group-hover:text-brand-400 ml-1"></i></th>
@@ -260,12 +261,13 @@
 
     <!-- MODAL REKAP PROVINSI -->
     <div id="rekapModal" class="fixed inset-0 bg-slate-900/50 dark:bg-darkBg/80 z-[100] hidden flex justify-center items-center backdrop-blur-sm p-4 transition-opacity">
-        <div class="bg-white dark:bg-darkCard w-full max-w-4xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-slate-200 dark:border-darkBorder">
+        <div class="bg-white dark:bg-darkCard w-full max-w-4xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-slate-200 dark:border-darkBorder relative">
             <div class="flex justify-between items-center p-5 border-b border-slate-100 dark:border-darkBorder bg-slate-50 dark:bg-darkHover">
                 <h2 class="text-lg font-bold text-slate-800 dark:text-white uppercase tracking-wide"><i class="fas fa-chart-pie text-brand-600 mr-2"></i> Rekapitulasi Berdasarkan Provinsi</h2>
                 <button onclick="closeRekapModal()" class="text-slate-400 hover:text-red-500 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-50 dark:hover:bg-red-900/20"><i class="fas fa-times text-xl"></i></button>
             </div>
-            <div class="p-0 overflow-y-auto flex-1 bg-white dark:bg-darkBg">
+            
+            <div class="p-0 overflow-y-auto flex-1 bg-white dark:bg-darkBg relative">
                 <table class="min-w-full w-full text-left text-sm whitespace-nowrap">
                     <thead class="bg-slate-100/90 dark:bg-darkHover/90 sticky top-0 z-10 text-slate-600 dark:text-slate-300 font-extrabold border-b border-slate-200 dark:border-darkBorder uppercase tracking-wider text-[11px] backdrop-blur-sm">
                         <tr>
@@ -279,9 +281,15 @@
                     <tbody id="rekapTableBody" class="text-slate-700 dark:text-slate-200 font-medium">
                         <!-- Data rekap akan dimuat secara dinamis -->
                     </tbody>
+                    
+                    <!-- REVISI: Tfoot ditambahkan dengan mode "sticky bottom-0" agar baris total selalu freeze -->
+                    <tfoot id="rekapTableFoot" class="sticky bottom-0 z-20 bg-brand-50 dark:bg-brand-900/90 border-t-2 border-brand-200 dark:border-brand-800 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+                        <!-- Baris Total Akhir akan dimuat di sini -->
+                    </tfoot>
                 </table>
             </div>
-            <div class="p-4 border-t border-slate-100 dark:border-darkBorder flex justify-end bg-slate-50 dark:bg-darkHover">
+            
+            <div class="p-4 border-t border-slate-100 dark:border-darkBorder flex justify-end bg-slate-50 dark:bg-darkHover z-30 relative">
                 <button onclick="closeRekapModal()" class="px-6 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-white text-sm font-bold rounded-xl transition-all shadow-sm">Tutup</button>
             </div>
         </div>
@@ -296,7 +304,7 @@
         
         let dbData = [];
         let filteredData = [];
-        let currentSort = { key: '', dir: 'asc' };
+        let currentSort = { key: 'tahun_diutus', dir: 'asc' }; // REVISI: Default urutan tahun diutus (Paling lama ke terbaru)
         let progressInterval;
 
         // DAFTAR PROVINSI BERURUTAN (Sesuai Permintaan)
@@ -401,9 +409,9 @@
                             processResponse({
                                 status: "success",
                                 data: [
-                                    { nama_dai: "Ust. Fulan, Lc", tahun_diutus: "2019", penempatan: "Makassar", provinsi: "Sulawesi Selatan", status: "Aktif", nama_istri: "Aisyah Hanum", nik_istri: "73711223344", tgl_lahir_istri: "2001-10-09", wa_istri: "081234567890", jumlah_anak: 2 },
-                                    { nama_dai: "Ust. Fulan, Lc", tahun_diutus: "2019", penempatan: "Makassar", provinsi: "Sulawesi Selatan", status: "Aktif", nama_istri: "Khadijah", nik_istri: "73711223355", tgl_lahir_istri: "1999-05-12", wa_istri: "6285299887766", jumlah_anak: 1 },
-                                    { nama_dai: "Ust. Abdullah", tahun_diutus: "2021", penempatan: "Kendari", provinsi: "Sulawesi Tenggara", status: "Non Aktif", nama_istri: "Fatimah", nik_istri: "74711223344", tgl_lahir_istri: "1995-02-14", wa_istri: "081122334455", jumlah_anak: 3 }
+                                    { nama_dai: "Ust. Fulan, Lc", tahun_diutus: "2019", penempatan: "Makassar", provinsi: "Sulawesi Selatan", status: "Aktif", nama_istri: "AISYAH HANUM", nik_istri: "73711223344", tgl_lahir_istri: "2001-10-09", wa_istri: "081234567890", jumlah_anak: 2 },
+                                    { nama_dai: "Ust. Fulan, Lc", tahun_diutus: "2019", penempatan: "Makassar", provinsi: "Sulawesi Selatan", status: "Aktif", nama_istri: "KHADIJAH", nik_istri: "73711223355", tgl_lahir_istri: "1999-05-12", wa_istri: "6285299887766", jumlah_anak: 1 },
+                                    { nama_dai: "Ust. Abdullah", tahun_diutus: "2021", penempatan: "Kendari", provinsi: "Sulawesi Tenggara", status: "Non Aktif", nama_istri: "FATIMAH", nik_istri: "74711223344", tgl_lahir_istri: "1995-02-14", wa_istri: "081122334455", jumlah_anak: 3 }
                                 ]
                             });
                         } else {
@@ -428,6 +436,12 @@
                 statusFilterEl.innerHTML = '<option value="">Semua Status</option>';
                 uniqueStatus.forEach(s => statusFilterEl.innerHTML += `<option value="${s}">${s}</option>`);
 
+                // REVISI: Atur Default Filter Aktif jika ada
+                const opsiAktif = uniqueStatus.find(s => s.toLowerCase() === 'aktif');
+                if (opsiAktif) {
+                    statusFilterEl.value = opsiAktif;
+                }
+
                 const uniqueTahun = [...new Set(dbData.map(d => d.tahun_diutus).filter(t => t && t !== '-'))].sort((a,b) => b-a);
                 const tahunFilterEl = document.getElementById('tahunFilter');
                 tahunFilterEl.innerHTML = '<option value="">Semua Tahun</option>';
@@ -435,6 +449,13 @@
 
                 document.getElementById('kodeAkses').value = '';
                 switchView('main');
+                
+                // Set default icon panah sort saat awal buka
+                currentSort = { key: 'tahun_diutus', dir: 'asc' }; 
+                document.querySelectorAll('th i').forEach(icon => icon.className = 'fas fa-sort text-slate-300 group-hover:text-brand-400 ml-1 transition-colors');
+                const activeIcon = document.querySelector(`th[onclick="sortTable('tahun_diutus')"] i`);
+                if (activeIcon) activeIcon.className = 'fas fa-sort-up text-brand-600 dark:text-brand-400 ml-1';
+                
                 applyFilters();
             } else {
                 Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: res.message, confirmButtonColor: '#0f766e', borderRadius: '12px' });
@@ -498,7 +519,7 @@
                     totalAnak += parseInt(row.jumlah_anak || 0);
 
                     const waNum = formatWA(row.wa_istri);
-                    let waHtml = `<span class="text-slate-400 italic text-xs font-semibold">-</span>`;
+                    let waHtml = `<span class="text-slate-400 italic text-xs font-semibold whitespace-nowrap">-</span>`;
                     
                     if (waNum) {
                         const displayWa = row.wa_istri;
@@ -514,27 +535,28 @@
 
                     // Desain badge status
                     const statusVal = (row.status || '-').toLowerCase();
-                    let statusBadge = `<span class="px-2.5 py-1 bg-slate-100 dark:bg-darkBg text-slate-700 dark:text-slate-300 rounded text-xs font-bold border border-slate-200 dark:border-darkBorder shadow-sm">${row.status}</span>`;
+                    let statusBadge = `<span class="px-2.5 py-1 bg-slate-100 dark:bg-darkBg text-slate-700 dark:text-slate-300 rounded text-xs font-bold border border-slate-200 dark:border-darkBorder shadow-sm whitespace-nowrap">${row.status}</span>`;
                     if(statusVal === 'aktif') {
-                        statusBadge = `<span class="px-2.5 py-1 bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-400 rounded text-xs font-bold border border-brand-200 dark:border-brand-800/50 shadow-sm">${row.status}</span>`;
+                        statusBadge = `<span class="px-2.5 py-1 bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-400 rounded text-xs font-bold border border-brand-200 dark:border-brand-800/50 shadow-sm whitespace-nowrap">${row.status}</span>`;
                     } else if (statusVal !== '-' && statusVal !== '') {
-                        statusBadge = `<span class="px-2.5 py-1 bg-rose-50 text-rose-700 dark:bg-rose-900/20 dark:text-rose-400 rounded text-xs font-bold border border-rose-200 dark:border-rose-800/50 shadow-sm">${row.status}</span>`;
+                        statusBadge = `<span class="px-2.5 py-1 bg-rose-50 text-rose-700 dark:bg-rose-900/20 dark:text-rose-400 rounded text-xs font-bold border border-rose-200 dark:border-rose-800/50 shadow-sm whitespace-nowrap">${row.status}</span>`;
                     }
 
+                    // REVISI: Kelas whitespace-nowrap dan penentuan lebar pada kolom td (Tahun, Penempatan)
                     tbody.innerHTML += `
                         <tr class="${rowBg} hover:bg-brand-50/70 dark:hover:bg-darkHover transition-colors border-b border-slate-100 dark:border-darkBorder/60 last:border-0 group">
-                            <td class="px-4 py-3 text-center text-slate-500 dark:text-slate-400 font-semibold">${idx + 1}</td>
-                            <td class="px-4 py-3 font-extrabold text-slate-900 dark:text-white">${row.nama_dai}</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-4 py-3 text-center text-slate-500 dark:text-slate-400 font-semibold whitespace-nowrap">${idx + 1}</td>
+                            <td class="px-4 py-3 font-extrabold text-slate-900 dark:text-white whitespace-normal min-w-[150px]">${row.nama_dai}</td>
+                            <td class="px-4 py-3 text-center whitespace-nowrap">
                                 <span class="px-2.5 py-1 bg-slate-100 dark:bg-darkBg text-slate-700 dark:text-slate-300 rounded text-xs font-bold border border-slate-200 dark:border-darkBorder shadow-sm">${row.tahun_diutus}</span>
                             </td>
-                            <td class="px-4 py-3 font-semibold">${row.penempatan}</td>
-                            <td class="px-4 py-3">${statusBadge}</td>
-                            <td class="px-4 py-3">${istriHtml}</td>
-                            <td class="px-4 py-3 text-center text-slate-600 dark:text-slate-400 font-mono font-medium tracking-wider">${row.nik_istri}</td>
+                            <td class="px-4 py-3 font-semibold whitespace-normal min-w-[160px] max-w-[280px] leading-snug">${row.penempatan}</td>
+                            <td class="px-4 py-3 whitespace-nowrap">${statusBadge}</td>
+                            <td class="px-4 py-3 whitespace-normal min-w-[140px]">${istriHtml}</td>
+                            <td class="px-4 py-3 text-center text-slate-600 dark:text-slate-400 font-mono font-medium tracking-wider whitespace-nowrap">${row.nik_istri}</td>
                             <td class="px-4 py-3 text-center text-slate-700 dark:text-slate-300 font-semibold whitespace-nowrap">${formatTanggalIndo(row.tgl_lahir_istri)}</td>
-                            <td class="px-4 py-3 text-center">${waHtml}</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-4 py-3 text-center whitespace-nowrap">${waHtml}</td>
+                            <td class="px-4 py-3 text-center whitespace-nowrap">
                                 <span class="inline-flex justify-center items-center w-7 h-7 rounded-full bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-300 text-xs font-bold border border-brand-200 dark:border-brand-800/50 shadow-sm">
                                     ${row.jumlah_anak}
                                 </span>
@@ -614,15 +636,18 @@
 
         function showRekapProvinsi() {
             const tbody = document.getElementById('rekapTableBody');
+            const tfoot = document.getElementById('rekapTableFoot');
+            
             tbody.innerHTML = '';
+            tfoot.innerHTML = '';
             
             let totalSemuaDai = 0;
             let totalSemuaIstri = 0;
             let totalSemuaAnak = 0;
 
             PROVINSI_LIST.forEach((prov, idx) => {
-                // Saring berdasarkan provinsi yang sama persis
-                const dataProv = dbData.filter(d => d.provinsi === prov);
+                // REVISI: Menggunakan filteredData agar angka rekap menyesuaikan filter aktif (100% sinkron dgn Dashboard)
+                const dataProv = filteredData.filter(d => d.provinsi === prov);
                 
                 const uniqueDais = new Set(dataProv.map(d => d.nama_dai)).size;
                 const jmlIstri = dataProv.length;
@@ -643,9 +668,9 @@
                 `;
             });
 
-            // Baris Total Akhir
-            tbody.innerHTML += `
-                <tr class="bg-brand-50 dark:bg-brand-900/20 border-t-2 border-brand-200 dark:border-brand-800">
+            // REVISI: Baris Total Akhir dimasukkan ke dalam elemen <tfoot> yang dibuat "sticky" di atas
+            tfoot.innerHTML = `
+                <tr>
                     <td colspan="2" class="px-4 py-4 text-right font-black text-brand-800 dark:text-brand-300 uppercase text-xs tracking-wider">Total Keseluruhan</td>
                     <td class="px-4 py-4 text-center font-black text-brand-800 dark:text-brand-300 text-base">${totalSemuaDai}</td>
                     <td class="px-4 py-4 text-center font-black text-brand-800 dark:text-brand-300 text-base">${totalSemuaIstri}</td>
