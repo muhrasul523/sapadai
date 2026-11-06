@@ -57,6 +57,9 @@
         body.theme-success {
             background-image: radial-gradient(circle at 15% 50%, #D4F0DB, #FCFDDB 50%, #B2E3B6 100%);
         }
+        body.theme-admin {
+            background-image: radial-gradient(circle at 15% 50%, #E9ECEF, #F8F9FA 50%, #E9ECEF 100%);
+        }
 
         @keyframes gradientMove {
             0% { background-position: 0% 50%; }
@@ -78,6 +81,7 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             padding: 20px;
+            transition: max-width 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .page-slide {
@@ -117,6 +121,12 @@
             margin-bottom: 20px;
             filter: drop-shadow(0 8px 16px rgba(0,0,0,0.15));
             border-radius: 24px; /* Sudut dibuat membulat */
+            cursor: pointer; /* Memberikan indikasi bisa diklik */
+            transition: transform 0.2s;
+        }
+        
+        .main-logo:active {
+            transform: scale(0.95);
         }
 
         .form-logo {
@@ -135,7 +145,7 @@
             transition: all 0.3s;
         }
 
-        .form-control:focus, .form-textarea:focus {
+        .form-control:focus, .form-select:focus, .form-textarea:focus {
             box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15);
             border-color: var(--apple-blue);
             background: #fff;
@@ -215,6 +225,11 @@
             background: linear-gradient(135deg, rgba(230, 255, 235, 0.8), rgba(240, 255, 245, 0.9));
             border: 1px solid rgba(52, 199, 89, 0.2);
         }
+        
+        .card-orange {
+            background: linear-gradient(135deg, rgba(255, 240, 230, 0.8), rgba(255, 245, 240, 0.9));
+            border: 1px solid rgba(255, 149, 0, 0.2);
+        }
 
         .info-card label {
             font-size: 0.75rem;
@@ -252,16 +267,71 @@
         }
 
         .spinner-border { width: 1.2rem; height: 1.2rem; }
+
+        /* TABEL ADMIN APPLE STYLE */
+        .table-apple {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 800px; /* Minimal width for horizontal scrolling */
+        }
+        .table-apple thead th {
+            background: rgba(245, 245, 247, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 14px 16px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+            user-select: none;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .table-apple tbody td {
+            padding: 14px 16px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            color: var(--text-main);
+            vertical-align: middle;
+        }
+        .table-apple tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .table-apple tbody tr:hover {
+            background-color: rgba(0, 122, 255, 0.03);
+        }
+        .table-wrapper {
+            border-radius: 16px;
+            border: 1px solid rgba(0,0,0,0.08);
+            background: #fff;
+            overflow: auto;
+            max-height: 50vh;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        }
+        
+        .badge-apple {
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-sudah { background: #E5F8EB; color: #10893E; }
+        .badge-belum { background: #FFF4E5; color: #D67200; }
+        .badge-kosong { background: #F5F5F7; color: #86868B; }
     </style>
 </head>
 <body class="theme-login">
 
-    <div class="app-container">
+    <div class="app-container" id="main-container">
         
         <!-- ================= BAGIAN A: LOGIN ================= -->
         <div id="page-login" class="page-slide active">
             <div class="text-center mt-3">
-                <img src="../../logo_sapadai_2.png" alt="Sapa Dai Logo" class="main-logo">
+                <img src="../../logo_sapadai_2.png" alt="Sapa Dai Logo" class="main-logo" onclick="promptAdminAccess()" title="Klik untuk akses khusus">
                 <p class="text-muted small fw-medium px-3">Silakan masuk untuk melanjutkan pendataan status kedatangan Anda.</p>
             </div>
 
@@ -433,6 +503,97 @@
             <button onclick="logout()" class="btn btn-light w-100 mt-2 rounded-3 text-muted fw-bold shadow-sm mb-4">Kembali & Keluar</button>
         </div>
 
+        <!-- ================= BAGIAN D: HALAMAN ADMIN ================= -->
+        <div id="page-admin" class="page-slide">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center">
+                    <img src="../../logo_sapadai_1.png" alt="Logo" class="form-logo mb-0 me-3" style="max-width: 45px;">
+                    <div>
+                        <h4 class="mb-0 fw-bold">Admin Rekapitulasi</h4>
+                        <small class="text-muted">Daftar Dai yang telah mengisi form</small>
+                    </div>
+                </div>
+                <button class="btn btn-sm btn-light rounded-circle shadow-sm" onclick="logoutAdmin()" title="Keluar Admin">
+                    <i class="bi bi-x-lg text-danger fs-5"></i>
+                </button>
+            </div>
+
+            <!-- Rekap Cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-md-3">
+                    <div class="info-card card-blue h-100 mb-0 d-flex flex-column justify-content-center">
+                        <label>Total Mengisi</label>
+                        <div class="val fs-3 mb-0 text-primary" id="admin-total">0</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="info-card card-green h-100 mb-0 d-flex flex-column justify-content-center">
+                        <label>Sudah Tiba</label>
+                        <div class="val fs-3 mb-0 text-success" id="admin-sudah">0</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="info-card card-orange h-100 mb-0 d-flex flex-column justify-content-center">
+                        <label>Belum Tiba</label>
+                        <div class="val fs-3 mb-0 text-warning" style="color: #D67200 !important;" id="admin-belum">0</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="info-card bg-white border h-100 mb-0 d-flex flex-column justify-content-center">
+                        <label>Tiba Bulan Ini (<span id="admin-month-label">-</span>)</label>
+                        <div class="val fs-3 mb-0" id="admin-bulan-ini">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls: Search & Filter -->
+            <div class="row g-2 mb-3">
+                <div class="col-12 col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                        <input type="text" id="admin-search" class="form-control border-start-0" placeholder="Cari nama, ID, atau penempatan..." oninput="applyAdminFilters()">
+                    </div>
+                </div>
+                <div class="col-6 col-md-4">
+                    <select id="admin-filter-status" class="form-select" onchange="applyAdminFilters()">
+                        <option value="">Semua Status</option>
+                        <option value="Sudah Tiba">Sudah Tiba</option>
+                        <option value="Belum Tiba">Belum Tiba</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-4">
+                    <select id="admin-filter-bulan" class="form-select" onchange="applyAdminFilters()">
+                        <option value="">Semua Bulan Tiba</option>
+                        <!-- Options generated dynamically -->
+                    </select>
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="table-wrapper">
+                <table class="table-apple">
+                    <thead>
+                        <tr>
+                            <th onclick="sortAdminTable('dai_id')">ID <i class="bi bi-arrow-down-up float-end"></i></th>
+                            <th onclick="sortAdminTable('nama_dai')">Nama Dai <i class="bi bi-arrow-down-up float-end"></i></th>
+                            <th onclick="sortAdminTable('penempatan')">Penempatan <i class="bi bi-arrow-down-up float-end"></i></th>
+                            <th onclick="sortAdminTable('status_kedatangan')">Status <i class="bi bi-arrow-down-up float-end"></i></th>
+                            <th onclick="sortAdminTable('tanggal_sort')">Tgl Tiba / Rencana <i class="bi bi-arrow-down-up float-end"></i></th>
+                            <th onclick="sortAdminTable('alasan_keterlambatan')">Ket. / Alasan <i class="bi bi-arrow-down-up float-end"></i></th>
+                            <th onclick="sortAdminTable('waktu_update')">Terakhir Update <i class="bi bi-arrow-down-up float-end"></i></th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-table-body">
+                        <!-- Data will be populated here -->
+                    </tbody>
+                </table>
+                <div id="admin-empty-state" class="text-center py-5 d-none">
+                    <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+                    <p class="text-muted mt-2">Tidak ada data yang ditemukan.</p>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- JS (app.js logic) -->
@@ -442,6 +603,12 @@
         
         let currentUser = null;
         let loginMode = 'wa'; 
+
+        // Admin State
+        let adminRawData = [];
+        let adminFilteredData = [];
+        let adminSortCol = '';
+        let adminSortAsc = true;
 
         document.addEventListener('DOMContentLoaded', () => {
             initDates();
@@ -476,6 +643,7 @@
                     page.classList.remove('prev');
                 }
             });
+            
             setTimeout(() => {
                 const target = document.getElementById(pageId);
                 target.classList.remove('prev');
@@ -486,7 +654,15 @@
                 if(pageId === 'page-login') document.body.classList.add('theme-login');
                 if(pageId === 'page-form') document.body.classList.add('theme-form');
                 if(pageId === 'page-success') document.body.classList.add('theme-success');
+                if(pageId === 'page-admin') document.body.classList.add('theme-admin');
                 
+                // Resize container dinamis untuk admin page
+                const container = document.getElementById('main-container');
+                if(pageId === 'page-admin') {
+                    container.style.maxWidth = '1100px';
+                } else {
+                    container.style.maxWidth = '450px';
+                }
             }, 50);
         }
 
@@ -597,18 +773,27 @@
             document.getElementById('group-belum-tiba').style.display = 'none';
             navigateTo('page-login');
         }
+        
+        function logoutAdmin() {
+            document.getElementById('form-login').reset();
+            navigateTo('page-login');
+            // Bersihkan data admin dari memori
+            adminRawData = [];
+            adminFilteredData = [];
+        }
 
         function setLoading(btnId, isLoading) {
             const btn = document.getElementById(btnId);
+            if(!btn) return;
             const text = btn.querySelector('.btn-text');
             const spin = btn.querySelector('.spinner-border');
             btn.disabled = isLoading;
             if (isLoading) {
-                text.classList.add('d-none');
-                spin.classList.remove('d-none');
+                if(text) text.classList.add('d-none');
+                if(spin) spin.classList.remove('d-none');
             } else {
-                text.classList.remove('d-none');
-                spin.classList.add('d-none');
+                if(text) text.classList.remove('d-none');
+                if(spin) spin.classList.add('d-none');
             }
         }
 
@@ -699,6 +884,199 @@
             } catch (err) {
                 console.log("Failed to load dynamic buttons", err);
             }
+        }
+
+        // ================= LOGIKA ADMIN =================
+        function promptAdminAccess() {
+            Swal.fire({
+                title: 'Akses Admin',
+                input: 'password',
+                inputPlaceholder: 'Masukkan kode akses...',
+                showCancelButton: true,
+                confirmButtonText: 'Masuk',
+                confirmButtonColor: '#007AFF',
+                cancelButtonText: 'Batal',
+                customClass: { popup: 'rounded-4' }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (result.value === 'lajnah1404') {
+                        loadAdminData(result.value);
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: 'Kode yang Anda masukkan salah.', customClass: { popup: 'rounded-4' }});
+                    }
+                }
+            });
+        }
+
+        async function loadAdminData(code) {
+            Swal.fire({
+                title: 'Memuat Data...',
+                text: 'Merekapitulasi data dari server',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            try {
+                const res = await apiCall('getAdminRecap', { code: code });
+                // Bersihkan dan format data yang masuk
+                adminRawData = res.data.map(item => {
+                    // Pre-calculate filterable date string for Month Filter (YYYY-MM)
+                    let d = new Date(item.tanggal_tiba);
+                    item.bulan_tiba = isNaN(d.getTime()) ? '' : `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2, '0')}`;
+                    item.tanggal_sort = item.tanggal_tiba || item.tanggal_rencana || ''; // Combined key for sorting dates
+                    return item;
+                });
+                
+                populateMonthFilter();
+                applyAdminFilters(); // Set filtered data and render
+                
+                Swal.close();
+                navigateTo('page-admin');
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'Gagal Memuat', text: err.message, customClass: { popup: 'rounded-4' } });
+            }
+        }
+
+        function populateMonthFilter() {
+            const select = document.getElementById('admin-filter-bulan');
+            // Hapus opsi selain opsi default ("Semua Bulan")
+            select.options.length = 1;
+
+            const months = new Set();
+            adminRawData.forEach(item => {
+                if (item.status_kedatangan === 'Sudah Tiba' && item.bulan_tiba) {
+                    months.add(item.bulan_tiba);
+                }
+            });
+
+            const sortedMonths = Array.from(months).sort().reverse();
+            sortedMonths.forEach(m => {
+                const [year, month] = m.split('-');
+                const monthName = new Date(year, month - 1).toLocaleString('id-ID', { month: 'long', year: 'numeric' });
+                const option = document.createElement('option');
+                option.value = m;
+                option.textContent = monthName;
+                select.appendChild(option);
+            });
+        }
+
+        function applyAdminFilters() {
+            const searchTerm = document.getElementById('admin-search').value.toLowerCase();
+            const statusTerm = document.getElementById('admin-filter-status').value;
+            const bulanTerm = document.getElementById('admin-filter-bulan').value;
+
+            adminFilteredData = adminRawData.filter(item => {
+                const matchSearch = item.nama_dai.toLowerCase().includes(searchTerm) || 
+                                    item.dai_id.toLowerCase().includes(searchTerm) || 
+                                    item.penempatan.toLowerCase().includes(searchTerm);
+                const matchStatus = statusTerm ? item.status_kedatangan === statusTerm : true;
+                const matchBulan = bulanTerm ? item.bulan_tiba === bulanTerm : true;
+                
+                return matchSearch && matchStatus && matchBulan;
+            });
+
+            updateAdminDashboard();
+            renderAdminTable();
+        }
+
+        function updateAdminDashboard() {
+            const total = adminFilteredData.length;
+            const sudahTiba = adminFilteredData.filter(i => i.status_kedatangan === 'Sudah Tiba').length;
+            const belumTiba = adminFilteredData.filter(i => i.status_kedatangan === 'Belum Tiba').length;
+
+            // Hitung yang tiba bulan INI secara spesifik (dari semua rawData untuk kartu ringkasan atau sesuai filter?)
+            // Rekap umumnya lebih baik dihitung dari data real bulan ini, terlepas dari text filter, tapi mengikuti data source utama
+            const now = new Date();
+            const currentMonthStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2, '0')}`;
+            const currentMonthName = now.toLocaleString('id-ID', { month: 'short', year: 'numeric' });
+            
+            const tibaBulanIni = adminRawData.filter(i => i.status_kedatangan === 'Sudah Tiba' && i.bulan_tiba === currentMonthStr).length;
+
+            document.getElementById('admin-total').textContent = total;
+            document.getElementById('admin-sudah').textContent = sudahTiba;
+            document.getElementById('admin-belum').textContent = belumTiba;
+            
+            document.getElementById('admin-month-label').textContent = currentMonthName;
+            document.getElementById('admin-bulan-ini').textContent = tibaBulanIni;
+        }
+
+        function sortAdminTable(col) {
+            if (adminSortCol === col) {
+                adminSortAsc = !adminSortAsc;
+            } else {
+                adminSortCol = col;
+                adminSortAsc = true;
+            }
+
+            adminFilteredData.sort((a, b) => {
+                let valA = a[col] || '';
+                let valB = b[col] || '';
+
+                if (col.includes('tanggal') || col === 'waktu_update') {
+                    valA = new Date(valA).getTime() || 0;
+                    valB = new Date(valB).getTime() || 0;
+                } else {
+                    valA = valA.toString().toLowerCase();
+                    valB = valB.toString().toLowerCase();
+                }
+
+                if (valA < valB) return adminSortAsc ? -1 : 1;
+                if (valA > valB) return adminSortAsc ? 1 : -1;
+                return 0;
+            });
+
+            renderAdminTable();
+        }
+
+        function renderAdminTable() {
+            const tbody = document.getElementById('admin-table-body');
+            const emptyState = document.getElementById('admin-empty-state');
+            tbody.innerHTML = '';
+
+            if (adminFilteredData.length === 0) {
+                emptyState.classList.remove('d-none');
+                return;
+            }
+            emptyState.classList.add('d-none');
+
+            const formatDate = (dateStr) => {
+                if (!dateStr) return '-';
+                const d = new Date(dateStr);
+                if (isNaN(d.getTime())) return dateStr;
+                return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+            };
+
+            const formatDateTime = (dateStr) => {
+                if (!dateStr) return '-';
+                const d = new Date(dateStr);
+                if (isNaN(d.getTime())) return dateStr;
+                return d.toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            };
+
+            adminFilteredData.forEach(item => {
+                const tr = document.createElement('tr');
+                
+                // Menentukan Badge Status
+                let badgeClass = 'badge-kosong';
+                if(item.status_kedatangan === 'Sudah Tiba') badgeClass = 'badge-sudah';
+                else if(item.status_kedatangan === 'Belum Tiba') badgeClass = 'badge-belum';
+                const statusHtml = item.status_kedatangan ? `<span class="badge-apple ${badgeClass}">${item.status_kedatangan}</span>` : '-';
+
+                // Menentukan Tgl yg ditampilkan & Keterangan
+                let tglHtml = item.status_kedatangan === 'Sudah Tiba' ? formatDate(item.tanggal_tiba) : formatDate(item.tanggal_rencana);
+                let ketHtml = item.alasan_keterlambatan || '-';
+
+                tr.innerHTML = `
+                    <td class="fw-medium">${item.dai_id || '-'}</td>
+                    <td>${item.nama_dai || '-'}</td>
+                    <td>${item.penempatan || '-'}</td>
+                    <td>${statusHtml}</td>
+                    <td>${tglHtml}</td>
+                    <td><small class="text-muted">${ketHtml}</small></td>
+                    <td><small class="text-muted">${formatDateTime(item.waktu_update)}</small></td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
     </script>
 </body>
