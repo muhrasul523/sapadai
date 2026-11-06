@@ -48,28 +48,42 @@
     <div id="closed-page" class="hidden min-h-screen flex items-center justify-center p-4 bg-gray-50">
         <div class="bg-white p-10 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 text-center">
             <i class="fas fa-lock text-5xl text-gray-400 mb-4"></i>
-            <h2 class="text-2xl font-bold text-gray-800 mb-2">Laporan Ditutup</h2>
-            <p class="text-gray-600">Pengisian Laporan Kinerja Dai sudah ditutup atau belum memasuki jadwal yang ditentukan.</p>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Akses Ditolak</h2>
+            <p class="text-gray-600">Pengisian Laporan Kinerja Dai sudah ditutup atau Anda belum diberikan akses masuk pada jadwal saat ini.</p>
         </div>
     </div>
 
-    <!-- Halaman Countdown -->
+    <!-- Halaman Countdown (Apple Theme) -->
     <div id="countdown-page" class="hidden min-h-screen flex items-center justify-center p-4 bg-gray-50">
-        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 text-center">
-            <i class="fas fa-clock text-5xl text-teal-600 mb-4"></i>
-            <h2 class="text-2xl font-bold text-gray-800 mb-2">Belum Dibuka</h2>
-            <p class="text-gray-600 mb-6">Pengisian Laporan Kinerja Dai akan dibuka dalam:</p>
+        <div class="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-lg border border-gray-100 text-center">
+            <div class="bg-teal-50 w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-6">
+                <i class="fas fa-hourglass-half text-3xl text-teal-600"></i>
+            </div>
+            <h2 class="text-3xl font-extrabold text-gray-800 mb-3 tracking-tight">Belum Dibuka</h2>
+            <p class="text-gray-500 mb-8 font-medium">Jadwal pengisian laporan kinerja Anda akan segera dibuka dalam:</p>
             
-            <div id="countdown-timer-div" class="grid grid-cols-4 gap-2 mb-4">
-                <div class="bg-teal-50 p-2 rounded-lg border border-teal-100"><span id="cd-days" class="block text-2xl font-bold text-teal-700">0</span><span class="text-xs text-gray-500 uppercase">Hari</span></div>
-                <div class="bg-teal-50 p-2 rounded-lg border border-teal-100"><span id="cd-hours" class="block text-2xl font-bold text-teal-700">0</span><span class="text-xs text-gray-500 uppercase">Jam</span></div>
-                <div class="bg-teal-50 p-2 rounded-lg border border-teal-100"><span id="cd-mins" class="block text-2xl font-bold text-teal-700">0</span><span class="text-xs text-gray-500 uppercase">Menit</span></div>
-                <div class="bg-teal-50 p-2 rounded-lg border border-teal-100"><span id="cd-secs" class="block text-2xl font-bold text-teal-700">0</span><span class="text-xs text-gray-500 uppercase">Detik</span></div>
+            <div id="countdown-timer-div" class="flex justify-center gap-3 mb-6">
+                <div id="cd-days-container" class="bg-white border-2 border-gray-100 p-4 rounded-2xl w-24 shadow-sm">
+                    <span id="cd-days" class="block text-4xl font-bold text-gray-800">0</span>
+                    <span class="text-xs text-gray-400 font-bold uppercase tracking-wider mt-1 block">Hari</span>
+                </div>
+                <div id="cd-hours-container" class="bg-white border-2 border-gray-100 p-4 rounded-2xl w-24 shadow-sm">
+                    <span id="cd-hours" class="block text-4xl font-bold text-gray-800">00</span>
+                    <span class="text-xs text-gray-400 font-bold uppercase tracking-wider mt-1 block">Jam</span>
+                </div>
+                <div id="cd-mins-container" class="bg-white border-2 border-gray-100 p-4 rounded-2xl w-24 shadow-sm">
+                    <span id="cd-mins" class="block text-4xl font-bold text-gray-800">00</span>
+                    <span class="text-xs text-gray-400 font-bold uppercase tracking-wider mt-1 block">Menit</span>
+                </div>
+                <div id="cd-secs-container" class="bg-white border-2 border-gray-100 p-4 rounded-2xl w-24 shadow-sm">
+                    <span id="cd-secs" class="block text-4xl font-bold text-gray-800">00</span>
+                    <span class="text-xs text-gray-400 font-bold uppercase tracking-wider mt-1 block">Detik</span>
+                </div>
             </div>
 
             <div id="countdown-refresh-div" class="hidden">
-                <p class="text-teal-700 font-bold mb-4">Waktu pengisian telah tiba!</p>
-                <button onclick="location.reload()" class="w-full wahdah-bg text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-800 transition shadow-lg"><i class="fas fa-sync-alt mr-2"></i> Muat Ulang Halaman</button>
+                <p class="text-teal-600 font-bold mb-5 text-lg">Waktu pengisian telah tiba!</p>
+                <button onclick="location.reload()" class="w-full bg-teal-600 text-white font-bold py-4 px-4 rounded-xl hover:bg-teal-700 transition shadow-lg text-lg"><i class="fas fa-sync-alt mr-2"></i> Mulai Mengisi Laporan</button>
             </div>
         </div>
     </div>
@@ -383,8 +397,9 @@
         function showLoading(txt) { document.getElementById('loading-text').innerText = txt; document.getElementById('loading-overlay').style.display = 'flex'; }
         function hideLoading() { document.getElementById('loading-overlay').style.display = 'none'; }
 
+        // Event listener yang mencakup validasi WA sesuai perbaikan
         document.addEventListener('input', e => {
-            if(e.target.classList.contains('numeric-only')) {
+            if(e.target.classList.contains('numeric-only') && !e.target.classList.contains('wa-validate')) {
                 e.target.value = e.target.value.replace(/[^0-9]/g, '');
             }
             if(e.target.classList.contains('text-only')) {
@@ -394,9 +409,29 @@
                 if(e.target.value !== '' && parseInt(e.target.value) > 5) e.target.value = '5';
             }
             if(e.target.classList.contains('wa-validate')) {
-                let v = e.target.value.replace(/[^0-9]/g, ''); if(v.startsWith('08')) v = '628' + v.substring(2); e.target.value = v;
+                let v = e.target.value.replace(/[^0-9]/g, '');
+                // Auto hapus '0' di depan jika bukan '08'
+                if(v.startsWith('0') && !v.startsWith('08')) {
+                    v = v.substring(1); 
+                }
+                // Ubah 08 menjadi 628 otomatis
+                if(v.startsWith('08')) {
+                    v = '628' + v.substring(2);
+                }
+                e.target.value = v;
             }
             if(e.target.classList.contains('input-error') && e.target.checkValidity()) e.target.classList.remove('input-error');
+        });
+
+        // Hapus input dropdown otomatis jika tidak memilih dari list
+        document.addEventListener('focusout', e => {
+            if(e.target.classList.contains('sh-dai')) {
+                setTimeout(() => { // Waktu jeda agar klik dropdown berhasil ditangkap terlebih dahulu
+                    if (!e.target.dataset.val) {
+                        e.target.value = ''; 
+                    }
+                }, 200);
+            }
         });
 
         function parseWaktuMakassar(dateStr) {
@@ -427,12 +462,9 @@
                     if(res.daiList) {
                         initDaiList = res.daiList;
                         
-                        // Membuat Datalist penampung opsi secara dinamis
                         let datalistHtml = '';
                         initDaiList.forEach(d => {
-                            // Abaikan jika ID Dai kosong / tidak valid
                             if (d.id && d.id.trim() !== '') {
-                                // Value diatur memuat ID - Nama agar ID otomatis tercatat
                                 datalistHtml += `<option value="${d.id} - ${d.nama}">`;
                             }
                         });
@@ -446,35 +478,8 @@
                         dl.innerHTML = datalistHtml;
                     }
 
-                    let nowWita = new Date().getTime() + serverTimeOffsetMs;
-                    let isOpen = false;
-                    let jadwal1Buka = 0;
-
-                    if (appConfig.jadwal && appConfig.jadwal.length > 0) {
-                        jadwal1Buka = parseWaktuMakassar(appConfig.jadwal[0].buka);
-                        for (let i = 0; i < appConfig.jadwal.length; i++) {
-                            let b = parseWaktuMakassar(appConfig.jadwal[i].buka);
-                            let t = parseWaktuMakassar(appConfig.jadwal[i].tutup);
-                            if (nowWita >= b && nowWita <= t) {
-                                isOpen = true;
-                                break;
-                            }
-                        }
-                    } else {
-                        isOpen = true; 
-                    }
-
-                    if (isOpen) {
-                        document.getElementById('login-page').style.display = 'flex';
-                    } else {
-                        const satuPekanMs = 7 * 24 * 60 * 60 * 1000;
-                        if (jadwal1Buka > 0 && nowWita < jadwal1Buka && (jadwal1Buka - nowWita) <= satuPekanMs) {
-                            document.getElementById('countdown-page').style.display = 'flex';
-                            mulaiCountdown(jadwal1Buka);
-                        } else {
-                            document.getElementById('closed-page').style.display = 'flex';
-                        }
-                    }
+                    // Tampilkan Login terlebih dahulu tanpa mengecek jadwal
+                    document.getElementById('login-page').style.display = 'flex';
 
                     let sel = document.getElementById('select-bulan');
                     sel.innerHTML = '<option value="">-- Pilih Bulan Laporan --</option>';
@@ -506,10 +511,24 @@
                 let m = Math.floor((sisaMs % (1000 * 60 * 60)) / (1000 * 60));
                 let s = Math.floor((sisaMs % (1000 * 60)) / 1000);
 
+                let cdDays = document.getElementById('cd-days-container');
+                let cdHours = document.getElementById('cd-hours-container');
+                
+                if (d > 0) {
+                    cdDays.style.display = 'block';
+                    cdHours.style.display = 'block';
+                } else if (h > 0) {
+                    cdDays.style.display = 'none';
+                    cdHours.style.display = 'block';
+                } else {
+                    cdDays.style.display = 'none';
+                    cdHours.style.display = 'none';
+                }
+
                 document.getElementById('cd-days').innerText = d;
-                document.getElementById('cd-hours').innerText = h;
-                document.getElementById('cd-mins').innerText = m;
-                document.getElementById('cd-secs').innerText = s;
+                document.getElementById('cd-hours').innerText = h.toString().padStart(2, '0');
+                document.getElementById('cd-mins').innerText = m.toString().padStart(2, '0');
+                document.getElementById('cd-secs').innerText = s.toString().padStart(2, '0');
             }, 1000);
         }
 
@@ -537,13 +556,54 @@
             let u = t === 'wa' ? document.getElementById('login-wa').value : document.getElementById('login-email').value;
             let p = document.getElementById('login-password').value;
             
-            showLoading("Memproses...");
+            showLoading("Memproses Kredensial...");
             callBackend('processLogin', { type: t, user: u, pass: p }, res => {
                 hideLoading();
                 if(res && res.success) {
                     currentUser = res.data;
                     document.getElementById('login-page').style.display = 'none';
-                    document.getElementById('month-page').style.display = 'flex';
+                    
+                    // PENGECEKAN AKSES & JADWAL 1 & 2
+                    let daiId = currentUser.dai_id;
+                    let akses1Ids = (appConfig.akses_1 || "").split(',').map(s => s.trim());
+                    let akses2Ids = (appConfig.akses_2 || "").split(',').map(s => s.trim());
+                    
+                    let hasAccess1 = akses1Ids.includes(daiId);
+                    let hasAccess2 = akses2Ids.includes(daiId);
+
+                    let nowWita = new Date().getTime() + serverTimeOffsetMs;
+                    let targetBuka = -1;
+                    let isOpen = false;
+                    let accessSchedules = [];
+
+                    if (hasAccess1 && appConfig.jadwal && appConfig.jadwal.find(j => j.id === 1)) accessSchedules.push(appConfig.jadwal.find(j => j.id === 1));
+                    if (hasAccess2 && appConfig.jadwal && appConfig.jadwal.find(j => j.id === 2)) accessSchedules.push(appConfig.jadwal.find(j => j.id === 2));
+
+                    if (accessSchedules.length > 0) {
+                        for (let sch of accessSchedules) {
+                            let b = parseWaktuMakassar(sch.buka);
+                            let t = parseWaktuMakassar(sch.tutup);
+                            if (nowWita >= b && nowWita <= t) {
+                                isOpen = true;
+                                break;
+                            }
+                            if (nowWita < b) {
+                                if (targetBuka === -1 || b < targetBuka) {
+                                    targetBuka = b;
+                                }
+                            }
+                        }
+                    }
+
+                    if (isOpen) {
+                        document.getElementById('month-page').style.display = 'flex';
+                    } else if (targetBuka !== -1) {
+                        document.getElementById('countdown-page').style.display = 'flex';
+                        mulaiCountdown(targetBuka);
+                    } else {
+                        document.getElementById('closed-page').style.display = 'flex';
+                    }
+
                 } else Swal.fire('Gagal', res.message, 'error');
             });
         }
@@ -800,8 +860,6 @@
                         let w = img.width;
                         let h = img.height; 
                         
-                        // HANYA BATASI LEBAR.
-                        // Berapapun tingginya akan dibiarkan proporsional (sangat cocok untuk screenshot chat yang panjang ke bawah)
                         const MAX_WIDTH = 1280; 
                         
                         if (w > MAX_WIDTH) { 
@@ -814,11 +872,9 @@
                         const ctx = canvas.getContext('2d'); 
                         ctx.drawImage(img, 0, 0, w, h);
                         
-                        // Kualitas ditingkatkan dari 0.7 menjadi 0.9
                         let q = 0.9;
                         let b64 = canvas.toDataURL('image/jpeg', q);
                         
-                        // Batas ukuran dinaikkan 10x lipat (dari 150KB menjadi setara file ~1.4MB)
                         while (b64.length > 1400000 && q > 0.4) { 
                             q -= 0.1; 
                             b64 = canvas.toDataURL('image/jpeg', q); 
@@ -849,41 +905,98 @@
         }
         function removeFile(idx) { uploadedFilesBase64.splice(idx, 1); renderFilePreview(); }
 
-        function getListData(containerId, isSila=false) {
-            let rows = document.getElementById(containerId).querySelectorAll(isSila?'.sila-row':'.karya-row');
+        // FUNGSI VALIDASI NAMA & WA KARYA UNGGULAN (Baru)
+        function validateNameAndWa(name, wa, fieldLabel) {
+            let n = name.trim().toLowerCase();
+            let invalidWords = ['-', 'belum ada', 'tidak ada', 'kosong', 'nihil', 'tdk ada'];
+            
+            if (n.length < 3) return `[${fieldLabel}] Nama harus minimal 3 huruf.`;
+            if (/\d/.test(n)) return `[${fieldLabel}] Nama tidak boleh mengandung angka.`;
+            if (invalidWords.includes(n)) return `[${fieldLabel}] Nama yang dimasukkan tidak diizinkan.`;
+
+            let w = wa.replace(/[^0-9]/g, '');
+            if (w.length < 9) return `[${fieldLabel}] Nomor WA terlalu pendek.`;
+            if (w.startsWith('0')) return `[${fieldLabel}] Nomor WA harus berawalan 62.`;
+            
+            return null;
+        }
+
+        function getKaryaData(containerId, label) {
+            let rows = document.getElementById(containerId).querySelectorAll('.karya-row');
             if(rows.length === 0) return { jml: 0, rincian: "-" };
             let arr = [];
-            rows.forEach(r => {
-                if(isSila) arr.push(r.querySelector('.s-nama').value.trim() + " - " + r.querySelector('.s-hasil').value.trim());
-                else arr.push(r.querySelector('.k-nama').value.trim() + " - " + r.querySelector('.k-wa').value.trim());
-            });
+            
+            for (let r of rows) {
+                let namaEl = r.querySelector('.k-nama');
+                let waEl = r.querySelector('.k-wa');
+                let nama = namaEl.value.trim();
+                let wa = waEl.value.trim();
+                
+                let err = validateNameAndWa(nama, wa, label);
+                if (err) {
+                    namaEl.classList.add('input-error');
+                    waEl.classList.add('input-error');
+                    throw new Error(err);
+                } else {
+                    namaEl.classList.remove('input-error');
+                    waEl.classList.remove('input-error');
+                }
+                arr.push(nama + " - " + wa);
+            }
             return { jml: rows.length, rincian: arr.join("\n") };
         }
 
+        // FUNGSI VALIDASI SILATURAHMI (Baru)
+        function getSilaData(containerId) {
+            let rows = document.getElementById(containerId).querySelectorAll('.sila-row');
+            if(rows.length === 0) return { jml: 0, rincian: "-" };
+            let arr = [];
+
+            for (let r of rows) {
+                let namaEl = r.querySelector('.s-nama');
+                let hasilEl = r.querySelector('.s-hasil');
+                let nama = namaEl.value.trim();
+                let hasil = hasilEl.value.trim();
+                
+                if (hasil.length < 10) {
+                    hasilEl.classList.add('input-error');
+                    throw new Error("Pastikan jawaban anda benar, jelaskan hasil silaturahminya (Minimal 10 karakter).");
+                } else {
+                    hasilEl.classList.remove('input-error');
+                }
+                arr.push(nama + " - " + hasil);
+            }
+            
+            return { jml: rows.length, rincian: arr.join("\n") };
+        }
+
+        // FUNGSI VALIDASI SHARING INSPIRASI (Baru)
         function getSharingData(containerId) {
             let rows = document.getElementById(containerId).querySelectorAll('.sharing-row');
             if(rows.length === 0) return { jml: 0, rincian: "-" };
             let arr = [];
-            let isValid = true;
             
-            rows.forEach(r => {
+            for (let r of rows) {
                 let elDai = r.querySelector('.sh-dai');
-                // Ambil data utuh dari atribut tersembunyi
                 let valDai = elDai.dataset.val || ""; 
                 
-                // Pastikan nilainya ada dan valid (mengandung ' - ')
                 if (!valDai.includes(' - ')) {
                     elDai.classList.add('input-error');
-                    isValid = false;
+                    throw new Error("Terdapat pilihan Dai yang belum valid. Silakan ketik nama Dai, lalu WAJIB KLIK nama pada daftar.");
                 } else {
                     elDai.classList.remove('input-error');
                 }
                 
-                arr.push(valDai + " - " + r.querySelector('.sh-hasil').value.trim());
-            });
-            
-            if (!isValid) {
-                throw new Error("Terdapat pilihan Dai yang belum sempurna. Silakan ketik nama Dai, lalu WAJIB KLIK namanya pada daftar yang muncul agar ID tersimpan.");
+                let hasilEl = r.querySelector('.sh-hasil');
+                let hasil = hasilEl.value.trim();
+                if (hasil.length < 10) {
+                    hasilEl.classList.add('input-error');
+                    throw new Error("Pastikan hasil sharingnya benar, jelaskan isi sharing secara rinci (Minimal 10 karakter).");
+                } else {
+                    hasilEl.classList.remove('input-error');
+                }
+
+                arr.push(valDai + " - " + hasil);
             }
             
             return { jml: rows.length, rincian: arr.join("\n") };
@@ -897,7 +1010,6 @@
             // Hapus data tersembunyi jika user mengubah teks (memaksa user untuk memilih ulang dari list)
             input.dataset.val = "";
         
-            // Pencarian hanya menampilkan yang punya ID
             let filtered = initDaiList.filter(d => 
                 d.id && d.id.trim() !== '' && 
                 d.nama.toLowerCase().includes(val)
@@ -909,12 +1021,11 @@
                 filtered.forEach(d => {
                     let div = document.createElement('div');
                     div.className = 'p-2.5 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-800 cursor-pointer border-b border-gray-100 last:border-0 font-medium';
-                    // Hanya tampilkan Nama saja di dropdown
                     div.innerText = d.nama; 
                     
                     div.onclick = () => {
-                        input.value = d.nama; // Tampilan input hanya Nama
-                        input.dataset.val = `${d.id} - ${d.nama}`; // Data utuh (termasuk ID) disimpan sembunyi
+                        input.value = d.nama; 
+                        input.dataset.val = `${d.id} - ${d.nama}`; 
                         dropdown.classList.add('hidden');
                         input.classList.remove('input-error'); 
                     };
@@ -924,7 +1035,6 @@
             dropdown.classList.remove('hidden');
         }
         
-        // Skrip penutup dropdown jika area luar diklik tetap sama
         document.addEventListener('click', function(e) {
             if (!e.target.classList.contains('sh-dai')) {
                 document.querySelectorAll('.dai-dropdown').forEach(dd => dd.classList.add('hidden'));
@@ -942,16 +1052,25 @@
                 Swal.fire('Bukti Kosong', 'Upload minimal 1 foto persetujuan.', 'warning'); return;
             }
 
-            let d_quran = getListData('karya_quran'); let d_murabbi = getListData('karya_murabbi');
-            let d_pengurus = getListData('karya_pengurus'); let d_stiba = getListData('karya_stiba'); let d_dai = getListData('karya_dai');
-            let d_sila_in = getListData('silaturahmi_internal', true); let d_sila_ex = getListData('silaturahmi_eksternal', true);
-            let d_sharing;
-                try {
-                    d_sharing = getSharingData('sharing_dai_container'); 
-                } catch(e) {
-                    Swal.fire('Perhatian', e.message, 'warning');
-                    return; // Hentikan proses simpan laporan jika ada error
-                }
+            let d_quran, d_murabbi, d_pengurus, d_stiba, d_dai, d_sila_in, d_sila_ex, d_sharing;
+            
+            try {
+                // Menjalankan validasi baru
+                d_quran = getKaryaData('karya_quran', 'Pengajar Al-Quran'); 
+                d_murabbi = getKaryaData('karya_murabbi', 'Murabbi / Pra Murabbi');
+                d_pengurus = getKaryaData('karya_pengurus', 'Pengurus / Pra Pengurus'); 
+                d_stiba = getKaryaData('karya_stiba', 'Camaba STIBA'); 
+                d_dai = getKaryaData('karya_dai', 'Camaba Sekolah Dai');
+                
+                d_sila_in = getSilaData('silaturahmi_internal'); 
+                d_sila_ex = getSilaData('silaturahmi_eksternal');
+                
+                d_sharing = getSharingData('sharing_dai_container'); 
+            } catch(e) {
+                // Hentikan proses eksekusi jika terjadi pelanggaran di input data
+                Swal.fire('Periksa Kembali Data Anda', e.message, 'warning');
+                return; 
+            }
 
             let payload = {
                 id_pengguna: currentUser.dai_id,
@@ -976,7 +1095,7 @@
                 khotbah_jumat: document.getElementById('khotbah_jumat').value, taklim_tablig: document.getElementById('taklim_tablig').value,
                 silaturahmi_internal_jml: d_sila_in.jml, silaturahmi_internal_rincian: d_sila_in.rincian, silaturahmi_eksternal_jml: d_sila_ex.jml, silaturahmi_eksternal_rincian: d_sila_ex.rincian,
                 
-                kegiatan_lainnya: document.getElementById('kegiatan_lainnya').value, // Mengirim payload kegiatan lainnya
+                kegiatan_lainnya: document.getElementById('kegiatan_lainnya').value,
 
                 marhalah: currentUser.marhalah, nama_murabbi: currentUser.nama_murabbi, wa_murabbi: currentUser.wa_murabbi,
                 ketidakhadiran_tarbiyah: document.getElementById('ketidakhadiran_tarbiyah').value,
