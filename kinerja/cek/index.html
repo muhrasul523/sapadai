@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -328,13 +327,16 @@
 
             let totalKinerja = 0, totalKafalah = 0;
             laporanDiterima.forEach(k => {
-                totalKinerja += parseFloat(k.nilai_kinerja || 0);
+                // Perbaikan penggantian koma menjadi titik untuk memproses desimal
+                let strNilai = String(k.nilai_kinerja || "0").replace(',', '.');
+                totalKinerja += parseFloat(strNilai) || 0;
+                
                 totalKafalah += num(k.total_kafalah);
             });
             
             // Perbaikan nilai pembagi sesuai jumlah laporan diterima
             let jumlahLaporan = laporanDiterima.length > 0 ? laporanDiterima.length : 1; 
-            let avgKinerja = (totalKinerja / jumlahLaporan).toFixed(1);
+            let avgKinerja = (totalKinerja / jumlahLaporan).toFixed(2).replace('.', ',');
             let avgKafalah = (totalKafalah / jumlahLaporan);
             
             // Render 3 Card
@@ -648,7 +650,8 @@
             
             let dataKinerja = db.listBulan.map(bln => {
                 let found = laporanDiterima.find(k => (k.bulan_laporan || "").trim() === bln || (k.bulan_id_laporan || "").trim() === bln);
-                return found ? parseFloat(found.nilai_kinerja || 0) : 0;
+                // Perbaikan pembacaan koma untuk grafik
+                return found ? parseFloat(String(found.nilai_kinerja || "0").replace(',', '.')) : 0;
             });
             
             let dataKafalah = db.listBulan.map(bln => {
