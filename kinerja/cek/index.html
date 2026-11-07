@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -331,9 +332,10 @@
                 totalKafalah += num(k.total_kafalah);
             });
             
-            let jumlahBulanSistem = db.listBulan.length > 0 ? db.listBulan.length : 1; 
-            let avgKinerja = (totalKinerja / jumlahBulanSistem).toFixed(1);
-            let avgKafalah = (totalKafalah / jumlahBulanSistem);
+            // Perbaikan nilai pembagi sesuai jumlah laporan diterima
+            let jumlahLaporan = laporanDiterima.length > 0 ? laporanDiterima.length : 1; 
+            let avgKinerja = (totalKinerja / jumlahLaporan).toFixed(1);
+            let avgKafalah = (totalKafalah / jumlahLaporan);
             
             // Render 3 Card
             document.getElementById('stat-total-laporan').innerText = laporanDiterima.length;
@@ -349,6 +351,21 @@
             } else {
                 let reversedBulan = [...db.listBulan].reverse();
                 reversedBulan.forEach(b => selBulan.add(new Option(b, b)));
+
+                // Logic Default Bulan: otomatis 1 bulan lalu
+                let now = new Date();
+                let prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                const blnArr = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+                let prevMonthStr = blnArr[prevMonth.getMonth()] + ' ' + prevMonth.getFullYear();
+
+                let foundOption = Array.from(selBulan.options).find(opt => opt.value === prevMonthStr);
+                if (foundOption) {
+                    selBulan.value = prevMonthStr;
+                } else {
+                    // Fallback ke yang terbaru jika bulan lalu tidak ada
+                    selBulan.value = reversedBulan[0];
+                }
+
                 renderRincian();
             }
 
@@ -467,7 +484,7 @@
             </div>`;
 
             return `
-            <!-- Tata letak nilai kinerja CENTER Kiri-Kanan Atas-Bawah (Diperbaiki Ukuran Font Sama) -->
+            <!-- Tata letak nilai kinerja CENTER Kiri-Kanan Atas-Bawah -->
             <div class="flex flex-row items-center justify-center p-8 bg-white border border-gray-200 rounded-xl shadow-sm mb-6 max-w-lg mx-auto divide-x divide-gray-300">
                 <div class="flex-1 flex flex-col items-center justify-center px-4 py-2">
                     <p class="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 text-center">TOTAL NILAI KINERJA</p>
@@ -479,7 +496,6 @@
                 </div>
             </div>
 
-            <!-- URUTAN DIPERBARUI SESUAI PERMINTAAN -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 
                 <!-- 1. KARYA UNGGULAN -->
@@ -510,8 +526,8 @@
                     </div>
                 </div>
 
-                <!-- 4. DAKWAH UMUM (Tanpa Berkantor) -->
-                <div class="border rounded-xl bg-white overflow-hidden shadow-sm">
+                <!-- 4. DAKWAH UMUM (Lebar penuh md:col-span-2 sesuai permintaan urutan) -->
+                <div class="border rounded-xl bg-white overflow-hidden shadow-sm md:col-span-2">
                     <div class="card-header-custom uppercase"><i class="fas fa-bullhorn text-orange-500"></i> DAKWAH UMUM</div>
                     <div class="p-4 text-sm divide-y divide-gray-100">
                         <div class="py-2.5 flex justify-between items-center"><span class="text-gray-600 font-medium">Khotbah Jumat</span> <span class="font-bold text-gray-800 text-right">${d.khotbah_jumat||0} Kali</span></div>
@@ -519,14 +535,30 @@
                     </div>
                 </div>
 
-                <!-- 5. SILATURAHMI & LAINNYA -->
-                <div class="border rounded-xl bg-white overflow-hidden shadow-sm">
+                <!-- 5. SILATURAHMI & LAINNYA (Pindah ke bawah Dakwah Umum dengan md:col-span-2) -->
+                <div class="border rounded-xl bg-white overflow-hidden shadow-sm md:col-span-2">
                     <div class="card-header-custom uppercase"><i class="fas fa-handshake text-green-500"></i> SILATURAHMI & LAINNYA</div>
                     <div class="p-4 text-sm divide-y divide-gray-100">
                         <div class="py-2.5 flex justify-between items-center"><span class="text-gray-600 font-medium">Silaturahmi Internal</span> <span class="font-bold text-gray-800 text-right">${d.silaturahmi_internal_jml||0} Kali</span></div>
                         <div class="py-2.5 flex justify-between items-center"><span class="text-gray-600 font-medium">Silaturahmi Eksternal</span> <span class="font-bold text-gray-800 text-right">${d.silaturahmi_eksternal_jml||0} Kali</span></div>
                         <div class="py-2.5 flex justify-between items-center"><span class="text-gray-600 font-medium">Alpa Tarbiyah</span> <span class="font-bold text-gray-800 text-right">${d.ketidakhadiran_tarbiyah||0} Kali</span></div>
                         <div class="py-2.5 flex justify-between items-center"><span class="text-gray-600 font-medium">Izin</span> <span class="font-bold text-gray-800 text-right">${d.izin||d.hari_izin||0} Hari</span></div>
+                    </div>
+                </div>
+
+                <!-- 6. KEGIATAN LAINNYA (Kotak baru paling bawah) -->
+                <div class="border rounded-xl bg-white overflow-hidden shadow-sm md:col-span-2">
+                    <div class="card-header-custom uppercase"><i class="fas fa-clipboard-list text-purple-500"></i> KEGIATAN LAINNYA</div>
+                    <div class="p-4 pt-4">
+                        ${(d.kegiatan_lainnya && d.kegiatan_lainnya.trim() !== '' && d.kegiatan_lainnya.trim() !== '-') ? `
+                        <div class="bg-gray-50 border border-gray-100 p-3 rounded-lg text-sm shadow-inner text-gray-700">
+                            ${renderList(d.kegiatan_lainnya)}
+                        </div>
+                        ` : `
+                        <div class="bg-gray-50 border border-gray-100 p-3 rounded-lg text-sm shadow-inner text-gray-400 italic font-medium">
+                            Tidak ada data kegiatan lainnya.
+                        </div>
+                        `}
                     </div>
                 </div>
 
@@ -574,7 +606,7 @@
                 }
 
             } else {
-                html += `<tr><td colspan="2" class="p-6 text-center text-gray-500 italic border-b bg-gray-50 font-medium"><i class="fas fa-info-circle text-gray-400 mr-1"></i> Rincian komponen disembunyikan karena terdapat kondisi khusus/batasan.</td></tr>`;
+                // Teks "Rincian komponen disembunyikan karena terdapat kondisi khusus/batasan." dihapus sesuai permintaan
             }
 
             // BIRU - TOTAL & SUMBER DANA
@@ -587,6 +619,12 @@
                         <tr class="border-b border-gray-50 hover:bg-gray-50 transition"><td class="p-4 pl-8 font-medium text-gray-700">Tanggungan DPW/DPD/Instansi Tempat Tugas</td><td class="p-4 font-bold text-right text-gray-800">${formatRupiah(d.dpw_dpd_instansi_tempat_tugas || d['dpw/dpd/instansi_tempat_tugas'])}</td></tr>
                         <tr class="border-b border-gray-50 hover:bg-gray-50 transition"><td class="p-4 pl-8 font-medium text-gray-700">Tanggungan DPW/DPD Persaudaraan</td><td class="p-4 font-bold text-right text-gray-800">${formatRupiah(d.dpw_dpd_persaudaraan || d['dpw/dpd_persaudaraan'])}</td></tr>
                         <tr class="bg-blue-50/30 border-t border-blue-100"><td class="p-4 pl-8 font-bold text-blue-900">Tanggungan Lajnah Dai DPP</td><td class="p-4 font-bold text-right text-blue-900 text-lg">${formatRupiah(d.kafalah_lajnah_dai_dpp)}</td></tr>
+                        
+                        <!-- Penyaluran Kafalah -->
+                        <tr class="bg-emerald-50/50 border-t-2 border-emerald-200"><td colspan="2" class="px-4 py-3 font-bold text-xs text-emerald-700 uppercase tracking-wider"><i class="fas fa-money-check-alt mr-1"></i> PENYALURAN KAFALAH (LAJNAH DAI DPP)</td></tr>
+                        <tr class="border-b border-gray-50 hover:bg-gray-50 transition"><td class="p-4 pl-8 font-medium text-gray-700">Termin</td><td class="p-4 font-bold text-right text-gray-800">${d.termin || '-'}</td></tr>
+                        <tr class="border-b border-gray-50 hover:bg-gray-50 transition"><td class="p-4 pl-8 font-medium text-gray-700">Kafalah Disalurkan</td><td class="p-4 font-bold text-right text-emerald-600">${formatRupiah(d.kafalah_disalurkan)}</td></tr>
+                        <tr class="border-b border-gray-50 hover:bg-gray-50 transition"><td class="p-4 pl-8 font-medium text-gray-700">Kafalah Sisa</td><td class="p-4 font-bold text-right text-red-500">${formatRupiah(d.kafalah_sisa)}</td></tr>
                     </tbody>
                 </table>
             </div>`;
@@ -605,15 +643,18 @@
             
             document.getElementById('modal-grafik').classList.remove('hidden');
             
-            let sortedData = [];
-            db.listBulan.forEach(bln => {
+            // Perbaikan Grafik Kronologis: Memetakan semua bulan agar tidak putus/melompat, setel ke 0 jika tidak ada
+            let labels = db.listBulan.map(bln => bln.split(' ')[0]);
+            
+            let dataKinerja = db.listBulan.map(bln => {
                 let found = laporanDiterima.find(k => (k.bulan_laporan || "").trim() === bln || (k.bulan_id_laporan || "").trim() === bln);
-                if(found) sortedData.push(found);
+                return found ? parseFloat(found.nilai_kinerja || 0) : 0;
             });
-
-            let labels = sortedData.map(d => (d.bulan_laporan || d.bulan_id_laporan).split(' ')[0]); 
-            let dataKinerja = sortedData.map(d => parseFloat(d.nilai_kinerja || 0));
-            let dataKafalah = sortedData.map(d => num(d.total_kafalah));
+            
+            let dataKafalah = db.listBulan.map(bln => {
+                let found = laporanDiterima.find(k => (k.bulan_laporan || "").trim() === bln || (k.bulan_id_laporan || "").trim() === bln);
+                return found ? num(found.total_kafalah) : 0;
+            });
 
             // Chart Kinerja - Line dengan Gradien Modern
             const ctxKin = document.getElementById('chartKinerja').getContext('2d');
